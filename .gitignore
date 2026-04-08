@@ -1,0 +1,14 @@
+HCT-9000/.vs
+HCT-9000/build
+HCT-9000/externs
+HCT-9000/packages
+
+HCT-9000/projects/HctReport/export
+HCT-9000/projects/HctToolkit/export
+HCT-9000/projects/HctToolkit/logs
+
+HCT-9000/modules/HttpRequestHelper/libHttpRequestHelper/obj
+
+*.VC.db
+*.json
+*.db

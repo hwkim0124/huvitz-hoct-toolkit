@@ -1,0 +1,181 @@
+#include "stdafx.h"
+#include "Normative.h"
+
+#include "CppUtil2.h"
+#include "NormData2.h"
+
+using namespace OctSystem;
+using namespace NormData;
+using namespace CppUtil;
+using namespace std;
+
+
+struct Normative::NormativeImpl
+{
+	NormArchive normDB;
+
+};
+
+
+// Direct initialization of static smart pointer.
+std::unique_ptr<Normative::NormativeImpl> Normative::d_ptr(new NormativeImpl());
+
+
+Normative::Normative()
+{
+}
+
+
+Normative::~Normative()
+{
+}
+
+
+bool OctSystem::Normative::initNormative(void)
+{
+	if (getArchive().openDatabase()) {
+		LogDebug() << "Normative DB opened, " << getArchive().getDBFilePath();
+		
+		LogDebug() << "ETDRS: " << getPercentile_ETDRS(Ethinicity::COCASIAN, Gender::MALE, 40, EyeSide::OD, 0, 192.0f);
+		LogDebug() << "ETDRS: " << getPercentile_ETDRS(Ethinicity::COCASIAN, Gender::MALE, 40, EyeSide::OD, 1, 309.0f);
+		LogDebug() << "ETDRS: " << getPercentile_ETDRS(Ethinicity::COCASIAN, Gender::MALE, 40, EyeSide::OD, 2, 304.0f);
+		LogDebug() << "ETDRS: " << getPercentile_ETDRS(Ethinicity::COCASIAN, Gender::MALE, 40, EyeSide::OD, 3, 321.0f);
+		LogDebug() << "ETDRS: " << getPercentile_ETDRS(Ethinicity::COCASIAN, Gender::MALE, 40, EyeSide::OD, 4, 304.1f);
+		LogDebug() << "ETDRS: " << getPercentile_ETDRS(Ethinicity::COCASIAN, Gender::MALE, 40, EyeSide::OD, 5, 282.7f);
+		LogDebug() << "ETDRS: " << getPercentile_ETDRS(Ethinicity::COCASIAN, Gender::MALE, 40, EyeSide::OD, 6, 305.0f);
+		LogDebug() << "ETDRS: " << getPercentile_ETDRS(Ethinicity::COCASIAN, Gender::MALE, 40, EyeSide::OD, 7, 269.3f);
+		LogDebug() << "ETDRS: " << getPercentile_ETDRS(Ethinicity::COCASIAN, Gender::MALE, 40, EyeSide::OD, 8, 269.6f);
+		LogDebug() << "GCC: " << getPercentile_GCC(Ethinicity::COCASIAN, Gender::MALE, 40, EyeSide::OD, 0, 110.0f);
+
+		auto graph = getGraph_TSNIT(Ethinicity::COCASIAN, Gender::MALE, 40, EyeSide::OD, 5, 128);
+
+		auto data = vector<float>(512*96, 100);
+		auto image = getDeviation_MacularIPL(Ethinicity::COCASIAN, Gender::MALE, 40, EyeSide::OD, data, 96, 512, 512, 96);
+		return true;
+	}
+	else {
+		LogError() << "Normative DB open failed, " << getArchive().getDBFilePath();
+	}
+	return false;
+}
+
+
+bool OctSystem::Normative::isAvailabel(void)
+{
+	return getArchive().isFetched();
+}
+
+
+int OctSystem::Normative::getPercentile_ETDRS(Ethinicity race, Gender gender, int age, EyeSide side, int sector, float value)
+{
+	auto result = getArchive().getETDRS().getPercentile(race, gender, age, side, sector, value);
+	return result;
+}
+
+
+int OctSystem::Normative::getPercentile_GCC(Ethinicity race, Gender gender, int age, EyeSide side, int sector, float value)
+{
+	auto result = getArchive().getGCC().getPercentile(race, gender, age, side, sector, value);
+	return result;
+}
+
+int OctSystem::Normative::getPercentile_BisectGCC(Ethinicity race, Gender gender, int age, EyeSide side, int sector, float value)
+{
+	auto result = getArchive().getBisectGCC().getPercentile(race, gender, age, side, sector, value);
+	return result;
+}
+
+int OctSystem::Normative::getPercentile_QuadNFL(Ethinicity race, Gender gender, int age, EyeSide side, int sector, float value)
+{
+	auto result = getArchive().getQuadNFL().getPercentile(race, gender, age, side, sector, value);
+	return result;
+}
+
+int OctSystem::Normative::getPercentile_QuadRPE(Ethinicity race, Gender gender, int age, EyeSide side, int sector, float value)
+{
+	auto result = getArchive().getQuadRPE().getPercentile(race, gender, age, side, sector, value);
+	return result;
+}
+
+int OctSystem::Normative::getPercentile_ClockNFL(Ethinicity race, Gender gender, int age, EyeSide side, int sector, float value)
+{
+	auto result = getArchive().getClockNFL().getPercentile(race, gender, age, side, sector, value);
+	return result;
+}
+
+int OctSystem::Normative::getPercentile_ClockRPE(Ethinicity race, Gender gender, int age, EyeSide side, int sector, float value)
+{
+	auto result = getArchive().getClockRPE().getPercentile(race, gender, age, side, sector, value);
+	return result;
+}
+
+
+std::vector<float> OctSystem::Normative::getGraph_TSNIT(Ethinicity race, Gender gender, int age, EyeSide side, int percentile, int size)
+{
+	auto result = getArchive().getTSNIT().getNormGraph(race, gender, age, side, percentile, size);
+	return result;
+}
+
+
+CppUtil::CvImage OctSystem::Normative::getDeviation_DiscNFL(Ethinicity race, Gender gender, int age, EyeSide side, const std::vector<float>& data, int lines, int points, int width, int height)
+{
+	auto result = getArchive().getDiscNFL().makeImage(race, gender, age, side, data, lines, points, width, height);
+	return result;
+}
+
+
+CppUtil::CvImage OctSystem::Normative::getDeviation_DiscRPE(Ethinicity race, Gender gender, int age, EyeSide side, const std::vector<float>& data, int lines, int points, int width, int height)
+{
+	auto result = getArchive().getDiscRPE().makeImage(race, gender, age, side, data, lines, points, width, height);
+	return result;
+}
+
+
+CppUtil::CvImage OctSystem::Normative::getDeviation_MacularIPL(Ethinicity race, Gender gender, int age, EyeSide side, const std::vector<float>& data, int lines, int points, int width, int height)
+{
+	auto result = getArchive().getMacularIPL().makeImage(race, gender, age, side, data, lines, points, width, height);
+	return result;
+}
+
+
+CppUtil::CvImage OctSystem::Normative::getDeviation_MacularRPE(Ethinicity race, Gender gender, int age, EyeSide side, const std::vector<float>& data, int lines, int points, int width, int height)
+{
+	auto result = getArchive().getMacularRPE().makeImage(race, gender, age, side, data, lines, points, width, height);
+	return result;
+}
+
+float OctSystem::Normative::getNormThickness_MacularIPL(Ethinicity race, Gender gender, int age, EyeSide side, int sector, int percentile)
+{
+	auto result = getArchive().getMacularIPL().getNormThickness(race, gender, age, side, sector, percentile);
+	return result;
+}
+
+float OctSystem::Normative::getNormThickness_MacularRPE(Ethinicity race, Gender gender, int age, EyeSide side, int sector, int percentile)
+{
+	auto result = getArchive().getMacularRPE().getNormThickness(race, gender, age, side, sector, percentile);
+	return result;
+}
+
+float OctSystem::Normative::getNormThickness_DiscRPE(Ethinicity race, Gender gender, int age, EyeSide side, int sector, int percentile)
+{
+	auto result = getArchive().getDiscRPE().getNormThickness(race, gender, age, side, sector, percentile);
+	return result;
+}
+
+float OctSystem::Normative::getNormThickness_DiscNFL(Ethinicity race, Gender gender, int age, EyeSide side, int sector, int percentile)
+{
+	auto result = getArchive().getDiscNFL().getNormThickness(race, gender, age, side, sector, percentile);
+	return result;
+}
+
+
+Normative::NormativeImpl & OctSystem::Normative::getImpl(void)
+{
+	return *d_ptr;
+}
+
+
+NormData::NormArchive & OctSystem::Normative::getArchive(void)
+{
+	return getImpl().normDB;
+}

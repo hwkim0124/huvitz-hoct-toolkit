@@ -1,0 +1,249 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="HctReport.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MainFrm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ChildFrm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HctReportDoc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HctReportView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="HctReport.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MainFrm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ChildFrm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HctReportDoc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HctReportView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="HctReport.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\HctReport.rc2">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\HctReportDoc.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\HctReport.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Toolbar.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_back_01.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_back_02.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_back_03.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_back_04.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_back_05.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_back_06.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_back_07.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_back_08.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_back_09.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_down_01.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_down_02.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_down_03.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_down_04.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_down_05.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_down_06.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_down_07.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_down_08.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_down_09.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_front_01.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_front_02.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_front_03.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_front_04.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_front_05.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_front_06.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_front_07.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_front_08.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_front_09.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_left_01.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_left_02.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_left_03.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_left_04.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_left_05.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_left_06.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_left_07.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_left_08.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_left_09.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_right_01.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_right_02.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_right_03.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_right_04.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_right_05.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_right_06.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_right_07.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_right_08.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_right_09.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_up_01.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_up_02.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_up_03.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_up_04.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_up_05.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_up_06.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_up_07.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_up_08.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\modules\ReportCtrl\res\moter\arrow_up_09.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+</Project>

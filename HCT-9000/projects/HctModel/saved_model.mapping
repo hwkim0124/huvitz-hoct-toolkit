@@ -1,0 +1,1079 @@
+<?xml version="1.0" ?>
+<mapping>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion2/up_conv/conv2d_17/Conv2D/ReadVariableOp" out_port_id="0"/>
+		<IR id="191" name="StatefulPartitionedCall/hoct_net2/fusion2/up_conv/conv2d_17/Conv2D/Transpose18239_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_1/Relu" out_port_id="0"/>
+		<IR id="67" name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_1/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/segment_head/up_sampling2d_3/strided_slice/stack_2" out_port_id="0"/>
+		<IR id="388" name="StatefulPartitionedCall/hoct_net2/segment_head/up_sampling2d_3/strided_slice/Cast_324321_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_1/conv_1/separable_conv2d_8/separable_conv2d/depthwise" out_port_id="0"/>
+		<IR id="293" name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_1/conv_1/separable_conv2d_8/separable_conv2d/depthwise" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/base_branch/block_1/conv_1/separable_conv2d/separable_conv2d/ReadVariableOp_1" out_port_id="0"/>
+		<IR id="13" name="StatefulPartitionedCall/hoct_net2/base_branch/block_1/conv_1/separable_conv2d/separable_conv2d/Transpose18079_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_2/skip_downsample/conv2d_13/Conv2D/ReadVariableOp" out_port_id="0"/>
+		<IR id="119" name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_2/skip_downsample/conv2d_13/Conv2D/Transpose18191_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion3/Relu" out_port_id="0"/>
+		<IR id="381" name="StatefulPartitionedCall/hoct_net2/fusion3/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/segment_head/concat" out_port_id="0"/>
+		<IR id="406" name="StatefulPartitionedCall/hoct_net2/segment_head/concat" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/segment_head/up_sampling2d_4/mul" out_port_id="0"/>
+		<IR id="424" name="StatefulPartitionedCall/hoct_net2/segment_head/up_sampling2d_4/resize/ResizeBilinear/Cast_1" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_1/conv_2/separable_conv2d_13/separable_conv2d/depthwise" out_port_id="0"/>
+		<IR id="345" name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_1/conv_2/separable_conv2d_13/separable_conv2d/depthwise" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_1/conv_2/batch_normalization_27/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="61" name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_1/conv_2/separable_conv2d_17/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_2/conv_1/separable_conv2d_18/separable_conv2d/depthwise" out_port_id="0"/>
+		<IR id="69" name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_2/conv_1/separable_conv2d_18/separable_conv2d/depthwise" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_1/conv_1/separable_conv2d_24/separable_conv2d/ReadVariableOp_1" out_port_id="0"/>
+		<IR id="127" name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_1/conv_1/separable_conv2d_24/separable_conv2d/Transpose18199_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_2/conv_1/separable_conv2d_6/separable_conv2d/ReadVariableOp_1" out_port_id="0"/>
+		<IR id="268" name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_2/conv_1/separable_conv2d_6/separable_conv2d/Transpose18271_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_1/conv_2/batch_normalization_15/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="304" name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_1/conv_2/separable_conv2d_9/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion2/up_conv/batch_normalization_46/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="194" name="StatefulPartitionedCall/hoct_net2/fusion2/up_conv/conv2d_17/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion1/conv/separable_conv2d_28/separable_conv2d/ReadVariableOp_1" out_port_id="0"/>
+		<IR id="287" name="StatefulPartitionedCall/hoct_net2/fusion1/conv/separable_conv2d_28/separable_conv2d/Transpose18291_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_1/add" out_port_id="0"/>
+		<IR id="66" name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_1/add" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_2/skip_downsample/batch_normalization_25/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="372" name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_2/skip_downsample/conv2d_9/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_1/skip_downsample/conv2d_14/Conv2D/ReadVariableOp" out_port_id="0"/>
+		<IR id="138" name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_1/skip_downsample/conv2d_14/Conv2D/Transpose18211_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/base_branch/block_2/add" out_port_id="0"/>
+		<IR id="47" name="StatefulPartitionedCall/hoct_net2/base_branch/block_2/add" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_1/conv_1/separable_conv2d_8/separable_conv2d/ReadVariableOp_1" out_port_id="0"/>
+		<IR id="294" name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_1/conv_1/separable_conv2d_8/separable_conv2d/Transpose18299_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion1/up_sampling2d/Shape" out_port_id="0"/>
+		<IR id="226" name="StatefulPartitionedCall/hoct_net2/fusion1/up_sampling2d/Shape/GatherNCHWtoNHWC" out_port_id="3"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/segment_head/up_sampling2d_4/Shape" out_port_id="0"/>
+		<IR id="417" name="StatefulPartitionedCall/hoct_net2/segment_head/up_sampling2d_4/Shape/GatherNCHWtoNHWC" out_port_id="3"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_2/conv_1/separable_conv2d_10/separable_conv2d/ReadVariableOp" out_port_id="0"/>
+		<IR id="311" name="2388223885_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion3/up_sampling2d_2/strided_slice/stack_2" out_port_id="0"/>
+		<IR id="173" name="StatefulPartitionedCall/hoct_net2/fusion3/up_sampling2d_2/strided_slice/Cast_324405_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_2/add" out_port_id="0"/>
+		<IR id="123" name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_2/add" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_2/conv_1/batch_normalization_23/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="361" name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_2/conv_1/separable_conv2d_14/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_2/conv_1/separable_conv2d_14/separable_conv2d/ReadVariableOp_1" out_port_id="0"/>
+		<IR id="358" name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_2/conv_1/separable_conv2d_14/separable_conv2d/Transpose18367_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_1/conv_1/batch_normalization_8/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="252" name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_1/conv_1/separable_conv2d_4/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="Identity" out_port_id="0"/>
+		<IR id="442" name="StatefulPartitionedCall/hoct_net2/segment_head/softmax/Softmax" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="Func/StatefulPartitionedCall/output/_341" out_port_id="0"/>
+		<IR id="442" name="StatefulPartitionedCall/hoct_net2/segment_head/softmax/Softmax" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/Identity" out_port_id="0"/>
+		<IR id="442" name="StatefulPartitionedCall/hoct_net2/segment_head/softmax/Softmax" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/segment_head/softmax/Softmax" out_port_id="0"/>
+		<IR id="442" name="StatefulPartitionedCall/hoct_net2/segment_head/softmax/Softmax" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/segment_head/up_sampling2d_4/strided_slice/stack_1" out_port_id="0"/>
+		<IR id="419" name="StatefulPartitionedCall/hoct_net2/segment_head/up_sampling2d_4/strided_slice/Cast_224389_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/base_branch/block_1/skip_downsample/batch_normalization_4/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="27" name="StatefulPartitionedCall/hoct_net2/base_branch/block_1/skip_downsample/conv2d_2/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_1/conv_1/separable_conv2d_4/separable_conv2d/depthwise" out_port_id="0"/>
+		<IR id="248" name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_1/conv_1/separable_conv2d_4/separable_conv2d/depthwise" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_2/skip_downsample/batch_normalization_37/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="122" name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_2/skip_downsample/conv2d_13/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/base_branch/block_1/add" out_port_id="0"/>
+		<IR id="28" name="StatefulPartitionedCall/hoct_net2/base_branch/block_1/add" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_1/conv_1/separable_conv2d_4/separable_conv2d/ReadVariableOp_1" out_port_id="0"/>
+		<IR id="249" name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_1/conv_1/separable_conv2d_4/separable_conv2d/Transpose18251_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/base_branch/block_1/conv_2/separable_conv2d_1/separable_conv2d/depthwise" out_port_id="0"/>
+		<IR id="19" name="StatefulPartitionedCall/hoct_net2/base_branch/block_1/conv_2/separable_conv2d_1/separable_conv2d/depthwise" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_2/conv_1/Relu" out_port_id="0"/>
+		<IR id="74" name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_2/conv_1/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion3/up_sampling2d_2/Const" out_port_id="0"/>
+		<IR id="175" name="StatefulPartitionedCall/hoct_net2/fusion3/up_sampling2d_2/Const/Output_0/Data__const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion1/conv/separable_conv2d_28/separable_conv2d/depthwise" out_port_id="0"/>
+		<IR id="286" name="StatefulPartitionedCall/hoct_net2/fusion1/conv/separable_conv2d_28/separable_conv2d/depthwise" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_1/conv_1/separable_conv2d_16/separable_conv2d/ReadVariableOp_1" out_port_id="0"/>
+		<IR id="51" name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_1/conv_1/separable_conv2d_16/separable_conv2d/Transpose18119_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_2/conv_1/separable_conv2d_26/separable_conv2d/ReadVariableOp_1" out_port_id="0"/>
+		<IR id="146" name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_2/conv_1/separable_conv2d_26/separable_conv2d/Transpose18219_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_2/conv_2/separable_conv2d_23/separable_conv2d/ReadVariableOp_1" out_port_id="0"/>
+		<IR id="115" name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_2/conv_2/separable_conv2d_23/separable_conv2d/Transpose18187_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion1/up_conv/conv2d_16/Conv2D/ReadVariableOp" out_port_id="0"/>
+		<IR id="219" name="StatefulPartitionedCall/hoct_net2/fusion1/up_conv/conv2d_16/Conv2D/Transpose18243_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_1/skip_downsample/conv2d_4/Conv2D/ReadVariableOp" out_port_id="0"/>
+		<IR id="260" name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_1/skip_downsample/conv2d_4/Conv2D/Transpose18263_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion1/up_sampling2d/strided_slice/stack" out_port_id="0"/>
+		<IR id="227" name="StatefulPartitionedCall/hoct_net2/fusion1/up_sampling2d/strided_slice/Cast_124365_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_1/skip_downsample/batch_normalization_34/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="103" name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_1/skip_downsample/conv2d_12/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_2/conv_1/batch_normalization_41/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="149" name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_2/conv_1/separable_conv2d_26/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_2/conv_1/batch_normalization_11/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="271" name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_2/conv_1/separable_conv2d_6/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_1/conv_2/batch_normalization_21/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="349" name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_1/conv_2/separable_conv2d_13/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion2/up_sampling2d_1/strided_slice" out_port_id="0"/>
+		<IR id="202" name="StatefulPartitionedCall/hoct_net2/fusion2/up_sampling2d_1/strided_slice" out_port_id="4"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_2/conv_2/separable_conv2d_23/separable_conv2d/depthwise" out_port_id="0"/>
+		<IR id="114" name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_2/conv_2/separable_conv2d_23/separable_conv2d/depthwise" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_2/conv_1/Relu" out_port_id="0"/>
+		<IR id="317" name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_2/conv_1/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/segment_head/up_sampling2d_3/strided_slice/stack_1" out_port_id="0"/>
+		<IR id="387" name="StatefulPartitionedCall/hoct_net2/segment_head/up_sampling2d_3/strided_slice/Cast_224319_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_1/skip_downsample/conv2d_6/Conv2D/ReadVariableOp" out_port_id="0"/>
+		<IR id="305" name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_1/skip_downsample/conv2d_6/Conv2D/Transpose18311_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_2/conv_1/separable_conv2d_18/separable_conv2d/ReadVariableOp_1" out_port_id="0"/>
+		<IR id="70" name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_2/conv_1/separable_conv2d_18/separable_conv2d/Transpose18139_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_2/conv_1/separable_conv2d_26/separable_conv2d/ReadVariableOp" out_port_id="0"/>
+		<IR id="144" name="2386223865_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_1/conv_1/batch_normalization_14/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="297" name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_1/conv_1/separable_conv2d_8/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_1/skip_downsample/conv2d_12/Conv2D/ReadVariableOp" out_port_id="0"/>
+		<IR id="100" name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_1/skip_downsample/conv2d_12/Conv2D/Transpose18171_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_1/skip_downsample/Pad" out_port_id="0"/>
+		<IR id="86" name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_2/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_2/Relu" out_port_id="0"/>
+		<IR id="86" name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_2/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_1/skip_downsample/batch_normalization_22/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="353" name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_1/skip_downsample/conv2d_8/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion3/up_sampling2d_2/strided_slice/stack_1" out_port_id="0"/>
+		<IR id="172" name="StatefulPartitionedCall/hoct_net2/fusion3/up_sampling2d_2/strided_slice/Cast_224403_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_2/conv_1/Relu" out_port_id="0"/>
+		<IR id="112" name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_2/conv_1/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_1/conv_2/separable_conv2d_17/separable_conv2d/depthwise" out_port_id="0"/>
+		<IR id="57" name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_1/conv_2/separable_conv2d_17/separable_conv2d/depthwise" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_1/conv_1/batch_normalization_20/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="342" name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_1/conv_1/separable_conv2d_12/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_2/conv_2/batch_normalization_18/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="323" name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_2/conv_2/separable_conv2d_11/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/segment_head/up_sampling2d_4/strided_slice" out_port_id="0"/>
+		<IR id="421" name="StatefulPartitionedCall/hoct_net2/segment_head/up_sampling2d_4/strided_slice" out_port_id="4"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/segment_head/conv_1/separable_conv2d_31/separable_conv2d/depthwise" out_port_id="0"/>
+		<IR id="408" name="StatefulPartitionedCall/hoct_net2/segment_head/conv_1/separable_conv2d_31/separable_conv2d/depthwise" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_1/conv_2/separable_conv2d_17/separable_conv2d/ReadVariableOp_1" out_port_id="0"/>
+		<IR id="58" name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_1/conv_2/separable_conv2d_17/separable_conv2d/Transpose18127_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion1/up_sampling2d/mul" out_port_id="0"/>
+		<IR id="233" name="StatefulPartitionedCall/hoct_net2/fusion1/up_sampling2d/resize/ResizeBilinear/Cast_1" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion1/up_sampling2d/resize/ResizeBilinear" out_port_id="0"/>
+		<IR id="246" name="StatefulPartitionedCall/hoct_net2/fusion1/up_sampling2d/resize/ResizeBilinear" out_port_id="4"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion2/up_sampling2d_1/Shape" out_port_id="0"/>
+		<IR id="198" name="StatefulPartitionedCall/hoct_net2/fusion2/up_sampling2d_1/Shape/GatherNCHWtoNHWC" out_port_id="3"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/base_branch/block_2/conv_1/batch_normalization_5/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="35" name="StatefulPartitionedCall/hoct_net2/base_branch/block_2/conv_1/separable_conv2d_2/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_2/conv_1/separable_conv2d_14/separable_conv2d/ReadVariableOp" out_port_id="0"/>
+		<IR id="356" name="2383823841_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/base_branch/block_1/skip_downsample/Pad" out_port_id="0"/>
+		<IR id="10" name="StatefulPartitionedCall/hoct_net2/base_stage/conv_2/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/base_stage/conv_2/Relu" out_port_id="0"/>
+		<IR id="10" name="StatefulPartitionedCall/hoct_net2/base_stage/conv_2/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_1/conv_1/separable_conv2d_12/separable_conv2d/ReadVariableOp_1" out_port_id="0"/>
+		<IR id="339" name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_1/conv_1/separable_conv2d_12/separable_conv2d/Transpose18347_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_1/skip_downsample/conv2d_8/Conv2D/ReadVariableOp" out_port_id="0"/>
+		<IR id="350" name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_1/skip_downsample/conv2d_8/Conv2D/Transpose18359_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_2/conv_1/separable_conv2d_6/separable_conv2d/depthwise" out_port_id="0"/>
+		<IR id="267" name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_2/conv_1/separable_conv2d_6/separable_conv2d/depthwise" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion1/up_conv/batch_normalization_44/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="222" name="StatefulPartitionedCall/hoct_net2/fusion1/up_conv/conv2d_16/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_2/conv_2/separable_conv2d_27/separable_conv2d/ReadVariableOp" out_port_id="0"/>
+		<IR id="151" name="2381423817_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/base_branch/block_1/conv_1/batch_normalization_2/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="16" name="StatefulPartitionedCall/hoct_net2/base_branch/block_1/conv_1/separable_conv2d/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_1/conv_1/Relu" out_port_id="0"/>
+		<IR id="55" name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_1/conv_1/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_2/conv_2/separable_conv2d_11/separable_conv2d/ReadVariableOp" out_port_id="0"/>
+		<IR id="318" name="2379023793_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion1/up_sampling2d/Const" out_port_id="0"/>
+		<IR id="231" name="StatefulPartitionedCall/hoct_net2/fusion1/up_sampling2d/Const/Output_0/Data__const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_2/add" out_port_id="0"/>
+		<IR id="283" name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_2/add" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_2/conv_2/separable_conv2d_11/separable_conv2d/ReadVariableOp_1" out_port_id="0"/>
+		<IR id="320" name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_2/conv_2/separable_conv2d_11/separable_conv2d/Transpose18327_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_2/skip_downsample/conv2d_11/Conv2D/ReadVariableOp" out_port_id="0"/>
+		<IR id="81" name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_2/skip_downsample/conv2d_11/Conv2D/Transpose18151_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion3/up_conv/batch_normalization_48/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="166" name="StatefulPartitionedCall/hoct_net2/fusion3/up_conv/conv2d_18/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_1/conv_2/separable_conv2d_17/separable_conv2d/ReadVariableOp" out_port_id="0"/>
+		<IR id="56" name="2389023893_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/base_branch/block_1/Relu" out_port_id="0"/>
+		<IR id="29" name="StatefulPartitionedCall/hoct_net2/base_branch/block_1/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion1/up_sampling2d/strided_slice/stack_1" out_port_id="0"/>
+		<IR id="228" name="StatefulPartitionedCall/hoct_net2/fusion1/up_sampling2d/strided_slice/Cast_224367_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_1/add" out_port_id="0"/>
+		<IR id="142" name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_1/add" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_2/conv_1/Relu" out_port_id="0"/>
+		<IR id="150" name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_2/conv_1/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_1/conv_1/Relu" out_port_id="0"/>
+		<IR id="343" name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_1/conv_1/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/segment_head/up_sampling2d_3/strided_slice/stack" out_port_id="0"/>
+		<IR id="386" name="StatefulPartitionedCall/hoct_net2/segment_head/up_sampling2d_3/strided_slice/Cast_124317_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/segment_head/up_sampling2d_4/Const" out_port_id="0"/>
+		<IR id="422" name="StatefulPartitionedCall/hoct_net2/segment_head/up_sampling2d_4/Const/Output_0/Data__const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion3/conv/separable_conv2d_30/separable_conv2d/ReadVariableOp" out_port_id="0"/>
+		<IR id="375" name="2389423897_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion2/up_sampling2d_1/Const" out_port_id="0"/>
+		<IR id="203" name="StatefulPartitionedCall/hoct_net2/fusion2/up_sampling2d_1/Const/Output_0/Data__const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_2/conv_2/separable_conv2d_15/separable_conv2d/depthwise" out_port_id="0"/>
+		<IR id="364" name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_2/conv_2/separable_conv2d_15/separable_conv2d/depthwise" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_1/conv_2/separable_conv2d_9/separable_conv2d/ReadVariableOp_1" out_port_id="0"/>
+		<IR id="301" name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_1/conv_2/separable_conv2d_9/separable_conv2d/Transpose18307_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/segment_head/conv_2/conv2d_19/BiasAdd" out_port_id="0"/>
+		<IR id="441" name="StatefulPartitionedCall/hoct_net2/segment_head/conv_2/conv2d_19/BiasAdd/Add" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion1/Relu" out_port_id="0"/>
+		<IR id="291" name="StatefulPartitionedCall/hoct_net2/fusion1/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/base_stage/conv_1/Relu" out_port_id="0"/>
+		<IR id="5" name="StatefulPartitionedCall/hoct_net2/base_stage/conv_1/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_1/conv_1/Relu" out_port_id="0"/>
+		<IR id="253" name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_1/conv_1/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/segment_head/up_sampling2d_4/resize/ResizeBilinear" out_port_id="0"/>
+		<IR id="437" name="StatefulPartitionedCall/hoct_net2/segment_head/up_sampling2d_4/resize/ResizeBilinear" out_port_id="4"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/base_branch/block_2/conv_2/separable_conv2d_3/separable_conv2d/ReadVariableOp" out_port_id="0"/>
+		<IR id="37" name="2384623849_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_2/conv_1/separable_conv2d_14/separable_conv2d/depthwise" out_port_id="0"/>
+		<IR id="357" name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_2/conv_1/separable_conv2d_14/separable_conv2d/depthwise" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_1/skip_downsample/batch_normalization_40/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="141" name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_1/skip_downsample/conv2d_14/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_1/Relu" out_port_id="0"/>
+		<IR id="265" name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_1/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_2/skip_downsample/conv2d_15/Conv2D/ReadVariableOp" out_port_id="0"/>
+		<IR id="157" name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_2/skip_downsample/conv2d_15/Conv2D/Transpose18231_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion3/up_sampling2d_2/mul" out_port_id="0"/>
+		<IR id="177" name="StatefulPartitionedCall/hoct_net2/fusion3/up_sampling2d_2/resize/ResizeBilinear/Cast_1" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_2/conv_2/separable_conv2d_27/separable_conv2d/ReadVariableOp_1" out_port_id="0"/>
+		<IR id="153" name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_2/conv_2/separable_conv2d_27/separable_conv2d/Transpose18227_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="Func/StatefulPartitionedCall/input/_0" out_port_id="0"/>
+		<IR id="0" name="input_1" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="input_1" out_port_id="0"/>
+		<IR id="0" name="input_1" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_1/conv_2/batch_normalization_39/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="137" name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_1/conv_2/separable_conv2d_25/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_1/add" out_port_id="0"/>
+		<IR id="104" name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_1/add" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion3/up_sampling2d_2/Shape" out_port_id="0"/>
+		<IR id="170" name="StatefulPartitionedCall/hoct_net2/fusion3/up_sampling2d_2/Shape/GatherNCHWtoNHWC" out_port_id="3"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_1/skip_downsample/batch_normalization_16/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="308" name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_1/skip_downsample/conv2d_6/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_2/conv_1/separable_conv2d_6/separable_conv2d/ReadVariableOp" out_port_id="0"/>
+		<IR id="266" name="2380623809_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/base_branch/block_1/conv_2/batch_normalization_3/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="23" name="StatefulPartitionedCall/hoct_net2/base_branch/block_1/conv_2/separable_conv2d_1/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion3/up_sampling2d_2/resize/ResizeBilinear" out_port_id="0"/>
+		<IR id="190" name="StatefulPartitionedCall/hoct_net2/fusion3/up_sampling2d_2/resize/ResizeBilinear" out_port_id="4"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_2/conv_1/Relu" out_port_id="0"/>
+		<IR id="272" name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_2/conv_1/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion3/conv/batch_normalization_49/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="380" name="StatefulPartitionedCall/hoct_net2/fusion3/conv/separable_conv2d_30/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion2/concat" out_port_id="0"/>
+		<IR id="329" name="StatefulPartitionedCall/hoct_net2/fusion2/concat" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/base_branch/block_2/conv_1/separable_conv2d_2/separable_conv2d/ReadVariableOp_1" out_port_id="0"/>
+		<IR id="32" name="StatefulPartitionedCall/hoct_net2/base_branch/block_2/conv_1/separable_conv2d_2/separable_conv2d/Transpose18099_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_2/conv_2/separable_conv2d_7/separable_conv2d/ReadVariableOp" out_port_id="0"/>
+		<IR id="273" name="2390623909_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion3/up_sampling2d_2/strided_slice" out_port_id="0"/>
+		<IR id="174" name="StatefulPartitionedCall/hoct_net2/fusion3/up_sampling2d_2/strided_slice" out_port_id="4"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion3/up_conv/conv2d_18/Conv2D/ReadVariableOp" out_port_id="0"/>
+		<IR id="163" name="StatefulPartitionedCall/hoct_net2/fusion3/up_conv/conv2d_18/Conv2D/Transpose18235_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_2/conv_2/separable_conv2d_7/separable_conv2d/depthwise" out_port_id="0"/>
+		<IR id="274" name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_2/conv_2/separable_conv2d_7/separable_conv2d/depthwise" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_1/Relu" out_port_id="0"/>
+		<IR id="355" name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_1/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_1/conv_2/separable_conv2d_25/separable_conv2d/ReadVariableOp_1" out_port_id="0"/>
+		<IR id="134" name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_1/conv_2/separable_conv2d_25/separable_conv2d/Transpose18207_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion3/conv/separable_conv2d_30/separable_conv2d/ReadVariableOp_1" out_port_id="0"/>
+		<IR id="377" name="StatefulPartitionedCall/hoct_net2/fusion3/conv/separable_conv2d_30/separable_conv2d/Transpose18387_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_1/skip_downsample/batch_normalization_28/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="65" name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_1/skip_downsample/conv2d_10/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/base_branch/block_2/conv_1/Relu" out_port_id="0"/>
+		<IR id="36" name="StatefulPartitionedCall/hoct_net2/base_branch/block_2/conv_1/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_2/conv_1/batch_normalization_35/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="111" name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_2/conv_1/separable_conv2d_22/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_1/conv_1/Relu" out_port_id="0"/>
+		<IR id="131" name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_1/conv_1/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/segment_head/up_sampling2d_3/resize/ResizeBilinear" out_port_id="0"/>
+		<IR id="405" name="StatefulPartitionedCall/hoct_net2/segment_head/up_sampling2d_3/resize/ResizeBilinear" out_port_id="4"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/segment_head/up_sampling2d_4/strided_slice/stack" out_port_id="0"/>
+		<IR id="418" name="StatefulPartitionedCall/hoct_net2/segment_head/up_sampling2d_4/strided_slice/Cast_124387_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/segment_head/conv_2/conv2d_19/Conv2D" out_port_id="0"/>
+		<IR id="439" name="StatefulPartitionedCall/hoct_net2/segment_head/conv_2/conv2d_19/Conv2D" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion2/Relu" out_port_id="0"/>
+		<IR id="336" name="StatefulPartitionedCall/hoct_net2/fusion2/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/segment_head/conv_1/separable_conv2d_31/separable_conv2d/ReadVariableOp_1" out_port_id="0"/>
+		<IR id="409" name="StatefulPartitionedCall/hoct_net2/segment_head/conv_1/separable_conv2d_31/separable_conv2d/Transpose18395_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_2/skip_downsample/batch_normalization_13/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="282" name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_2/skip_downsample/conv2d_5/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/base_branch/block_2/conv_2/separable_conv2d_3/separable_conv2d/ReadVariableOp_1" out_port_id="0"/>
+		<IR id="39" name="StatefulPartitionedCall/hoct_net2/base_branch/block_2/conv_2/separable_conv2d_3/separable_conv2d/Transpose18107_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/base_branch/block_1/conv_2/separable_conv2d_1/separable_conv2d/ReadVariableOp" out_port_id="0"/>
+		<IR id="18" name="2381823821_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_2/conv_1/separable_conv2d_10/separable_conv2d/depthwise" out_port_id="0"/>
+		<IR id="312" name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_2/conv_1/separable_conv2d_10/separable_conv2d/depthwise" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion2/conv/separable_conv2d_29/separable_conv2d/ReadVariableOp_1" out_port_id="0"/>
+		<IR id="332" name="StatefulPartitionedCall/hoct_net2/fusion2/conv/separable_conv2d_29/separable_conv2d/Transpose18339_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/base_branch/block_2/skip_downsample/conv2d_3/Conv2D/ReadVariableOp" out_port_id="0"/>
+		<IR id="43" name="StatefulPartitionedCall/hoct_net2/base_branch/block_2/skip_downsample/conv2d_3/Conv2D/Transpose18111_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion2/conv/separable_conv2d_29/separable_conv2d/depthwise" out_port_id="0"/>
+		<IR id="331" name="StatefulPartitionedCall/hoct_net2/fusion2/conv/separable_conv2d_29/separable_conv2d/depthwise" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_1/Relu" out_port_id="0"/>
+		<IR id="143" name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_1/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_2/conv_2/batch_normalization_42/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="156" name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_2/conv_2/separable_conv2d_27/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_1/conv_2/separable_conv2d_5/separable_conv2d/ReadVariableOp_1" out_port_id="0"/>
+		<IR id="256" name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_1/conv_2/separable_conv2d_5/separable_conv2d/Transpose18259_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_2/skip_downsample/conv2d_5/Conv2D/ReadVariableOp" out_port_id="0"/>
+		<IR id="279" name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_2/skip_downsample/conv2d_5/Conv2D/Transpose18283_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_1/skip_downsample/batch_normalization_10/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="263" name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_1/skip_downsample/conv2d_4/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/segment_head/up_sampling2d_3/Const" out_port_id="0"/>
+		<IR id="390" name="StatefulPartitionedCall/hoct_net2/segment_head/up_sampling2d_3/Const/Output_0/Data__const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_2/conv_2/batch_normalization_30/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="80" name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_2/conv_2/separable_conv2d_19/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_1/Relu" out_port_id="0"/>
+		<IR id="105" name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_1/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/segment_head/up_sampling2d_3/strided_slice" out_port_id="0"/>
+		<IR id="389" name="StatefulPartitionedCall/hoct_net2/segment_head/up_sampling2d_3/strided_slice" out_port_id="4"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_2/conv_2/separable_conv2d_15/separable_conv2d/ReadVariableOp" out_port_id="0"/>
+		<IR id="363" name="2387423877_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_2/conv_1/separable_conv2d_26/separable_conv2d/depthwise" out_port_id="0"/>
+		<IR id="145" name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_2/conv_1/separable_conv2d_26/separable_conv2d/depthwise" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_1/conv_1/Relu" out_port_id="0"/>
+		<IR id="93" name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_1/conv_1/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_2/conv_1/batch_normalization_17/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="316" name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_2/conv_1/separable_conv2d_10/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/segment_head/up_sampling2d_4/strided_slice/stack_2" out_port_id="0"/>
+		<IR id="420" name="StatefulPartitionedCall/hoct_net2/segment_head/up_sampling2d_4/strided_slice/Cast_324391_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/segment_head/conv_1/batch_normalization_50/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="412" name="StatefulPartitionedCall/hoct_net2/segment_head/conv_1/separable_conv2d_31/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_1/conv_1/Relu" out_port_id="0"/>
+		<IR id="298" name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_1/conv_1/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_1/conv_1/separable_conv2d_12/separable_conv2d/depthwise" out_port_id="0"/>
+		<IR id="338" name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_1/conv_1/separable_conv2d_12/separable_conv2d/depthwise" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_2/conv_1/Relu" out_port_id="0"/>
+		<IR id="362" name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_2/conv_1/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_1/conv_1/separable_conv2d_20/separable_conv2d/ReadVariableOp_1" out_port_id="0"/>
+		<IR id="89" name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_1/conv_1/separable_conv2d_20/separable_conv2d/Transpose18159_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_2/conv_2/separable_conv2d_19/separable_conv2d/ReadVariableOp" out_port_id="0"/>
+		<IR id="75" name="2378623789_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion1/conv/batch_normalization_45/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="290" name="StatefulPartitionedCall/hoct_net2/fusion1/conv/separable_conv2d_28/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/base_branch/block_1/conv_1/separable_conv2d/separable_conv2d/depthwise" out_port_id="0"/>
+		<IR id="12" name="StatefulPartitionedCall/hoct_net2/base_branch/block_1/conv_1/separable_conv2d/separable_conv2d/depthwise" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_1/conv_1/separable_conv2d_20/separable_conv2d/ReadVariableOp" out_port_id="0"/>
+		<IR id="87" name="2385023853_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_1/conv_2/batch_normalization_9/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="259" name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_1/conv_2/separable_conv2d_5/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/segment_head/conv_2/conv2d_19/BiasAdd/ReadVariableOp" out_port_id="0"/>
+		<IR id="440" name="StatefulPartitionedCall/hoct_net2/segment_head/conv_2/conv2d_19/BiasAdd/ReadVariableOp/EltwiseUnsqueeze15032_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_2/conv_2/separable_conv2d_19/separable_conv2d/depthwise" out_port_id="0"/>
+		<IR id="76" name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_2/conv_2/separable_conv2d_19/separable_conv2d/depthwise" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/base_branch/block_1/conv_1/separable_conv2d/separable_conv2d/ReadVariableOp" out_port_id="0"/>
+		<IR id="11" name="2379823801_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_1/conv_2/separable_conv2d_13/separable_conv2d/ReadVariableOp_1" out_port_id="0"/>
+		<IR id="346" name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_1/conv_2/separable_conv2d_13/separable_conv2d/Transpose18355_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_1/conv_2/separable_conv2d_25/separable_conv2d/ReadVariableOp" out_port_id="0"/>
+		<IR id="132" name="2391023913_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion2/conv/separable_conv2d_29/separable_conv2d/ReadVariableOp" out_port_id="0"/>
+		<IR id="330" name="2389823901_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/segment_head/conv_1/Relu" out_port_id="0"/>
+		<IR id="413" name="StatefulPartitionedCall/hoct_net2/segment_head/conv_1/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_1/conv_1/separable_conv2d_20/separable_conv2d/depthwise" out_port_id="0"/>
+		<IR id="88" name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_1/conv_1/separable_conv2d_20/separable_conv2d/depthwise" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_2/add" out_port_id="0"/>
+		<IR id="85" name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_2/add" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/base_branch/block_2/conv_2/batch_normalization_6/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="42" name="StatefulPartitionedCall/hoct_net2/base_branch/block_2/conv_2/separable_conv2d_3/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_1/conv_2/separable_conv2d_25/separable_conv2d/depthwise" out_port_id="0"/>
+		<IR id="133" name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_1/conv_2/separable_conv2d_25/separable_conv2d/depthwise" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_1/conv_2/separable_conv2d_21/separable_conv2d/ReadVariableOp" out_port_id="0"/>
+		<IR id="94" name="2385823861_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion1/concat" out_port_id="0"/>
+		<IR id="284" name="StatefulPartitionedCall/hoct_net2/fusion1/concat" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion2/up_sampling2d_1/strided_slice/stack" out_port_id="0"/>
+		<IR id="199" name="StatefulPartitionedCall/hoct_net2/fusion2/up_sampling2d_1/strided_slice/Cast_124307_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_1/conv_1/batch_normalization_38/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="130" name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_1/conv_1/separable_conv2d_24/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/base_branch/block_2/conv_2/separable_conv2d_3/separable_conv2d/depthwise" out_port_id="0"/>
+		<IR id="38" name="StatefulPartitionedCall/hoct_net2/base_branch/block_2/conv_2/separable_conv2d_3/separable_conv2d/depthwise" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_2/conv_1/separable_conv2d_22/separable_conv2d/ReadVariableOp" out_port_id="0"/>
+		<IR id="106" name="2382623829_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_2/Relu" out_port_id="0"/>
+		<IR id="162" name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_2/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_2/conv_2/separable_conv2d_15/separable_conv2d/ReadVariableOp_1" out_port_id="0"/>
+		<IR id="365" name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_2/conv_2/separable_conv2d_15/separable_conv2d/Transpose18375_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_1/add" out_port_id="0"/>
+		<IR id="264" name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_1/add" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion3/up_sampling2d_2/strided_slice/stack" out_port_id="0"/>
+		<IR id="171" name="StatefulPartitionedCall/hoct_net2/fusion3/up_sampling2d_2/strided_slice/Cast_124401_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_1/conv_2/batch_normalization_33/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="99" name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_1/conv_2/separable_conv2d_21/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_2/conv_1/separable_conv2d_10/separable_conv2d/ReadVariableOp_1" out_port_id="0"/>
+		<IR id="313" name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_2/conv_1/separable_conv2d_10/separable_conv2d/Transpose18319_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_2/skip_downsample/batch_normalization_31/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="84" name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_2/skip_downsample/conv2d_11/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_1/add" out_port_id="0"/>
+		<IR id="354" name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_1/add" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_1/conv_1/separable_conv2d_16/separable_conv2d/depthwise" out_port_id="0"/>
+		<IR id="50" name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_1/conv_1/separable_conv2d_16/separable_conv2d/depthwise" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_2/conv_2/batch_normalization_12/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="278" name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_2/conv_2/separable_conv2d_7/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_2/skip_downsample/batch_normalization_19/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="327" name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_2/skip_downsample/conv2d_7/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_1/conv_2/separable_conv2d_9/separable_conv2d/ReadVariableOp" out_port_id="0"/>
+		<IR id="299" name="2383023833_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_1/conv_2/separable_conv2d_5/separable_conv2d/depthwise" out_port_id="0"/>
+		<IR id="255" name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_1/conv_2/separable_conv2d_5/separable_conv2d/depthwise" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/segment_head/conv_2/conv2d_19/Conv2D/ReadVariableOp" out_port_id="0"/>
+		<IR id="438" name="StatefulPartitionedCall/hoct_net2/segment_head/conv_2/conv2d_19/Conv2D/Transpose18399_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion1/up_sampling2d/strided_slice" out_port_id="0"/>
+		<IR id="230" name="StatefulPartitionedCall/hoct_net2/fusion1/up_sampling2d/strided_slice" out_port_id="4"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_2/conv_2/separable_conv2d_7/separable_conv2d/ReadVariableOp_1" out_port_id="0"/>
+		<IR id="275" name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_2/conv_2/separable_conv2d_7/separable_conv2d/Transpose18279_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion3/concat" out_port_id="0"/>
+		<IR id="374" name="StatefulPartitionedCall/hoct_net2/fusion3/concat" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_1/conv_1/batch_normalization_26/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="54" name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_1/conv_1/separable_conv2d_16/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/base_branch/block_1/conv_1/Relu" out_port_id="0"/>
+		<IR id="17" name="StatefulPartitionedCall/hoct_net2/base_branch/block_1/conv_1/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_2/skip_downsample/batch_normalization_43/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="160" name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_2/skip_downsample/conv2d_15/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_2/conv_1/separable_conv2d_18/separable_conv2d/ReadVariableOp" out_port_id="0"/>
+		<IR id="68" name="2381023813_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_2/add" out_port_id="0"/>
+		<IR id="328" name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_2/add" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion2/up_sampling2d_1/mul" out_port_id="0"/>
+		<IR id="205" name="StatefulPartitionedCall/hoct_net2/fusion2/up_sampling2d_1/resize/ResizeBilinear/Cast_1" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/segment_head/up_sampling2d_3/Shape" out_port_id="0"/>
+		<IR id="385" name="StatefulPartitionedCall/hoct_net2/segment_head/up_sampling2d_3/Shape/GatherNCHWtoNHWC" out_port_id="3"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_2/conv_2/separable_conv2d_11/separable_conv2d/depthwise" out_port_id="0"/>
+		<IR id="319" name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_2/conv_2/separable_conv2d_11/separable_conv2d/depthwise" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/base_stage/conv_1/conv2d/Conv2D/ReadVariableOp" out_port_id="0"/>
+		<IR id="1" name="StatefulPartitionedCall/hoct_net2/base_stage/conv_1/conv2d/Conv2D/Transpose18067_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/base_stage/conv_2/conv2d_1/Conv2D/ReadVariableOp" out_port_id="0"/>
+		<IR id="6" name="StatefulPartitionedCall/hoct_net2/base_stage/conv_2/conv2d_1/Conv2D/Transpose18071_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_2/conv_2/separable_conv2d_19/separable_conv2d/ReadVariableOp_1" out_port_id="0"/>
+		<IR id="77" name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_2/conv_2/separable_conv2d_19/separable_conv2d/Transpose18147_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_1/conv_1/batch_normalization_32/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="92" name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_1/conv_1/separable_conv2d_20/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_1/Relu" out_port_id="0"/>
+		<IR id="310" name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_1/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_2/conv_1/separable_conv2d_22/separable_conv2d/ReadVariableOp_1" out_port_id="0"/>
+		<IR id="108" name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_2/conv_1/separable_conv2d_22/separable_conv2d/Transpose18179_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_1/conv_2/separable_conv2d_21/separable_conv2d/depthwise" out_port_id="0"/>
+		<IR id="95" name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_1/conv_2/separable_conv2d_21/separable_conv2d/depthwise" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion2/up_sampling2d_1/strided_slice/stack_1" out_port_id="0"/>
+		<IR id="200" name="StatefulPartitionedCall/hoct_net2/fusion2/up_sampling2d_1/strided_slice/Cast_224309_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion2/up_sampling2d_1/resize/ResizeBilinear" out_port_id="0"/>
+		<IR id="218" name="StatefulPartitionedCall/hoct_net2/fusion2/up_sampling2d_1/resize/ResizeBilinear" out_port_id="4"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_1/conv_2/separable_conv2d_5/separable_conv2d/ReadVariableOp" out_port_id="0"/>
+		<IR id="254" name="2379423797_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_2/add" out_port_id="0"/>
+		<IR id="373" name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_2/add" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion2/conv/batch_normalization_47/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="335" name="StatefulPartitionedCall/hoct_net2/fusion2/conv/separable_conv2d_29/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_1/conv_1/separable_conv2d_12/separable_conv2d/ReadVariableOp" out_port_id="0"/>
+		<IR id="337" name="2380223805_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_1/skip_downsample/Pad" out_port_id="0"/>
+		<IR id="48" name="StatefulPartitionedCall/hoct_net2/base_branch/block_2/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/base_branch/block_2/Relu" out_port_id="0"/>
+		<IR id="48" name="StatefulPartitionedCall/hoct_net2/base_branch/block_2/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/base_branch/block_1/conv_2/separable_conv2d_1/separable_conv2d/ReadVariableOp_1" out_port_id="0"/>
+		<IR id="20" name="StatefulPartitionedCall/hoct_net2/base_branch/block_1/conv_2/separable_conv2d_1/separable_conv2d/Transpose18087_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_1/conv_1/separable_conv2d_8/separable_conv2d/ReadVariableOp" out_port_id="0"/>
+		<IR id="292" name="2382223825_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion1/conv/separable_conv2d_28/separable_conv2d/ReadVariableOp" out_port_id="0"/>
+		<IR id="285" name="2384223845_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_2/conv_2/separable_conv2d_23/separable_conv2d/ReadVariableOp" out_port_id="0"/>
+		<IR id="113" name="2388623889_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_2/conv_1/batch_normalization_29/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="73" name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_2/conv_1/separable_conv2d_18/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_2/conv_2/separable_conv2d_27/separable_conv2d/depthwise" out_port_id="0"/>
+		<IR id="152" name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_2/conv_2/separable_conv2d_27/separable_conv2d/depthwise" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/base_stage/conv_1/batch_normalization/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="4" name="StatefulPartitionedCall/hoct_net2/base_stage/conv_1/conv2d/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_2/skip_downsample/conv2d_7/Conv2D/ReadVariableOp" out_port_id="0"/>
+		<IR id="324" name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_2/skip_downsample/conv2d_7/Conv2D/Transpose18331_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/base_branch/block_2/skip_downsample/batch_normalization_7/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="46" name="StatefulPartitionedCall/hoct_net2/base_branch/block_2/skip_downsample/conv2d_3/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/base_branch/block_2/conv_1/separable_conv2d_2/separable_conv2d/ReadVariableOp" out_port_id="0"/>
+		<IR id="30" name="2387023873_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_2/conv_1/separable_conv2d_22/separable_conv2d/depthwise" out_port_id="0"/>
+		<IR id="107" name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_2/conv_1/separable_conv2d_22/separable_conv2d/depthwise" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion3/conv/separable_conv2d_30/separable_conv2d/depthwise" out_port_id="0"/>
+		<IR id="376" name="StatefulPartitionedCall/hoct_net2/fusion3/conv/separable_conv2d_30/separable_conv2d/depthwise" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_1/skip_downsample/Pad" out_port_id="0"/>
+		<IR id="124" name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_2/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_2/Relu" out_port_id="0"/>
+		<IR id="124" name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_2/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_1/skip_downsample/conv2d_10/Conv2D/ReadVariableOp" out_port_id="0"/>
+		<IR id="62" name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_1/skip_downsample/conv2d_10/Conv2D/Transpose18131_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion1/up_sampling2d/strided_slice/stack_2" out_port_id="0"/>
+		<IR id="229" name="StatefulPartitionedCall/hoct_net2/fusion1/up_sampling2d/strided_slice/Cast_324369_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_1/add" out_port_id="0"/>
+		<IR id="309" name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_1/add" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch1/block_1/conv_1/separable_conv2d_16/separable_conv2d/ReadVariableOp" out_port_id="0"/>
+		<IR id="49" name="2387823881_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_2/add" out_port_id="0"/>
+		<IR id="161" name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_2/add" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_2/skip_downsample/conv2d_9/Conv2D/ReadVariableOp" out_port_id="0"/>
+		<IR id="369" name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_2/skip_downsample/conv2d_9/Conv2D/Transpose18379_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_2/conv_2/batch_normalization_36/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="118" name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_2/conv_2/separable_conv2d_23/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fusion2/up_sampling2d_1/strided_slice/stack_2" out_port_id="0"/>
+		<IR id="201" name="StatefulPartitionedCall/hoct_net2/fusion2/up_sampling2d_1/strided_slice/Cast_324311_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch1/block_1/conv_1/separable_conv2d_4/separable_conv2d/ReadVariableOp" out_port_id="0"/>
+		<IR id="247" name="2383423837_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/base_branch/block_1/skip_downsample/conv2d_2/Conv2D/ReadVariableOp" out_port_id="0"/>
+		<IR id="24" name="StatefulPartitionedCall/hoct_net2/base_branch/block_1/skip_downsample/conv2d_2/Conv2D/Transpose18091_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_1/conv_2/separable_conv2d_9/separable_conv2d/depthwise" out_port_id="0"/>
+		<IR id="300" name="StatefulPartitionedCall/hoct_net2/fine_branch2/block_1/conv_2/separable_conv2d_9/separable_conv2d/depthwise" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_1/conv_1/separable_conv2d_24/separable_conv2d/ReadVariableOp" out_port_id="0"/>
+		<IR id="125" name="2386623869_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_1/conv_2/separable_conv2d_13/separable_conv2d/ReadVariableOp" out_port_id="0"/>
+		<IR id="344" name="2385423857_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_1/conv_2/separable_conv2d_21/separable_conv2d/ReadVariableOp_1" out_port_id="0"/>
+		<IR id="96" name="StatefulPartitionedCall/hoct_net2/norm_branch2/block_1/conv_2/separable_conv2d_21/separable_conv2d/Transpose18167_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_2/conv_2/batch_normalization_24/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="368" name="StatefulPartitionedCall/hoct_net2/fine_branch3/block_2/conv_2/separable_conv2d_15/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/base_branch/block_2/conv_1/separable_conv2d_2/separable_conv2d/depthwise" out_port_id="0"/>
+		<IR id="31" name="StatefulPartitionedCall/hoct_net2/base_branch/block_2/conv_1/separable_conv2d_2/separable_conv2d/depthwise" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_1/conv_1/separable_conv2d_24/separable_conv2d/depthwise" out_port_id="0"/>
+		<IR id="126" name="StatefulPartitionedCall/hoct_net2/norm_branch3/block_1/conv_1/separable_conv2d_24/separable_conv2d/depthwise" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/base_stage/conv_2/batch_normalization_1/FusedBatchNormV3" out_port_id="0"/>
+		<IR id="9" name="StatefulPartitionedCall/hoct_net2/base_stage/conv_2/conv2d_1/BiasAdd/Add/Fused_Add_" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/segment_head/conv_1/separable_conv2d_31/separable_conv2d/ReadVariableOp" out_port_id="0"/>
+		<IR id="407" name="2390223905_const" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="StatefulPartitionedCall/hoct_net2/segment_head/up_sampling2d_3/mul" out_port_id="0"/>
+		<IR id="392" name="StatefulPartitionedCall/hoct_net2/segment_head/up_sampling2d_3/resize/ResizeBilinear/Cast_1" out_port_id="1"/>
+	</map>
+</mapping>

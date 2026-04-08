@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HCT>
+    <!--System Configuration for Huvitz OCT-->
+    <DeviceSettings>
+        <LightLEDs>
+            <LED name="RetinaIR" value="5"/>
+            <LED name="RetinaIR_Bright" value="10"/>
+            <LED name="CorneaIR" value="5"/>
+            <LED name="KeratoRing" value="35"/>
+            <LED name="KeratoFocus" value="25"/>
+            <LED name="FundusFlash" value="60"/>
+            <LED name="SplitFocus" value="60"/>
+            <LED name="ExternalFixation" value="2"/>
+            <LED name="WorkingDots" value="15"/>
+            <LED name="WorkingDot2" value="15"/>
+        </LightLEDs>
+    </DeviceSettings>
+    <CameraSettings>
+        <Cameras>
+            <CAM name="RetinaIR" again="8" dgain="2" again2="8" dgain2="1" again3="4" dgain3="1"/>
+            <CAM name="CorneaIR" again="2" dgain="4"/>
+            <CAM name="FundusColor" again="4" dgain="1"/>
+        </Cameras>
+    </CameraSettings>
+    <FundusColor>
+        <WhiteBalance>
+            <attribute name="parameter0" value="1"/>
+            <attribute name="parameter1" value="1"/>
+            <status valid="1"/>
+        </WhiteBalance>
+        <RadialCorrection>
+            <attribute name="coordinate0" x="0" y="0"/>
+            <attribute name="coordinate1" x="256" y="768"/>
+            <attribute name="coordinate2" x="512" y="1024"/>
+            <attribute name="coordinate3" x="4095" y="4095"/>
+        </RadialCorrection>
+        <RadialCorrection_FILR>
+            <attribute name="coordinate0" x="0" y="0"/>
+            <attribute name="coordinate1" x="128" y="512"/>
+            <attribute name="coordinate2" x="256" y="768"/>
+            <attribute name="coordinate3" x="512" y="4096"/>
+            <attribute name="coordinate4" x="1024" y="8192"/>
+            <attribute name="coordinate5" x="4096" y="16384"/>
+            <attribute name="coordinate6" x="32767" y="32767"/>
+            <status valid="1"/>
+        </RadialCorrection_FILR>
+        <LevelCorrection>
+            <attribute name="ratio" value="1"/>
+            <status valid="1"/>
+        </LevelCorrection>
+        <RemoveReflectionLight>
+            <attribute name="light" value="135"/>
+            <attribute name="shadow" value="240"/>
+            <attribute name="outer" value="290"/>
+            <status valid="1"/>
+        </RemoveReflectionLight>
+        <AutoEnhancement>
+            <attribute name="brightness" value="-50"/>
+            <attribute name="contrast" value="20"/>
+            <attribute name="ub" value="0.75"/>
+            <attribute name="vr" value="1.29"/>
+        </AutoEnhancement>
+        <EdgeEnhancement>
+            <attribute name="kernelSize" value="19"/>
+        </EdgeEnhancement>
+        <ColorROI>
+            <attribute name="center" x="1880" y="1465"/>
+            <attribute name="radius" r="1380"/>
+            <status valid="1"/>
+        </ColorROI>
+        <AutoFlash>
+            <attribute name="level" normal="60" min="30" max="30"/>
+            <attribute name="sizeBase" value1="13" value2="11" value3="8"/>
+            <attribute name="sizeHigh" value1="26" value2="22" value3="16"/>
+            <attribute name="focusInt" value1="250" value2="225" value3="200"/>
+            <attribute name="defLevel" value1="60" value2="40" value3="30"/>
+            <attribute name="splitFocus" value1="60" value2="60" value3="60"/>
+            <attribute name="retinaIr" value1="5" value2="5" value3="5"/>
+            <attribute name="workDot1" value1="15" value2="15" value3="15"/>
+            <attribute name="workDot2" value1="15" value2="15" value3="15"/>
+            <status valid="0"/>
+        </AutoFlash>
+    </FundusColor>
+    <RetinaImage>
+        <ImageEnhance>
+            <attribute name="contrast" clipLimit="1" clipScalar="8"/>
+            <status valid="1"/>
+        </ImageEnhance>
+        <SplitFocus>
+            <attribute name="center" x="320" y="135"/>
+        </SplitFocus>
+        <RetinaROI>
+            <attribute name="center" x="326" y="228"/>
+            <attribute name="radius" r="224"/>
+            <status valid="1"/>
+        </RetinaROI>
+        <CenterMask>
+            <attribute name="center" x="326" y="228"/>
+            <attribute name="radius" value="20"/>
+            <status valid="1"/>
+        </CenterMask>
+    </RetinaImage>
+    <CorneaImage>
+        <SmallPupil>
+            <attribute name="pixelsPerMM" value="40"/>
+            <attribute name="smallPupilSize" value="4"/>
+        </SmallPupil>
+    </CorneaImage>
+    <InternalFixation>
+        <LcdFixation>
+            <attribute name="centerOD" row="67" col="63"/>
+            <attribute name="fundusOD" row="9" col="0"/>
+            <attribute name="scanDiskOD" row="26" col="-3"/>
+            <attribute name="leftSideOD" row="-40" col="0"/>
+            <attribute name="leftUpOD" row="-26" col="-19"/>
+            <attribute name="leftDownOD" row="-26" col="20"/>
+            <attribute name="rightSideOD" row="20" col="0"/>
+            <attribute name="rightUpOD" row="6" col="-19"/>
+            <attribute name="rightDownOD" row="6" col="20"/>
+            <attribute name="centerOS" row="67" col="63"/>
+            <attribute name="fundusOS" row="-9" col="0"/>
+            <attribute name="scanDiskOS" row="-26" col="-3"/>
+            <attribute name="leftSideOS" row="-20" col="0"/>
+            <attribute name="leftUpOS" row="-6" col="-19"/>
+            <attribute name="leftDownOS" row="-6" col="20"/>
+            <attribute name="rightSideOS" row="40" col="0"/>
+            <attribute name="rightUpOS" row="26" col="-19"/>
+            <attribute name="rightDownOS" row="26" col="20"/>
+            <attribute name="brightness" value="60"/>
+            <attribute name="blink" value="0" period="5000" onTime="4000" type="2"/>
+            <status valid="1"/>
+        </LcdFixation>
+    </InternalFixation>
+    <PatternSettings>
+        <PatternRange>
+            <attribute name="retinaNormal" scaleX="1" scaleY="1" offsetX="0" offsetY="0"/>
+            <attribute name="retinaFast" scaleX="1" scaleY="1" offsetX="0" offsetY="0"/>
+            <attribute name="retinaFaster" scaleX="1" scaleY="1" offsetX="0" offsetY="0"/>
+            <attribute name="corneaNormal" scaleX="1" scaleY="1" offsetX="0" offsetY="0"/>
+            <attribute name="corneaFast" scaleX="1" scaleY="1" offsetX="0" offsetY="0"/>
+            <attribute name="corneaFaster" scaleX="1" scaleY="1" offsetX="0" offsetY="0"/>
+            <attribute name="topographyNormal" scaleX="1" scaleY="1" offsetX="0" offsetY="0"/>
+            <attribute name="topographyFast" scaleX="1" scaleY="1" offsetX="0" offsetY="0"/>
+            <attribute name="topographyFaster" scaleX="1" scaleY="1" offsetX="0" offsetY="0"/>
+        </PatternRange>
+        <ReferenceRange>
+            <attribute name="rangeExtent" upper="10000" lower="28000"/>
+        </ReferenceRange>
+    </PatternSettings>
+    <SystemSettings>
+        <SystemInfo>
+            <attribute name="SerialNumber" value=""/>
+            <attribute name="ModelType" value="0"/>
+            <attribute name="OctGrabberType" value="0"/>
+            <attribute name="OctLineCameraMode" value="1"/>
+            <attribute name="SldFaultDetection" value="0"/>
+            <attribute name="RetinaTrackingSpeed" value="2"/>
+            <attribute name="TriggerForePadding" fore1="64" fore2="32" fore3="18"/>
+            <attribute name="TriggerPostPadding" post1="16" post2="12" post3="8"/>
+        </SystemInfo>
+    </SystemSettings>
+    <AngioSettings>
+        <AngioParams>
+            <attribute name="decorrelation" threshold="0" averageOffset="3"/>
+            <attribute name="motionCorrect" threshold="1.5" overPoints="0.5" distRatio="1.15"/>
+            <attribute name="filterParams" orients="12" sigma="3" divider="1.5" weight="0.5"/>
+            <attribute name="enhanceParams" contrast="1" biasField="15"/>
+        </AngioParams>
+    </AngioSettings>
+</HCT>

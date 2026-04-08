@@ -1,0 +1,346 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{C141E35C-0767-4BA2-9F7F-3AC113101242}</ProjectGuid>
+    <RootNamespace>ReportCtrl</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <Keyword>MFCDLLProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)build\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)build\$(Platform)\$(Configuration)\Output\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)build\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)build\$(Platform)\$(Configuration)\Output\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <ModuleDefinitionFile>.\ReportCtrl.def</ModuleDefinitionFile>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0412</Culture>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_WINDOWS;__REPORTCTRL_DLL;_DEBUG;_USRDLL;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)modules\GuiCtrl;$(SolutionDir)modules\CppUtil;$(SolutionDir)modules\OctGlobal;$(SolutionDir)externs\opencv\build\include;$(SolutionDir)modules\OctSystem;$(SolutionDir)modules\OctConfig;$(SolutionDir)modules\OctDevice;$(SolutionDir)externs\Spinnaker\include</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <ModuleDefinitionFile>.\ReportCtrl.def</ModuleDefinitionFile>
+      <AdditionalDependencies>GuiCtrl.lib;CppUtil.lib;OctGlobal.lib;opencv_world343d.lib;OctSystem.lib;OctConfig.lib;OctDevice.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OutDir);$(SolutionDir)externs\opencv\build\x64\vc14\lib;</AdditionalLibraryDirectories>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0412</Culture>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <ModuleDefinitionFile>.\ReportCtrl.def</ModuleDefinitionFile>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0412</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>_WINDOWS;__REPORTCTRL_DLL;NDEBUG;_USRDLL;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)modules\GuiCtrl;$(SolutionDir)modules\CppUtil;$(SolutionDir)modules\OctGlobal;$(SolutionDir)externs\opencv\build\include;C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories);$(SolutionDir)modules\OctSystem;$(SolutionDir)modules\OctConfig;$(SolutionDir)modules\OctDevice;$(SolutionDir)externs\Spinnaker\include</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <ModuleDefinitionFile>.\ReportCtrl.def</ModuleDefinitionFile>
+      <AdditionalLibraryDirectories>$(OutDir);$(SolutionDir)externs\opencv\build\x64\vc14\lib;C:\Program Files (x86)\Visual Leak Detector\lib\Win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>GuiCtrl.lib;CppUtil.lib;OctGlobal.lib;opencv_world343.lib;OctSystem.lib;OctConfig.lib;OctDevice.lib</AdditionalDependencies>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0412</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="DrawCorneaEtdrsChart.cpp" />
+    <ClCompile Include="DrawDeviationMap.cpp" />
+    <ClCompile Include="DrawEtdrsChart.cpp" />
+    <ClCompile Include="DrawGccChart.cpp" />
+    <ClCompile Include="DrawMeasureTool.cpp" />
+    <ClCompile Include="DrawRadiusMap.cpp" />
+    <ClCompile Include="DrawRnflChart.cpp" />
+    <ClCompile Include="DrawThicknessGraph.cpp" />
+    <ClCompile Include="DrawThicknessMap.cpp" />
+    <ClCompile Include="FundusAiAnalysis.cpp" />
+    <ClCompile Include="FundusAnnotation.cpp" />
+    <ClCompile Include="FundusImageProcess.cpp" />
+    <ClCompile Include="ImageBScanPreview.cpp" />
+    <ClCompile Include="ImageEnface.cpp" />
+    <ClCompile Include="OverlayBScan.cpp" />
+    <ClCompile Include="OverlayFundus.cpp" />
+    <ClCompile Include="RadiusMap.cpp" />
+    <ClCompile Include="ReportCtrl.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="ImageBase.cpp" />
+    <ClCompile Include="ImageCornea.cpp" />
+    <ClCompile Include="ImageFundus.cpp" />
+    <ClCompile Include="ImageRetina.cpp" />
+    <ClCompile Include="ImageBScan.cpp" />
+    <ClCompile Include="TableSummary.cpp" />
+    <ClCompile Include="ThicknessChart.cpp" />
+    <ClCompile Include="ThicknessGraph.cpp" />
+    <ClCompile Include="ThicknessMap.cpp" />
+    <ClCompile Include="TsnitGraph.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DrawCorneaEtdrsChart.h" />
+    <ClInclude Include="DrawDeviationMap.h" />
+    <ClInclude Include="DrawEtdrsChart.h" />
+    <ClInclude Include="DrawGccChart.h" />
+    <ClInclude Include="DrawMeasureTool.h" />
+    <ClInclude Include="DrawRadiusMap.h" />
+    <ClInclude Include="DrawRnflChart.h" />
+    <ClInclude Include="DrawThicknessGraph.h" />
+    <ClInclude Include="DrawThicknessMap.h" />
+    <ClInclude Include="FundusAiAnalysis.h" />
+    <ClInclude Include="FundusAnnotation.h" />
+    <ClInclude Include="FundusImageProcess.h" />
+    <ClInclude Include="ImageBScanPreview.h" />
+    <ClInclude Include="ImageEnface.h" />
+    <ClInclude Include="OverlayBScan.h" />
+    <ClInclude Include="OverlayFundus.h" />
+    <ClInclude Include="RadiusMap.h" />
+    <ClInclude Include="ReportCtrl.h" />
+    <ClInclude Include="ReportCtrl2.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="TableSummary.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="ReportCtrlDef.h" />
+    <ClInclude Include="ImageBase.h" />
+    <ClInclude Include="ImageCornea.h" />
+    <ClInclude Include="ImageFundus.h" />
+    <ClInclude Include="ImageRetina.h" />
+    <ClInclude Include="ImageBScan.h" />
+    <ClInclude Include="ThicknessChart.h" />
+    <ClInclude Include="ThicknessGraph.h" />
+    <ClInclude Include="ThicknessMap.h" />
+    <ClInclude Include="TsnitGraph.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReportCtrl.def" />
+    <None Include="res\ReportCtrl.rc2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ReportCtrl.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\focus_f.png" />
+    <Image Include="res\focus_n1.png" />
+    <Image Include="res\focus_n2.png" />
+    <Image Include="res\motorLimit\arrow_back_01.bmp" />
+    <Image Include="res\motorLimit\arrow_back_02.bmp" />
+    <Image Include="res\motorLimit\arrow_back_03.bmp" />
+    <Image Include="res\motorLimit\arrow_back_04.bmp" />
+    <Image Include="res\motorLimit\arrow_back_05.bmp" />
+    <Image Include="res\motorLimit\arrow_back_06.bmp" />
+    <Image Include="res\motorLimit\arrow_back_07.bmp" />
+    <Image Include="res\motorLimit\arrow_back_08.bmp" />
+    <Image Include="res\motorLimit\arrow_back_09.bmp" />
+    <Image Include="res\motorLimit\arrow_down_01.bmp" />
+    <Image Include="res\motorLimit\arrow_down_02.bmp" />
+    <Image Include="res\motorLimit\arrow_down_03.bmp" />
+    <Image Include="res\motorLimit\arrow_down_04.bmp" />
+    <Image Include="res\motorLimit\arrow_down_05.bmp" />
+    <Image Include="res\motorLimit\arrow_down_06.bmp" />
+    <Image Include="res\motorLimit\arrow_down_07.bmp" />
+    <Image Include="res\motorLimit\arrow_down_08.bmp" />
+    <Image Include="res\motorLimit\arrow_down_09.bmp" />
+    <Image Include="res\motorLimit\arrow_front_01.bmp" />
+    <Image Include="res\motorLimit\arrow_front_02.bmp" />
+    <Image Include="res\motorLimit\arrow_front_03.bmp" />
+    <Image Include="res\motorLimit\arrow_front_04.bmp" />
+    <Image Include="res\motorLimit\arrow_front_05.bmp" />
+    <Image Include="res\motorLimit\arrow_front_06.bmp" />
+    <Image Include="res\motorLimit\arrow_front_07.bmp" />
+    <Image Include="res\motorLimit\arrow_front_08.bmp" />
+    <Image Include="res\motorLimit\arrow_front_09.bmp" />
+    <Image Include="res\motorLimit\arrow_left_01.bmp" />
+    <Image Include="res\motorLimit\arrow_left_02.bmp" />
+    <Image Include="res\motorLimit\arrow_left_03.bmp" />
+    <Image Include="res\motorLimit\arrow_left_04.bmp" />
+    <Image Include="res\motorLimit\arrow_left_05.bmp" />
+    <Image Include="res\motorLimit\arrow_left_06.bmp" />
+    <Image Include="res\motorLimit\arrow_left_07.bmp" />
+    <Image Include="res\motorLimit\arrow_left_08.bmp" />
+    <Image Include="res\motorLimit\arrow_left_09.bmp" />
+    <Image Include="res\motorLimit\arrow_right_01.bmp" />
+    <Image Include="res\motorLimit\arrow_right_02.bmp" />
+    <Image Include="res\motorLimit\arrow_right_03.bmp" />
+    <Image Include="res\motorLimit\arrow_right_04.bmp" />
+    <Image Include="res\motorLimit\arrow_right_05.bmp" />
+    <Image Include="res\motorLimit\arrow_right_06.bmp" />
+    <Image Include="res\motorLimit\arrow_right_07.bmp" />
+    <Image Include="res\motorLimit\arrow_right_08.bmp" />
+    <Image Include="res\motorLimit\arrow_right_09.bmp" />
+    <Image Include="res\motorLimit\arrow_up_01.bmp" />
+    <Image Include="res\motorLimit\arrow_up_02.bmp" />
+    <Image Include="res\motorLimit\arrow_up_03.bmp" />
+    <Image Include="res\motorLimit\arrow_up_04.bmp" />
+    <Image Include="res\motorLimit\arrow_up_05.bmp" />
+    <Image Include="res\motorLimit\arrow_up_06.bmp" />
+    <Image Include="res\motorLimit\arrow_up_07.bmp" />
+    <Image Include="res\motorLimit\arrow_up_08.bmp" />
+    <Image Include="res\motorLimit\arrow_up_09.bmp" />
+    <Image Include="res\motorlimit\bitmap1.bmp" />
+    <Image Include="res\small_pupil_indi.png" />
+    <Image Include="res\z_level_l.png" />
+    <Image Include="res\z_level_r.png" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties RESOURCE_FILE="ReportCtrl.rc" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

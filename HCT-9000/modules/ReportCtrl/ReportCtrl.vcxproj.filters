@@ -1,0 +1,408 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ReportCtrl.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawMeasureTool.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawThicknessMap.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageBase.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageCornea.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageFundus.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageRetina.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageBScan.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ThicknessMap.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageBScanPreview.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="OverlayFundus.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawEtdrsChart.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawRnflChart.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ThicknessGraph.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="TableSummary.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageEnface.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawThicknessGraph.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="TsnitGraph.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="FundusImageProcess.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawRadiusMap.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="RadiusMap.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawGccChart.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ThicknessChart.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawCorneaEtdrsChart.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawDeviationMap.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="FundusAnnotation.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="OverlayBScan.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="FundusAiAnalysis.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ReportCtrl.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ReportCtrlDef.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ReportCtrl2.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawMeasureTool.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawThicknessMap.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageBase.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageCornea.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageFundus.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageRetina.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageBScan.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ThicknessMap.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageBScanPreview.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="OverlayFundus.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawEtdrsChart.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawRnflChart.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ThicknessGraph.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="TableSummary.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawThicknessGraph.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="TsnitGraph.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="FundusImageProcess.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawRadiusMap.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="RadiusMap.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawGccChart.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ThicknessChart.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageEnface.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawCorneaEtdrsChart.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawDeviationMap.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="FundusAnnotation.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="OverlayBScan.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="FundusAiAnalysis.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReportCtrl.def">
+      <Filter>소스 파일</Filter>
+    </None>
+    <None Include="res\ReportCtrl.rc2">
+      <Filter>리소스 파일</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ReportCtrl.rc">
+      <Filter>리소스 파일</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\motorLimit\arrow_left_01.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_left_02.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_left_03.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_left_04.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_left_05.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_left_06.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_left_07.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_left_08.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_left_09.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_right_01.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_right_02.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_right_03.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_right_04.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_right_05.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_right_06.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_right_07.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_right_08.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_right_09.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_up_01.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_up_02.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_up_03.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_up_04.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_up_05.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_up_06.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_up_07.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_up_08.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_up_09.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorlimit\bitmap1.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_down_01.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_down_02.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_down_03.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_down_04.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_down_05.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_down_06.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_down_07.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_down_08.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_down_09.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_front_01.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_front_02.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_front_03.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_front_04.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_front_05.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_front_06.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_front_07.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_front_08.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_front_09.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_back_01.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_back_02.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_back_03.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_back_04.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_back_05.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_back_06.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_back_07.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_back_08.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\motorLimit\arrow_back_09.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\small_pupil_indi.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\focus_f.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\focus_n1.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\focus_n2.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\z_level_l.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\z_level_r.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+  </ItemGroup>
+</Project>

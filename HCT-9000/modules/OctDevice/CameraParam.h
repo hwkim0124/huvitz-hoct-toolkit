@@ -1,0 +1,31 @@
+#pragma once
+#define XROI_START 0
+#define XROI_WIDTH 3840 //
+#define YROI_START 0
+#define YROI_HEIGHT 3000
+#define DECIMATION_RATIO 4 //0(No decimation),4,9
+#define CAPTURE_FRAME_SIZE 4 //MAX 4
+#define CAPTURE_FRAME_MODE FIXED_FRAME_MODE //FIXED_FRAME_MODE,CONTINUOUS_FRAME_MODE
+#define EXPOSURE_CNT_MS 30 //ms unit
+#define EXPOSURE_OFF_CNT_MS 250 //currently min. 230 ms for continous imaging.
+#define STRB_DELAY_CNT_MS 0 //30ms(current sensor readout time), in rolling shutter set to sensor readout time, in global shutter, set to zero.
+#define STRB_ACT_CNT_MS 20 //30ms
+#define SENSOR_AGAIN 1
+#define SENSOR_DGAIN 1.0
+#define SHUTTER_MODE GLOBAL_SHUTTER
+#define FLIP_OPTION NO_FLIP
+
+#define COMPANDING_SLOPE_SIZE 1
+#define COMPANDING_SLOPE1_LEN 0
+#define COMPANDING_SLOPE2_LEN 1030
+#define COMPANDING_SLOPE3_LEN 2098
+#define COMPANDING_SLOPE4_LEN 0
+#define COMPANDING_SLOPE5_LEN 0
+#define COMPANDING_SLOPE6_LEN 0
+#define COMPANDING_SLOPE1_GAIN 1
+#define COMPANDING_SLOPE2_GAIN 2
+#define COMPANDING_SLOPE3_GAIN 5
+#define COMPANDING_SLOPE4_GAIN 1
+#define COMPANDING_SLOPE5_GAIN 1
+#define COMPANDING_SLOPE6_GAIN 1
+#define COMPANDING_SLOPE7_GAIN 1
