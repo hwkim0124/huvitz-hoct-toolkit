@@ -42,7 +42,7 @@ bool SemtRetina::BoundaryRPE::detectBoundary(void)
 	if (!preparePathCostMap()) {
 		return false;
 	}
-	if (!searchPathMinCostInRange()) {
+	if (!searchPathMinCost()) {
 		return false;
 	}
 	if (!smoothBoundaryRPE()) {
@@ -54,22 +54,107 @@ bool SemtRetina::BoundaryRPE::detectBoundary(void)
 	return true;
 }
 
-bool SemtRetina::BoundaryRPE::refineBoundary(void)
+bool SemtRetina::BoundaryRPE::reconstructLayer(void)
 {
-	if (!refinePathConstraints()) {
-		return false;
+	auto* segm = retinaSegmenter();
+	auto* resa = segm->bscanResampler();
+	auto* crta = segm->retinaSegmCriteria();
+	auto* band = segm->retinaBandExtractor();
+
+	auto* image = resa->imageSource();
+	auto width = image->getWidth();
+	auto height = image->getHeight();
+
+	auto range = crta->getPathCostRangeDeltaRPE();
+	auto upps = std::vector<int>(width, 0);
+	auto lows = std::vector<int>(width, 0);
+	auto delt = std::vector<int>(width, range);
+
+	auto* bios = segm->boundaryIOS();
+	auto* bbrm = segm->boundaryBRM();
+	auto ioss = bios->sourceYs();
+	auto brms = bbrm->sourceYs();
+	auto rpes = sourceYs();
+
+	auto* edge1 = resa->sourceRiseEdge();
+	auto* edge2 = resa->sourceFallEdge();
+	Mat rise = edge1->getCvMatConst();
+	Mat fall = edge2->getCvMatConst();
+	Mat matCost;
+	rise.copyTo(matCost);
+
+	const int DIST_MIN = crta->getLayerDistanceMinRPE();
+	const int DIST_MAX = crta->getLayerDistanceMaxRPE();
+
+	if (band->isNerveHeadRangeValid()) {
+		auto disc_x1 = band->opticDiscMinX();
+		auto disc_x2 = band->opticDiscMaxX();
+		for (int x = 0; x < width; x++) {
+			auto y1 = ioss[x];
+			auto y2 = brms[x];
+			auto dist = y2 - y1;
+			if (x >= disc_x1 && x <= disc_x2) {
+				upps[x] = min(y2, y1 + DIST_MIN);
+				lows[x] = min(y2, y1 + DIST_MAX/2);
+			}
+			else {
+				if (dist > DIST_MAX) {
+					auto t1 = max(y1 - DIST_MAX, 0);
+					auto t2 = min(y2 + DIST_MAX, height - 1);
+					for (int y = t1; y <= t2; y++) {
+						auto idx = y * width + x;
+						matCost.at<float>(idx) = fall.at<float>(idx);
+					}
+					y2 = min(y1 + DIST_MAX, height - 1);
+					y1 = min(y1 + DIST_MIN, y2);
+				}
+				else {
+					y1 = rpes[x];
+				}
+				upps[x] = y1;
+				lows[x] = y2;
+			}
+			/*
+			if (resa->sampleIndex() == 242) {
+				LogD() << "x: " << x << ", ios: " << ioss[x] << ", brm: " << brms[x] << ", rpe: " << rpes[x] << ", dist: " << dist << ", y: " << y1 << ", y2: " << y2 << ", disc: " << (x >= disc_x1 && x <= disc_x2);
+			}
+			*/
+		}
 	}
-	if (!refinePathCostMap()) {
-		return false;
+	else {
+		for (int x = 0; x < width; x++) {
+			auto y1 = ioss[x];
+			auto y2 = brms[x];
+			auto dist = y2 - y1;
+			if (dist > DIST_MAX) {
+				auto t1 = max(y1 - DIST_MAX, 0);
+				auto t2 = min(y2 + DIST_MAX, height - 1);
+				for (int y = t1; y <= t2; y++) {
+					auto idx = y * width + x;
+					matCost.at<float>(idx) = fall.at<float>(idx);
+				}
+				y2 = min(y1 + DIST_MAX, height - 1);
+				y1 = min(y1 + DIST_MIN, y2);
+			}
+			else {
+				y1 = rpes[x];
+			}
+			upps[x] = y1;
+			lows[x] = y2;
+		}
 	}
 
-	if (!searchPathMinCostInRange()) {
+	this->upperYs() = upps;
+	this->lowerYs() = lows;
+	this->deltaYs() = delt;
+
+	matCost *= -1.0f;
+	matCost.copyTo(this->pathCostMat());
+	
+	if (!searchPathMinCost()) {
 		return false;
 	}
 	if (!smoothRefinedRPE()) {
-		return false;
-	}
-	if (!resizeToMatchSource()) {
 		return false;
 	}
 	return true;
@@ -79,52 +164,7 @@ bool SemtRetina::BoundaryRPE::refineBoundary(void)
 bool SemtRetina::BoundaryRPE::designPathConstraints(void)
 {
 	auto* segm = retinaSegmenter();
-	auto* resa = segm->bscanResampler();
-
-	auto* image = resa->imageSample();
-	auto width = image->getWidth();
-	auto height = image->getHeight();
-
-	auto* bilm = segm->boundaryILM();
-	auto inns = bilm->sampleYs();
-
-	auto* band = segm->retinaBandExtractor();
-	auto outs = band->outerYsFull();
-
-	auto upps = std::vector<int>(width, 0);
-	auto lows = std::vector<int>(width, 0);
-	auto delt = std::vector<int>(width, 7);
-
-	for (int i = 0; i < width; i++) {
-		upps[i] = inns[i];
-		lows[i] = outs[i];
-	}
-
-	if (band->isNerveHeadRangeValid()) {
-		auto x1 = band->opticDiscMinX();
-		auto x2 = band->opticDiscMaxX();
-		auto min_upp = *std::min_element(upps.begin(), upps.end());
-
-		for (int x = x1; x <= x2; ++x) {
-			upps[x] = min_upp;
-		}
-	}
-
-	const int WINDOW_SIZE = 7;
-	const int DEGREE = 1;
-	auto upp2 = CppUtil::SgFilter::smoothInts(upps, WINDOW_SIZE, DEGREE);
-	transform(begin(upp2), end(upp2), begin(upp2), [=](int elm) { return min(max(elm, 0), height - 1); });
-	transform(begin(upp2), end(upp2), begin(upp2), [=](int elm) { return min(max(elm, 0), height - 1); });
-
-	this->upperYs() = upp2;
-	this->lowerYs() = lows;
-	this->deltaYs() = delt;
-	return true;
-}
-
-bool SemtRetina::BoundaryRPE::refinePathConstraints(void)
-{
-	auto* segm = retinaSegmenter();
+	auto* crta = segm->retinaSegmCriteria();
 	auto* resa = segm->bscanResampler();
 
 	auto* image = resa->imageSample();
@@ -132,42 +172,25 @@ bool SemtRetina::BoundaryRPE::refinePathConstraints(void)
 	auto height = image->getHeight();
 
 	auto* bios = segm->boundaryIOS();
-	auto inns = bios->sampleYs();
+	auto ioss = bios->sampleYs();
 	auto* bbrm = segm->boundaryBRM();
-	auto outs = bbrm->sampleYs();
+	auto brms = bbrm->sampleYs();
 
+	auto range = crta->getPathCostRangeDeltaRPE();
 	auto upps = std::vector<int>(width, 0);
 	auto lows = std::vector<int>(width, 0);
-	auto delt = std::vector<int>(width, 7);
+	auto delt = std::vector<int>(width, range);
 
-	const int RANGE_MAX = 36;
 	for (int i = 0; i < width; i++) {
-		auto ylim = inns[i] + RANGE_MAX;
-		auto ypos = outs[i];
-		
-		if (ypos < ylim) {
-			auto y1 = (int)(inns[i] + ((outs[i] - inns[i]) * 0.35f));
-			auto y2 = (int)(inns[i] + ((outs[i] - inns[i]) * 0.85f));
-			upps[i] = y1;
-			lows[i] = y2;
-		}
-		else {
-			auto y1 = inns[i];
-			auto y2 = ylim;
-			upps[i] = y1;
-			lows[i] = y2;
-		}
+		auto y1 = ioss[i];
+		auto y2 = brms[i];
+		auto size = y2 - y1;
+		upps[i] = min(y1 + (int)(size * 0.45f), y2);
+		lows[i] = min(y1 + (int)(size * 0.95f), y2);
 	}
 
-	const int WINDOW_SIZE = 7;
-	const int DEGREE = 1;
-	auto upp2 = CppUtil::SgFilter::smoothInts(upps, WINDOW_SIZE, DEGREE);
-	auto low2 = CppUtil::SgFilter::smoothInts(lows, WINDOW_SIZE, DEGREE);
-	transform(begin(upp2), end(upp2), begin(upp2), [=](int elm) { return min(max(elm, 0), height - 1); });
-	transform(begin(low2), end(low2), begin(low2), [=](int elm) { return min(max(elm, 0), height - 1); });
-
-	this->upperYs() = upp2;
-	this->lowerYs() = low2;
+	this->upperYs() = upps;
+	this->lowerYs() = lows;
 	this->deltaYs() = delt;
 	return true;
 }
@@ -176,109 +199,27 @@ bool SemtRetina::BoundaryRPE::refinePathConstraints(void)
 bool SemtRetina::BoundaryRPE::prepareGradientMap(void)
 {
 	auto* segm = retinaSegmenter();
+	auto* crta = segm->retinaSegmCriteria();
 	auto* resa = segm->bscanResampler();
-	auto* image = resa->imageSample();
-
-	Mat matImage = image->getCvMatConst();
-	Mat matGray;
-	matImage.convertTo(matGray, CV_32F);
-	cv::normalize(matGray, matGray, 0.0, 1.0, cv::NORM_MINMAX);
-	
-	matGray.copyTo(this->pathEdgeMat());
-	return true;
-}
-
-
-bool SemtRetina::BoundaryRPE::preparePathCostMap(void)
-{
-	auto* segm = retinaSegmenter();
-	auto* resa = segm->bscanResampler();
-	auto* image = resa->imageSample();
-	auto* band = segm->retinaBandExtractor();
-
-	auto* pipe = segm->retinaInferPipeline();
-	auto* rpes = pipe->probMapRpe();
-	auto* onls = pipe->probMapOnl();
-	auto* nfls = pipe->probMapRnfl();
-	auto* ipls = pipe->probMapIplOpl();
-	auto* head = pipe->probMapDiscHead();
-
-	auto width = pipe->probMapWidth();
-	auto height = pipe->probMapHeight();
-	auto N = width * height;
-
-	Mat matProb = Mat::zeros(height, width, CV_32F);
-	float* p_prob = matProb.ptr<float>(0);
-	for (int i = 0; i < N; ++i) {
-		float val = rpes[i];
-		val = val - max(nfls[i], ipls[i]);
-		// val = max(val, 0.0f);
-		p_prob[i] = val;
-	}
-	
-	Mat& matEdge = this->pathEdgeMat();
-	float* p_edge = matEdge.ptr<float>(0);
-	
-	int head_x1, head_x2;
-	if (band->getNerveHeadRangeX(head_x1, head_x2)) {
-		auto upps = this->upperYs();
-		auto lows = this->lowerYs();
-
-		for (int x = head_x1; x <= head_x2; x++) {
-			auto y1 = upps[x];
-			auto y2 = lows[x];
-			for (int y = y1; y <= y2; y++) {
-				auto idx = y * width + x;
-				// matEdge.at<float>(y, x) = 0.0f;
-				// matProb.at<float>(y, x) = 0.0f;
-				if (head[idx] >= 0.5f) {
-					// p_prob[idx] = 0.0f;
-					p_edge[idx] = 0.0f;
-				}
-			}
-		}
-	}
-
-	Mat matCost;
-	// cv::add(matProb, 1.0f, matCost);
-	// cv::multiply(matCost, matEdge, matCost);
-	cv::add(matProb, matEdge, matCost);
-	
-	matCost *= -1.0f;
-	matCost.copyTo(this->pathCostMat());
-	return true;
-}
-
-bool SemtRetina::BoundaryRPE::refineGraidentMap(void)
-{
-	auto* segm = retinaSegmenter();
-	auto* resa = segm->bscanResampler();
+	// auto* image = resa->imageSample();
 	auto* image = resa->imageCoarse();
 
-	const int KERNEL_ROWS = 15;
-	const int KERNEL_COLS = 5;
+	const int KERNEL_ROWS = crta->getGradientKernelRowsRPE();
+	const int KERNEL_COLS = crta->getGradientKernelColsRPE();
 
 	Mat matSrc = image->getCvMatConst();
-	Mat kernel = Mat::ones(KERNEL_ROWS, KERNEL_COLS, CV_32F);
-
-	/*
-	for (int r = 0; r < kernel.rows; r++) {
-		for (int c = kernel.cols / 3; c <= (kernel.cols * 2) / 3; c++) {
-			kernel.at<float>(r, c) *= 2.0f;
-		}
-	}
-	*/
-	for (int r = 0; r < (kernel.rows / 2); r++) {
-		for (int c = 0; c < kernel.cols; c++) {
-			kernel.at<float>(r, c) *= -1.0f;
-		}
-	}
+	Mat kernel = Mat::zeros(KERNEL_ROWS, KERNEL_COLS, CV_32F);
+	kernel.rowRange(0, KERNEL_ROWS / 2).setTo(-1.0f);
+	kernel.rowRange(KERNEL_ROWS / 2 + 1, KERNEL_ROWS).setTo(1.0f);
 
 	{
 		auto mean = image->imageMean();
+		auto stdv = image->imageStdev();
+		int gmax = (int)(mean + stdv * 2.0f);
 		Mat matDst, matGrad, matOut;
 
 		cv::copyMakeBorder(matSrc, matDst, 9, 9, 0, 0, cv::BORDER_CONSTANT, mean);
+		// matDst.setTo(gmax, (matDst > gmax));
 		cv::filter2D(matDst, matGrad, CV_32F, kernel, Point(-1, -1), 0.0, cv::BORDER_REFLECT);
 		matOut = matGrad(cv::Rect(0, 9, matGrad.cols, matGrad.rows - 18));
 
@@ -289,40 +230,45 @@ bool SemtRetina::BoundaryRPE::refineGraidentMap(void)
 	return true;
 }
 
-bool SemtRetina::BoundaryRPE::refinePathCostMap(void)
+
+bool SemtRetina::BoundaryRPE::preparePathCostMap(void)
 {
-	const Mat& matEdge = this->pathEdgeMat();
+	Mat& matEdge = this->pathEdgeMat();
+	Mat& matProb = this->pathProbMat();
 
 	Mat matCost;
+	// cv::add(matProb, 1.0f, matCost);
+	// cv::multiply(matCost, matEdge, matCost);
+	// cv::add(matProb, matEdge, matCost);
 	matEdge.copyTo(matCost);
-
+	
 	matCost *= -1.0f;
 	matCost.copyTo(this->pathCostMat());
 	return true;
 }
 
-
 bool SemtRetina::BoundaryRPE::smoothBoundaryRPE(void)
 {
 	auto* segm = retinaSegmenter();
-	auto* band = segm->retinaBandExtractor();
+	auto* crta = segm->retinaSegmCriteria();
 	auto* resa = segm->bscanResampler();
 
 	auto* image = resa->imageSample();
 	auto width = image->getWidth();
 	auto height = image->getHeight();
 
-	auto* bilm = segm->boundaryILM();
-	auto inns = bilm->sampleYs();
-	auto outs = band->outerYsFull();
+	auto* bios = segm->boundaryIOS();
+	auto inns = bios->sampleYs();
+	auto* bbrm = segm->boundaryBRM();
+	auto outs = bbrm->sampleYs();
 
-	const int WINDOW_SIZE1 = 11; // 21;
+	auto path = this->optimalPath();
+	transform(begin(path), end(path), begin(path), [=](int elem) { return min(elem + 1, height - 1); });
+
+	const int WINDOW_SIZE = crta->getLayerSmoothWindowRPE(true);
 	const int DEGREE = 1;
+	auto filt = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE, DEGREE);
 
-	auto path = smoothOptimalPath(WINDOW_SIZE1, DEGREE, true);
-
-	const int WINDOW_SIZE2 = 21;
-	auto filt = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE2, DEGREE);
 	transform(cbegin(filt), cend(filt), cbegin(inns), begin(filt), [=](int elem1, int elem2) { return max(elem1, elem2); });
 	transform(cbegin(filt), cend(filt), cbegin(outs), begin(filt), [=](int elem1, int elem2) { return min(elem1, elem2); });
 	transform(begin(filt), end(filt), begin(filt), [=](int elm) { return min(max(elm, 0), height - 1); });
@@ -333,29 +279,29 @@ bool SemtRetina::BoundaryRPE::smoothBoundaryRPE(void)
 bool SemtRetina::BoundaryRPE::smoothRefinedRPE(void)
 {
 	auto* segm = retinaSegmenter();
+	auto* crta = segm->retinaSegmCriteria();
 	auto* band = segm->retinaBandExtractor();
 	auto* resa = segm->bscanResampler();
 
-	auto* image = resa->imageSample();
+	auto* image = resa->imageSource();
 	auto width = image->getWidth();
 	auto height = image->getHeight();
 
 	auto* bios = segm->boundaryIOS();
 	auto* bbrm = segm->boundaryBRM();
-	auto inns = bios->sampleYs();
-	auto outs = bbrm->sampleYs();
+	auto inns = bios->sourceYs();
+	auto outs = bbrm->sourceYs();
 
-	const int WINDOW_SIZE1 = 11; // 21;
+	auto path = this->optimalPath();
+
+	const int WINDOW_SIZE = crta->getLayerSmoothWindowRPE(true);
 	const int DEGREE = 1;
+	auto filt = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE, DEGREE);
 
-	auto path = smoothOptimalPath(WINDOW_SIZE1, DEGREE, true);
-
-	const int WINDOW_SIZE2 = 21;
-	auto filt = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE2, DEGREE);
 	transform(cbegin(filt), cend(filt), cbegin(inns), begin(filt), [=](int elem1, int elem2) { return max(elem1, elem2); });
 	transform(cbegin(filt), cend(filt), cbegin(outs), begin(filt), [=](int elem1, int elem2) { return min(elem1, elem2); });
 	transform(begin(filt), end(filt), begin(filt), [=](int elm) { return min(max(elm, 0), height - 1); });
-	this->sampleYs() = filt;
+	this->sourceYs() = filt;
 	return true;
 }
 

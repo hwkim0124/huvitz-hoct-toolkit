@@ -171,10 +171,10 @@ bool SegmProc::DiscSession::makeBRMImage(OctScanPattern pattern)
 			flags.push_back(output);
 
 			if (bsegm->getOpticNerveDiscRange(x1, x2)) {
-				disc1.x = (float)x1 / pattern.getNumberOfScanPoints() * d_ptr->enfaceWidth;
-				disc1.y = (float)i / (pattern.getNumberOfScanLines() - 1) * d_ptr->enfaceHeight;
-				disc2.x = (float)x2 / pattern.getNumberOfScanPoints() *d_ptr->enfaceWidth;
-				disc2.y = (float)i / (pattern.getNumberOfScanLines() - 1) * d_ptr->enfaceHeight;
+				disc1.x = ((float)x1 / pattern.getNumberOfScanPoints() * d_ptr->enfaceWidth + 0.5f);
+				disc1.y = ((float)i / (pattern.getNumberOfScanLines() - 1) * d_ptr->enfaceHeight + 0.5f);
+				disc2.x = ((float)x2 / pattern.getNumberOfScanPoints() *d_ptr->enfaceWidth + 0.5f);
+				disc2.y = ((float)i / (pattern.getNumberOfScanLines() - 1) * d_ptr->enfaceHeight + 0.5f);
 
 				if (pattern.getDirection() == 1) {
 					std::swap(disc1.x, disc1.y);

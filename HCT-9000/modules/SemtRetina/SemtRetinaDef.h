@@ -13,13 +13,31 @@ namespace RetSegm {
 
 namespace SemtRetina
 {
+	constexpr int SAMPLE_WIDTH_S = 384;
+	constexpr int SAMPLE_WIDTH_M = 512;
+	constexpr int SAMPLE_HEIGHT_S = 384; // 768;
+	constexpr int SAMPLE_HEIGHT_M = 768;
+
+	constexpr int COARSE_WIDTH_S = 384;
+	constexpr int COARSE_WIDTH_M = 512;
+	constexpr int COARSE_HEIGHT_S = 384; // 768;
+	constexpr int COARSE_HEIGHT_M = 768;
+
+	constexpr int MODEL_INPUT_WIDTH_S = 384;
+	constexpr int MODEL_INPUT_WIDTH_M = 512;
+	constexpr int MODEL_INPUT_HEIGHT_S = 384;
+	constexpr int MODEL_INPUT_HEIGHT_M = 512;
+
+	constexpr int COARSE_GUIDED_RADIUS_S = 3;
+	constexpr int COARSE_GUIDED_RADIUS_M = 5;
+	constexpr double COARSE_GUIDED_EPSILON_S = 0.05;
+	constexpr double COARSE_GUIDED_EPSILON_M = 0.05;
+
+
 	constexpr int MODEL_INPUT_WIDTH = 512;
 	constexpr int MODEL_INPUT_HEIGHT = 768;
-
 	constexpr int COARSE_IMAGE_WIDTH = 512;
 	constexpr int COARSE_IMAGE_HEIGHT = 768;
-	constexpr float COARSE_TO_SAMPLE_WIDTH_RATIO = MODEL_INPUT_WIDTH / COARSE_IMAGE_WIDTH;
-	constexpr float COARSE_TO_SAMPLE_HEIGHT_RATIO = MODEL_INPUT_HEIGHT / COARSE_IMAGE_HEIGHT;
 	constexpr int COARSE_GUIDED_RADIUS = 5; // 3;
 	constexpr double COARSE_GUIDED_EPSILON = 0.05;
 

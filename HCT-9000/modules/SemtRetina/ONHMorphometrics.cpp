@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "ONHMorphometrics.h"
-#include "ONHMorphometrics.h"
 #include "RetinaSegmenter.h"
 #include "RetinaSegmentModel.h"
 

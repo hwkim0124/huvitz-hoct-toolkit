@@ -22,6 +22,7 @@ namespace SemtRetina
 
 	public:
 		bool detectBoundary(void);
+		bool reconstructLayer(void);
 		bool enforceSourceOrder(void);
 
 	protected:
@@ -29,6 +30,7 @@ namespace SemtRetina
 		bool prepareGradientMap(void);
 		bool preparePathCostMap(void);
 		bool smoothBoundaryNFL(void);
+		bool smoothRefinedNFL(void);
 		bool resizeToMatchSource(void);
 
 

@@ -18,6 +18,7 @@ struct RetinaSegmenter::RetinaSegmenterImpl
 	unique_ptr<BscanResampler> resampler;
 	unique_ptr<RetinaBandExtractor> extractor;
 	unique_ptr<RetinaInferPipeline> pipeline;
+	unique_ptr<RetinaSegmCriteria> criteria;
 	unique_ptr<ONHMorphometrics> onhMetrics;
 
 	unique_ptr<BoundaryILM> boundILM;
@@ -69,6 +70,11 @@ RetinaBandExtractor* SemtRetina::RetinaSegmenter::retinaBandExtractor(void) cons
 RetinaInferPipeline* SemtRetina::RetinaSegmenter::retinaInferPipeline(void) const
 {
 	return impl().pipeline.get();
+}
+
+RetinaSegmCriteria* SemtRetina::RetinaSegmenter::retinaSegmCriteria(void) const
+{
+	return impl().criteria.get();
 }
 
 ONHMorphometrics* SemtRetina::RetinaSegmenter::onhMorphometrics(void) const
@@ -141,6 +147,12 @@ void SemtRetina::RetinaSegmenter::setRetinaBandExtractor(RetinaBandExtractor* p)
 void SemtRetina::RetinaSegmenter::setRetinaInferPipeline(RetinaInferPipeline* p)
 {
 	impl().pipeline = move(unique_ptr<RetinaInferPipeline>(p));
+	return;
+}
+
+void SemtRetina::RetinaSegmenter::setRetinaSegmCriteria(RetinaSegmCriteria* p)
+{
+	impl().criteria = move(unique_ptr<RetinaSegmCriteria>(p));
 	return;
 }
 

@@ -73,31 +73,60 @@ bool RetinaSegmentModel::isInitialized()
 bool SemtRetina::RetinaSegmentModel::runInference(const unsigned char* bscan, int width, int height, float* probs)
 {
     unique_lock<mutex> lock(impl().mutexLock);
-    RlmStatus status = RlmInferRetinaBscan(static_cast<const void*>(bscan), width, height, 1, probs, nullptr);
+    // RlmStatus status = RlmInferRetinaBscan(static_cast<const void*>(bscan), width, height, 1, probs, nullptr);
+    
+    RlmStatus status;
+    if (width <= inputWidthS()) {
+		status = RlmInferRetinaBscanS(static_cast<const void*>(bscan), width, height, 1, probs, nullptr);
+    }
+    else {
+		status = RlmInferRetinaBscanM(static_cast<const void*>(bscan), width, height, 1, probs, nullptr);
+    }
+
     if (status != RLM_STATUS_OK) {
         return false;
     }
     return true;
 }
 
-int SemtRetina::RetinaSegmentModel::inputWidth(void)
+int SemtRetina::RetinaSegmentModel::inputWidthS(void)
 {
-    return RLM_INPUT_WIDTH;
+    return RLM_INPUT_WIDTH_S;
 }
 
-int SemtRetina::RetinaSegmentModel::inputHeight(void)
+int SemtRetina::RetinaSegmentModel::inputWidthM(void)
 {
-    return RLM_INPUT_HEIGHT;
+    return RLM_INPUT_WIDTH_M;
 }
 
-int SemtRetina::RetinaSegmentModel::outputWidth(void)
+int SemtRetina::RetinaSegmentModel::inputHeightS(void)
 {
-    return RLM_OUTPUT_WIDTH;
+    return RLM_INPUT_HEIGHT_S;
 }
 
-int SemtRetina::RetinaSegmentModel::outputHeight(void)
+int SemtRetina::RetinaSegmentModel::inputHeightM(void)
 {
-    return RLM_OUTPUT_HEIGHT;
+    return RLM_INPUT_HEIGHT_M;
+}
+
+int SemtRetina::RetinaSegmentModel::outputWidthS(void)
+{
+    return RLM_OUTPUT_WIDTH_S;
+}
+
+int SemtRetina::RetinaSegmentModel::outputWidthM(void)
+{
+    return RLM_OUTPUT_WIDTH_M;
+}
+
+int SemtRetina::RetinaSegmentModel::outputHeightS(void)
+{
+    return RLM_OUTPUT_HEIGHT_S;
+}
+
+int SemtRetina::RetinaSegmentModel::outputHeightM(void)
+{
+    return RLM_OUTPUT_HEIGHT_M;
 }
 
 int SemtRetina::RetinaSegmentModel::numberOfClasses(void)
@@ -105,9 +134,14 @@ int SemtRetina::RetinaSegmentModel::numberOfClasses(void)
     return RLM_NUM_CLASSES;
 }
 
-int SemtRetina::RetinaSegmentModel::outputProbMapSize(void)
+int SemtRetina::RetinaSegmentModel::outputProbMapSizeS(void)
 {
-    return RLM_OUTPUT_PROBS_SIZE;
+    return RLM_OUTPUT_PROBS_SIZE_S;
+}
+
+int SemtRetina::RetinaSegmentModel::outputProbMapSizeM(void)
+{
+    return RLM_OUTPUT_PROBS_SIZE_M;
 }
 
 int SemtRetina::RetinaSegmentModel::classIndexVitreous(void)

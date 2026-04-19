@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "BscanResampler.h"
+#include "RetinaSegmenter.h"
 
 #include "CppUtil2.h"
 #include "RetSegm2.h"
@@ -13,11 +14,19 @@ using namespace cv;
 
 struct BscanResampler::BscanResamplerImpl
 {
+	const RetinaSegmenter* segm = nullptr;
+
 	BscanImageData source;
 	BscanImageData sample;
 	BscanImageData coarse;
 
+	BscanImageData srcRiseEdge;
+	BscanImageData srcFallEdge;
+
 	int sampleIndex = 0;
+	bool isAngio = false;
+	float rangeX = 0.0f;
+	float rangeY = 0.003f * 768.0f; // 0.003 mm/pixel * 768 pixels = 2.304 mm
 
 	BscanResamplerImpl()
 	{
@@ -25,9 +34,10 @@ struct BscanResampler::BscanResamplerImpl
 };
 
 
-BscanResampler::BscanResampler() :
+BscanResampler::BscanResampler(RetinaSegmenter* segm) :
 	d_ptr(make_unique<BscanResamplerImpl>())
 {
+	impl().segm = segm;
 }
 
 
@@ -36,7 +46,7 @@ SemtRetina::BscanResampler::BscanResampler(BscanResampler&& rhs) = default;
 BscanResampler& SemtRetina::BscanResampler::operator=(BscanResampler&& rhs) = default;
 
 
-bool SemtRetina::BscanResampler::runResampling(OctScanImage image, int width, int height)
+bool SemtRetina::BscanResampler::runResampling(OctScanImage image, bool angio)
 {
 	if (image.isEmpty()) {
 		return false;
@@ -51,19 +61,18 @@ bool SemtRetina::BscanResampler::runResampling(OctScanImage image, int width, in
 	auto src_h = image.getHeight();
 	auto index = image.getIndex();
 
-	const auto GUIDED_RADIUS = 5;
-	const auto GUIDED_EPSILON = 0.05;
-
-	const auto GUIDED_RADIUS2 = 3;
-	const auto GUIDED_EPSILON2 = 0.05;
-
+	impl().isAngio = angio;
 	impl().sampleIndex = index;
+	impl().rangeX = image.getRangeX();
+
 	if (source.fromBitsData(dptr, src_w, src_h)) {
+		auto target_w = (angio ? SAMPLE_WIDTH_S : SAMPLE_WIDTH_M);
+		auto target_h = (angio ? SAMPLE_HEIGHT_S : SAMPLE_HEIGHT_M);
 		
 		// CppUtil::ClockTimer::start();
-		if (width != src_w || height != src_h) {
-			Size size(width, height);
-			if (width > src_w || height > src_h) {
+		if (target_w != src_w || target_h != src_h) {
+			Size size(target_w, target_h);
+			if (target_w > src_w || target_h > src_h) {
 				// For upsampling, use cubic interpolation to avoid blocky effect.
 				cv::resize(source.getCvMatConst(), sample.getCvMat(), size, 0.0, 0.0, INTER_CUBIC);
 			}
@@ -78,9 +87,13 @@ bool SemtRetina::BscanResampler::runResampling(OctScanImage image, int width, in
 
 		//LogD() << "resize elapsed: " << CppUtil::ClockTimer::elapsedMsec();
 
-		cv::resize(sample.getCvMatConst(), coarse.getCvMat(), Size(COARSE_IMAGE_WIDTH, COARSE_IMAGE_HEIGHT), 0.0, 0.0, INTER_AREA);
-		coarse.applyGuidedFilter(COARSE_GUIDED_RADIUS, COARSE_GUIDED_EPSILON);
-		//cv::resize(coarse.getCvMatConst(), coarse.getCvMat(), Size(512, 768), 0.0, 0.0, INTER_AREA);
+		auto coarse_w = target_w; // (angio ? COARSE_WIDTH_S : COARSE_WIDTH_M);
+		auto coarse_h = target_h; // (angio ? COARSE_HEIGHT_S : COARSE_HEIGHT_M);
+		auto radius = (angio ? COARSE_GUIDED_RADIUS_S : COARSE_GUIDED_RADIUS_M);
+		auto epsilon = (angio ? COARSE_GUIDED_EPSILON_S : COARSE_GUIDED_EPSILON_M);
+
+		cv::resize(sample.getCvMatConst(), coarse.getCvMat(), Size(coarse_w, coarse_h), 0.0, 0.0, INTER_AREA);
+		coarse.applyGuidedFilter(radius, epsilon);
 		
 		// sample.copyTo(&coarse);
 		// coarse.applyGuidedFilter(GUIDED_RADIUS, GUIDED_EPSILON);
@@ -99,12 +112,27 @@ bool SemtRetina::BscanResampler::runResampling(OctScanImage image, int width, in
 		coarse.estimateStatitics();
 		coarse.estimateColSnRatios();
 		
-		coarse.resizeToMatchSample(MODEL_INPUT_WIDTH, MODEL_INPUT_HEIGHT);
+		// coarse.resizeToMatchSample(target_w, target_h);
 		// coarse.upscaleStatistics(sample.getWidth(), sample.getHeight());
 
 		//LogD() << "ratio elapsed: " << CppUtil::ClockTimer::elapsedMsec();
 		// string path = format_string("corased_%d.jpg", image.getIndex());
 		// coarse.saveFile(path);
+
+		float scaleX = sampleScaleRatioX();
+		float scaleY = sampleScaleRatioY();
+		float spaceX = samplePixelSpaceX();
+		float spaceY = samplePixelSpaceY();
+
+		auto* crt = impl().segm->retinaSegmCriteria();
+		crt->setSampleScaleFactors(scaleX, scaleY);
+		crt->setSampleDimensions(target_w, target_h, spaceX, spaceY);
+
+		spaceX = sourcePixelSpaceX();
+		spaceY = sourcePixelSpaceY();
+		crt->setSourceDimensions(src_w, src_h, spaceX, spaceY);
+
+		createSourceEdgeMaps();
 		return true;
 	}
 	return false;
@@ -142,6 +170,49 @@ bool SemtRetina::BscanResampler::checkRetinaSegmentable(void) const
 	return true;
 }
 
+bool SemtRetina::BscanResampler::createSourceEdgeMaps(void) const
+{
+	auto* image = imageSource();
+	const int KERNEL_ROWS = 15;
+	const int KERNEL_COLS = 5;
+
+	Mat matSrc = image->getCvMatConst();
+	Mat kernel = Mat::zeros(KERNEL_ROWS, KERNEL_COLS, CV_32F);
+	kernel.rowRange(0, KERNEL_ROWS / 2).setTo(-1.0f);
+	kernel.rowRange(KERNEL_ROWS / 2 + 1, KERNEL_ROWS).setTo(+1.0f);
+
+	{
+		auto mean = image->imageMean();
+		auto stdv = image->imageStdev();
+		int gmax = (int)(mean + stdv * 2.0f);
+
+		Mat matDst, matGrad, matOut;
+		cv::copyMakeBorder(matSrc, matDst, 9, 9, 0, 0, cv::BORDER_CONSTANT, mean);
+		matDst.setTo(gmax, (matDst > gmax));
+		cv::filter2D(matDst, matGrad, CV_32F, kernel, Point(-1, -1), 0.0, cv::BORDER_REFLECT);
+		matOut = matGrad(cv::Rect(0, 9, matGrad.cols, matGrad.rows - 18));
+
+		matOut.setTo(0.0f, (matOut < 0.0f));
+		cv::normalize(matOut, matOut, 0.0f, 1.0f, cv::NORM_MINMAX);
+		impl().srcRiseEdge.getCvMat() = matOut;
+	}
+
+	kernel.rowRange(0, KERNEL_ROWS / 2).setTo(+1.0f);
+	kernel.rowRange(KERNEL_ROWS / 2 + 1, KERNEL_ROWS).setTo(-1.0f);
+
+	{
+		auto mean = image->imageMean();
+		Mat matDst, matGrad, matOut;
+		cv::copyMakeBorder(matSrc, matDst, 9, 9, 0, 0, cv::BORDER_CONSTANT, mean);
+		cv::filter2D(matDst, matGrad, CV_32F, kernel, Point(-1, -1), 0.0, cv::BORDER_REFLECT);
+		matOut = matGrad(cv::Rect(0, 9, matGrad.cols, matGrad.rows - 18));
+
+		matOut.setTo(0.0f, (matOut < 0.0f));
+		cv::normalize(matOut, matOut, 0.0f, 1.0f, cv::NORM_MINMAX);
+		impl().srcFallEdge.getCvMat() = matOut;
+	}
+	return true;
+}
 
 int SemtRetina::BscanResampler::sourceWidth(void) const
 {
@@ -173,6 +244,72 @@ int SemtRetina::BscanResampler::sampleIndex(void) const
 	return index;
 }
 
+bool SemtRetina::BscanResampler::isAngio(void) const
+{
+	auto angio = impl().isAngio;
+	return angio;
+}
+
+float SemtRetina::BscanResampler::sourcePixelSpaceX(void) const
+{
+	float src_w = (float)sourceWidth();
+	float range = impl().rangeX;
+	if (src_w > 0.0f && range > 0.0f) {
+		return range / src_w;
+	}
+	return 0.0f;
+}
+
+float SemtRetina::BscanResampler::sourcePixelSpaceY(void) const
+{
+	float src_h = (float)sourceHeight();
+	float range = impl().rangeY;
+	if (src_h > 0.0f && range > 0.0f) {
+		return range / src_h;
+	}
+	return 0.0f;
+}
+
+float SemtRetina::BscanResampler::samplePixelSpaceX(void) const
+{
+	float samp_w = (float)sampleWidth();
+	float range = impl().rangeX;
+	if (samp_w > 0.0f && range > 0.0f) {
+		return range / samp_w;
+	}
+	return 0.0f;
+}
+
+float SemtRetina::BscanResampler::samplePixelSpaceY(void) const
+{
+	float samp_h = (float)sampleHeight();
+	float range = impl().rangeY;
+	if (samp_h > 0.0f && range > 0.0f) {
+		return range / samp_h;
+	}
+	return 0.0f;
+}
+
+float SemtRetina::BscanResampler::sampleScaleRatioX(void) const
+{
+	float src_w = (float)sourceWidth();
+	float samp_w = (float)sampleWidth();
+	if (src_w > 0.0f) {
+		return samp_w / src_w;
+	}
+	return 0.0f;
+}
+
+float SemtRetina::BscanResampler::sampleScaleRatioY(void) const
+{
+	float src_h = (float)sourceHeight();
+	float samp_h = (float)sampleHeight();
+	if (src_h > 0.0f) {
+		return samp_h / src_h;
+	}
+	return 0.0f;
+}
+
 BscanImageData* SemtRetina::BscanResampler::imageSource(void) const
 {
 	return &(impl().source);
@@ -186,6 +323,16 @@ BscanImageData* SemtRetina::BscanResampler::imageSample(void) const
 BscanImageData* SemtRetina::BscanResampler::imageCoarse(void) const
 {
 	return &(impl().coarse);
+}
+
+BscanImageData* SemtRetina::BscanResampler::sourceRiseEdge(void) const
+{
+	return &(impl().srcRiseEdge);
+}
+
+BscanImageData* SemtRetina::BscanResampler::sourceFallEdge(void) const
+{
+	return &(impl().srcFallEdge);
 }
 
 

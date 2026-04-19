@@ -16,12 +16,18 @@ namespace SemtRetina
         static bool isInitialized();
         static bool runInference(const unsigned char* bscan, int width, int height, float* probs);
 
-        static int inputWidth(void);
-        static int inputHeight(void);
-        static int outputWidth(void);
-        static int outputHeight(void);
+        static int inputWidthS(void);
+		static int inputWidthM(void);
+		static int inputHeightS(void);
+		static int inputHeightM(void);
+
+        static int outputWidthS(void);
+        static int outputWidthM(void);
+        static int outputHeightS(void);
+		static int outputHeightM(void);
         static int numberOfClasses(void);
-        static int outputProbMapSize(void);
+        static int outputProbMapSizeS(void);
+		static int outputProbMapSizeM(void);
         
         static int classIndexVitreous(void);
         static int classIndexRnfl(void);

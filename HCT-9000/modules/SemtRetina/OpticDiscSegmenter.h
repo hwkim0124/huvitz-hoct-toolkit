@@ -17,7 +17,7 @@ namespace SemtRetina
 		OpticDiscSegmenter& operator=(const OpticDiscSegmenter& rhs) = delete;
 
 	public:
-		bool segment(void) override;
+		bool segment(bool angio) override;
 
 	protected:
 		void resetAlgorithms(void) override;

@@ -81,7 +81,7 @@ bool SegmProc::SegmSession::initialize(void)
 			return false;
 		}
 
-		auto bsegm = make_unique<OcularBsegm>();
+		auto bsegm = std::make_unique<OcularBsegm>();
 		// if (!(i % overlaps)) {
 			bsegm->loadSource(bscan->getImageBuffer(), bscan->getImageWidth(), bscan->getImageHeight());
 			bsegm->setPatternDescript(getScanData()->getDescript());
@@ -98,7 +98,7 @@ bool SegmProc::SegmSession::initialize(void)
 			return false;
 		}
 
-		auto bsegm = make_unique<OcularBsegm>();
+		auto bsegm = std::make_unique<OcularBsegm>();
 		bsegm->loadSource(bscan->getImageBuffer(), bscan->getImageWidth(), bscan->getImageHeight());
 		bsegm->setPatternDescript(getScanData()->getDescript());
 		addPreviewBsegm(std::move(bsegm));

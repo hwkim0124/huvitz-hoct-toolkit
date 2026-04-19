@@ -22,16 +22,13 @@ namespace SemtRetina
 
 	public:
 		bool detectBoundary(void);
-		bool refineBoundary(void);
+		bool reconstructLayer(void);
 		bool enforceSourceOrder(void);
 
 	protected:
 		bool designPathConstraints(void);
-		bool refinePathConstraints(void);
-
 		bool prepareGradientMap(void);
 		bool preparePathCostMap(void);
-		bool refinePathCostMap(void);
 
 		bool smoothBoundaryBRM(void);
 		bool smoothRefinedBRM(void);

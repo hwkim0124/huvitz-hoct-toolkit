@@ -4,7 +4,9 @@
 #include "BscanResampler.h"
 #include "RetinaBandExtractor.h"
 #include "RetinaInferPipeline.h"
+#include "RetinaSegmCriteria.h"
 #include "ONHMorphometrics.h"
+
 
 #include "BoundaryILM.h"
 #include "BoundaryNFL.h"
@@ -23,6 +25,7 @@ namespace SemtRetina
 	class RetinaSegmFrame;
 	class RetinaBandExtractor;
 	class RetinaInferPipeline;
+	class RetinaSegmCriteria;
 	class BscanResampler;
 	class ONHMorphometrics;
 
@@ -38,12 +41,13 @@ namespace SemtRetina
 		RetinaSegmenter& operator=(const RetinaSegmenter& rhs) = delete;
 
 	public:
-		virtual bool segment() = 0;
+		virtual bool segment(bool angio) = 0;
 
 		const RetinaSegmFrame* retinaSegmFrame(void) const;
 		BscanResampler* bscanResampler(void) const;
 		RetinaBandExtractor* retinaBandExtractor(void) const;
 		RetinaInferPipeline* retinaInferPipeline(void) const;
+		RetinaSegmCriteria* retinaSegmCriteria(void) const;
 		ONHMorphometrics* onhMorphometrics(void) const;
 
 		BoundaryILM* boundaryILM(void) const;
@@ -64,6 +68,7 @@ namespace SemtRetina
 		void setBscanResampler(BscanResampler* p);
 		void setRetinaBandExtractor(RetinaBandExtractor* p);
 		void setRetinaInferPipeline(RetinaInferPipeline* p);
+		void setRetinaSegmCriteria(RetinaSegmCriteria* p);
 		void setONHMorphometrics(ONHMorphometrics* p);
 
 		void setBoundaryILM(BoundaryILM* p);

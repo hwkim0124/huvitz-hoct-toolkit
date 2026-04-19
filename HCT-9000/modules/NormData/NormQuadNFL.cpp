@@ -280,7 +280,7 @@ int NormData::NormQuadNFL::calculateWeightedRegionPercentile(int sector, const s
 		}
 	}
 
-	int totalCount = tsnitIndices.size();
+	int totalCount = (int)tsnitIndices.size();
 	float redRatio = (float)redCount / totalCount;
 	float abnormalRatio = (float)(redCount + yellowCount) / totalCount;
 

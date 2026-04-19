@@ -211,6 +211,7 @@
     <ClCompile Include="OpticDiscSegmPipeline.cpp" />
     <ClCompile Include="RetinaBandExtractor.cpp" />
     <ClCompile Include="RetinaBoundary.cpp" />
+    <ClCompile Include="RetinaSegmCriteria.cpp" />
     <ClCompile Include="RetinaInferPipeline.cpp" />
     <ClCompile Include="RetinaSegmenter.cpp" />
     <ClCompile Include="RetinaSegmFrame.cpp" />
@@ -245,6 +246,7 @@
     <ClInclude Include="Resource.h" />
     <ClInclude Include="RetinaBandExtractor.h" />
     <ClInclude Include="RetinaBoundary.h" />
+    <ClInclude Include="RetinaSegmCriteria.h" />
     <ClInclude Include="RetinaInferPipeline.h" />
     <ClInclude Include="RetinaSegmenter.h" />
     <ClInclude Include="RetinaSegmFrame.h" />

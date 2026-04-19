@@ -23,6 +23,7 @@ namespace SemtRetina
 		bool detectInnerRetinaBoundary(void);
 		bool detectOuterRetinaBoundary(void);
 		bool detectOpticNerveHeadRegion(void);
+		void upscaleToSourceDimensions(void);
 
 		void setNerveHeadRangeX(int x1, int x2) const;
 		bool getNerveHeadRangeX(int& x1, int& x2) const;
@@ -30,6 +31,7 @@ namespace SemtRetina
 		bool isRetinaOnNerveHeadMarginLeft(void) const;
 		bool isRetinaOnNerveHeadMarginRight(void) const;
 		bool isRetinaOnNerveHeadMarginBoth(void) const;
+		bool isNerveHeadDiscCupShaped(void) const;
 
 		std::vector<int> innerYs(void) const;
 		std::vector<int> outerYs(void) const;

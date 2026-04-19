@@ -31,7 +31,7 @@ SemtRetina::OpticDiscSegmenter::OpticDiscSegmenter(OpticDiscSegmenter&& rhs) = d
 OpticDiscSegmenter& SemtRetina::OpticDiscSegmenter::operator=(OpticDiscSegmenter&& rhs) = default;
 
 
-bool SemtRetina::OpticDiscSegmenter::segment(void)
+bool SemtRetina::OpticDiscSegmenter::segment(bool angio)
 {
 	auto frame = (MacularSegmFrame*)retinaSegmFrame();
 	if (!frame->isImageSource()) {
@@ -44,7 +44,7 @@ bool SemtRetina::OpticDiscSegmenter::segment(void)
 	auto& image = frame->bscanImage();
 	auto index = frame->bscanIndex();
 
-	if (!resam->runResampling(image, MODEL_INPUT_WIDTH, MODEL_INPUT_HEIGHT)) {
+	if (!resam->runResampling(image, angio)) {
 		return false;
 	}
 	if (!resam->checkRetinaSegmentable()) {
@@ -121,12 +121,7 @@ bool SemtRetina::OpticDiscSegmenter::segment(void)
 		return false;
 	}
 
-	if (!bilm->refineBoundary()) {
-		return false;
-	}
-	if (!brpe->refineBoundary()) {
-		return false;
-	}
+
 
 	bnfl->enforceSourceOrder();
 	bipl->enforceSourceOrder();
@@ -151,9 +146,10 @@ bool SemtRetina::OpticDiscSegmenter::segment(void)
 
 void SemtRetina::OpticDiscSegmenter::resetAlgorithms(void)
 {
-	setBscanResampler(new BscanResampler());
+	setBscanResampler(new BscanResampler(this));
 	setRetinaBandExtractor(new RetinaBandExtractor(this));
 	setRetinaInferPipeline(new RetinaInferPipeline(this));
+	setRetinaSegmCriteria(new RetinaSegmCriteria(this));
 	setONHMorphometrics(new ONHMorphometrics(this));
 
 	setBoundaryILM(new BoundaryILM(this));

@@ -150,6 +150,7 @@ bool SemtRetina::RetinaBoundary::searchPathMinCostInRange(void)
 	const auto& deltas = impl().deltas;
 
 	auto* segm = retinaSegmenter();
+	auto* crta = segm->retinaSegmCriteria();
 	auto* band = segm->retinaBandExtractor();
 	const int col_beg = band->retinaBeginX();
 	const int col_end = band->retinaEndX();
@@ -220,7 +221,7 @@ bool SemtRetina::RetinaBoundary::searchPathMinCostInRange(void)
 		lastIdx = minPath[c];
 	}
 
-	const int SLOPE_SIZE = 32;
+	const int SLOPE_SIZE = crta->getPathSideMarginSlopeWidth();
 	const int roi_size = (col_end - col_beg + 1);
 
 	if (col_beg > 0) {

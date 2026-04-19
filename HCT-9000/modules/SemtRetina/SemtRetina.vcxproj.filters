@@ -96,6 +96,9 @@
     <ClCompile Include="OpticDiscSegmFrame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RetinaSegmCriteria.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SemtRetina.h">
@@ -186,6 +189,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="OpticDiscSegmFrame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RetinaSegmCriteria.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

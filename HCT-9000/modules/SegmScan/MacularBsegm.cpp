@@ -101,7 +101,7 @@ bool SegmScan::MacularBsegm::performAnalysis(bool meye)
 
 		auto& frame = getImpl().segmFrame;
 		frame.setBscanImage(d_ptr, src_w, src_h, rangeX, index);
-		if (!frame.segmentMacularLayers()) {
+		if (!frame.segmentMacularLayers(true)) {
 			goto failed;
 		}
 
@@ -113,8 +113,9 @@ bool SegmScan::MacularBsegm::performAnalysis(bool meye)
 		layerRPE()->initialize(frame.boundaryRPE(), src_w, src_h);
 		layerBRM()->initialize(frame.boundaryBRM(), src_w, src_h);
 
-		layerInn()->initialize(frame.boundaryONL(), src_w, src_h);
-		layerOut()->initialize(frame.boundaryOUT(), src_w, src_h);
+		layerInn()->initialize(frame.boundaryINN(), src_w, src_h);
+		layerOut()->initialize(frame.boundaryONL(), src_w, src_h);
+		layerOPR()->initialize(frame.boundaryONL(), src_w, src_h);
 
 		auto layers = getRetinaLayers();
 		layers->setRegionSize(src_w, src_h);

@@ -95,6 +95,7 @@ bool SegmScan::DiscBsegm::performAnalysis(bool meye)
 	getImpl().rangeX = rangeX;
 
 	bool isDisc = getPatternDescript().isDiscScan();
+	bool isAngio = getPatternDescript().isAngioScan();
 	isDisc = (rangeX > 9.0f ? true : isDisc);
 
 	bool useSemtVersion = false;
@@ -152,7 +153,7 @@ bool SegmScan::DiscBsegm::performAnalysis(bool meye)
 
 		auto& frame = getImpl().segmFrame;
 		frame.setBscanImage(d_ptr, src_w, src_h, rangeX, index);
-		if (!frame.segmentMacularLayers()) {
+		if (!frame.segmentMacularLayers(isAngio)) {
 			goto failed;
 		}
 

@@ -29,6 +29,7 @@ BEGIN_MESSAGE_MAP(CHctReportView, CScrollView)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CScrollView::OnFilePrintPreview)
 	ON_WM_LBUTTONDOWN()
 	ON_WM_MOUSEMOVE()
+	ON_WM_KEYDOWN()
 END_MESSAGE_MAP()
 
 // CHctReportView construction/destruction
@@ -154,71 +155,71 @@ void CHctReportView::createBitmapOfPattern(void)
 					auto outer = bscan->getLayerPoints(OcularLayerType::OUTER, width, height);
 					for (int j = 0; j < outer.size(); j++) {
 						if (outer[j] >= 0) {
-							braw->SetPixel(j, outer[j], Gdiplus::Color(255, 0, 0));
-							braw->SetPixel(j, outer[j] + 1, Gdiplus::Color(255, 0, 0));
+							braw->SetPixel(j, outer[j], Gdiplus::Color(224, 224, 224));
+							// braw->SetPixel(j, outer[j] + 1, Gdiplus::Color(224, 224, 224));
 						}
 					}
 
 					auto ilms = bscan->getLayerPoints(OcularLayerType::ILM, width, height);
 					for (int j = 0; j < ilms.size(); j++) {
 						if (ilms[j] >= 0) {
-							braw->SetPixel(j, ilms[j], Gdiplus::Color(0, 255, 0));
-							braw->SetPixel(j, ilms[j] + 1, Gdiplus::Color(0, 255, 0));
+							braw->SetPixel(j, ilms[j], Gdiplus::Color(0, 255, 255));
+							braw->SetPixel(j, ilms[j] + 1, Gdiplus::Color(0, 255, 255));
 						}
 					}
 
 					auto nfls = bscan->getLayerPoints(OcularLayerType::NFL, width, height);
 					for (int j = 0; j < nfls.size(); j++) {
 						if (nfls[j] >= 0) {
-							braw->SetPixel(j, nfls[j], Gdiplus::Color(255, 0, 255));
-							braw->SetPixel(j, nfls[j] + 1, Gdiplus::Color(255, 0, 255));
+							braw->SetPixel(j, nfls[j], Gdiplus::Color(255, 0, 128));
+							braw->SetPixel(j, nfls[j] + 1, Gdiplus::Color(255, 0, 128));
 						}
 					}
 
 					auto ipls = bscan->getLayerPoints(OcularLayerType::IPL, width, height);
 					for (int j = 0; j < ipls.size(); j++) {
 						if (ipls[j] >= 0) {
-							braw->SetPixel(j, ipls[j], Gdiplus::Color(255, 255, 0));
-							braw->SetPixel(j, ipls[j] + 1, Gdiplus::Color(255, 255, 0));
+							braw->SetPixel(j, ipls[j], Gdiplus::Color(0, 255, 128));
+							braw->SetPixel(j, ipls[j] + 1, Gdiplus::Color(0, 255, 128));
 						}
 					}
 					auto opls = bscan->getLayerPoints(OcularLayerType::OPL, width, height);
 					for (int j = 0; j < opls.size(); j++) {
 						if (opls[j] >= 0) {
-							braw->SetPixel(j, opls[j], Gdiplus::Color(0, 255, 255));
-							braw->SetPixel(j, opls[j] + 1, Gdiplus::Color(0, 255, 255));
+							braw->SetPixel(j, opls[j], Gdiplus::Color(255, 255, 64));
+							braw->SetPixel(j, opls[j] + 1, Gdiplus::Color(255, 255, 64));
 						}
 					}
 
 					auto ioss = bscan->getLayerPoints(OcularLayerType::IOS, width, height);
 					for (int j = 0; j < ioss.size(); j++) {
 						if (ioss[j] >= 0) {
-							braw->SetPixel(j, ioss[j], Gdiplus::Color(0, 160, 255));
-							braw->SetPixel(j, ioss[j] + 1, Gdiplus::Color(0, 160, 255));
+							braw->SetPixel(j, ioss[j], Gdiplus::Color(64, 192, 255));
+							braw->SetPixel(j, ioss[j] + 1, Gdiplus::Color(64, 192, 255));
 						}
 					}
 
 					auto rpes = bscan->getLayerPoints(OcularLayerType::RPE, width, height);
 					for (int j = 0; j < rpes.size(); j++) {
 						if (rpes[j] >= 0) {
-							braw->SetPixel(j, rpes[j], Gdiplus::Color(255, 192, 0));
-							braw->SetPixel(j, rpes[j] + 1, Gdiplus::Color(255, 192, 0));
+							braw->SetPixel(j, rpes[j], Gdiplus::Color(255, 192, 64));
+							braw->SetPixel(j, rpes[j] + 1, Gdiplus::Color(255, 192, 64));
 						}
 					}
 
 					auto brm = bscan->getLayerPoints(OcularLayerType::BRM, width, height);
 					for (int j = 0; j < brm.size(); j++) {
 						if (brm[j] >= 0) {
-							braw->SetPixel(j, brm[j], Gdiplus::Color(192, 0, 255));
-							braw->SetPixel(j, brm[j] + 1, Gdiplus::Color(192, 0, 255));
+							braw->SetPixel(j, brm[j], Gdiplus::Color(192, 64, 255));
+							braw->SetPixel(j, brm[j] + 1, Gdiplus::Color(192, 64, 255));
 						}
 					}
 					/*
 					auto oprs = bscan->getLayerPoints(OcularLayerType::OPR, width, height);
 					for (int j = 0; j < oprs.size(); j++) {
 						if (oprs[j] >= 0) {
-							braw->SetPixel(j, oprs[j], Gdiplus::Color(192, 0, 255));
-							braw->SetPixel(j, oprs[j] + 1, Gdiplus::Color(192, 0, 255));
+							braw->SetPixel(j, oprs[j], Gdiplus::Color(255, 128, 0));
+							braw->SetPixel(j, oprs[j] + 1, Gdiplus::Color(255, 128, 0));
 						}
 					}
 					*/
@@ -416,7 +417,7 @@ void CHctReportView::updateLayoutOfImages(void)
 	}
 
 	_screenWidth = wScreen + CHART_WIDTH;
-	_screenHeight = hScreen;
+	_screenHeight = (int)(hScreen * 1.2);
 	_screenHeight += 1024;
 	return;
 }
@@ -847,11 +848,44 @@ void CHctReportView::OnInitialUpdate()
 	// TODO: calculate the total size of this view
 	sizeTotal.cx = _screenWidth;
 	sizeTotal.cy = _screenHeight;
-	CSize page(200, 200);
-	CSize line(25, 25);
+	CSize page(256, 512);
+	CSize line(64, 128);
 	SetScrollSizes(MM_TEXT, sizeTotal, page, line);
 }
 
+void CHctReportView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	switch (nChar)
+	{
+	case VK_PRIOR: // Page Up
+		SendMessage(WM_VSCROLL, SB_PAGEUP, 0L);
+		break;
+
+	case VK_NEXT:  // Page Down
+		SendMessage(WM_VSCROLL, SB_PAGEDOWN, 0L);
+		break;
+
+	case VK_UP:    // Arrow Up
+		SendMessage(WM_VSCROLL, SB_LINEUP, 0L);
+		break;
+
+	case VK_DOWN:  // Arrow Down
+		SendMessage(WM_VSCROLL, SB_LINEDOWN, 0L);
+		break;
+
+	case VK_HOME:  // Home Key
+		SendMessage(WM_VSCROLL, SB_TOP, 0L);
+		break;
+
+	case VK_END:   // End Key
+		SendMessage(WM_VSCROLL, SB_BOTTOM, 0L);
+		break;
+
+	default:
+		CScrollView::OnKeyDown(nChar, nRepCnt, nFlags);
+		break;
+	}
+}
 
 // CHctReportView printing
 

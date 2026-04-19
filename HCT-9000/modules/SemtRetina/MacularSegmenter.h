@@ -17,7 +17,7 @@ namespace SemtRetina
 		MacularSegmenter& operator=(const MacularSegmenter& rhs) = delete;
 
 	public:
-		bool segment(void) override;
+		bool segment(bool angio) override;
 
 	protected:
 		void resetAlgorithms(void) override;

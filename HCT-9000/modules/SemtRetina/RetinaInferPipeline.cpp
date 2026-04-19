@@ -20,6 +20,8 @@ struct RetinaInferPipeline::RetinaInferPipelineImpl
 	const RetinaSegmenter* segm = nullptr;
 
 	vector<float> probMaps;
+	int map_width = 0;
+	int map_height = 0;
 
 	RetinaInferPipelineImpl()
 	{
@@ -47,43 +49,66 @@ bool SemtRetina::RetinaInferPipeline::inferLayerProbMaps(void)
 
 	auto* segm = impl().segm;
 	auto* resa = segm->bscanResampler();
-	// auto* image = resa->imageCoarse;
 	auto* image = resa->imageSample();
 
-	auto* p_img = image->getCvMatConst().data;
 	int width = image->getWidth();
 	int height = image->getHeight();
 
-	int mapSize = RetinaSegmentModel::outputProbMapSize();
-	auto probs = vector<float>(mapSize);
-	float* p_map = probs.data();
+	int input_w = (resa->isAngio() ? RetinaSegmentModel::inputWidthS() : RetinaSegmentModel::inputWidthM());
+	int input_h = (resa->isAngio() ? RetinaSegmentModel::inputHeightS() : RetinaSegmentModel::inputHeightM());
+	int n_class = RetinaSegmentModel::numberOfClasses();
+
+	CvImage input;
+	cv::resize(image->getCvMatConst(), input.getCvMat(), Size(input_w, input_h), 0.0, 0.0, INTER_AREA);
+
+	int map_size = (resa->isAngio() ? RetinaSegmentModel::outputProbMapSizeS() : RetinaSegmentModel::outputProbMapSizeM());
+	auto probs = vector<float>(map_size);
+
+	auto* p_data = input.getCvMatConst().data;
+	float* p_prob = probs.data();
 	
-	if (!RetinaSegmentModel::runInference(p_img, width, height, p_map)) {
+	if (!RetinaSegmentModel::runInference(p_data, input_w, input_h, p_prob)) {
 		return false;
 	}
 
-	impl().probMaps = probs;
+	cv::Mat src(input_h, input_w, CV_MAKETYPE(CV_32F, n_class), const_cast<float*>(p_prob));
+	cv::Mat dst;
+
+	cv::resize(src, dst, cv::Size(width, height), 0.0, 0.0, INTER_CUBIC);
+	std::vector<float> output;
+	if (dst.isContinuous()) {
+		output.assign((float*)dst.datastart, (float*)dst.dataend);
+	}
+	else {
+		for (int i = 0; i < dst.rows; ++i) {
+			const float* row_ptr = dst.ptr<float>(i);
+			output.insert(output.end(), row_ptr, row_ptr + dst.cols * n_class);
+		}
+	}
+	
+	impl().map_width = width;
+	impl().map_height = height;
+	impl().probMaps = output;
 	return true;
 }
 
 int SemtRetina::RetinaInferPipeline::probMapWidth(void) const
 {
-	auto width = RetinaSegmentModel::outputWidth();
+	auto width = impl().map_width;
 	return width;
 }
 
 int SemtRetina::RetinaInferPipeline::probMapHeight(void) const
 {
-	auto height = RetinaSegmentModel::outputHeight();
+	auto height = impl().map_height;
 	return height;
 }
-
 
 const float* SemtRetina::RetinaInferPipeline::probMapVitreous(void) const
 {
 	auto index = RetinaSegmentModel::classIndexVitreous();
-	auto width = RetinaSegmentModel::outputWidth();
-	auto height = RetinaSegmentModel::outputHeight();
+	auto width = probMapWidth();
+	auto height = probMapHeight();
 	auto* p = impl().probMaps.data() + index * width * height;
 	return p;
 }
@@ -91,8 +116,8 @@ const float* SemtRetina::RetinaInferPipeline::probMapVitreous(void) const
 const float* SemtRetina::RetinaInferPipeline::probMapRnfl(void) const
 {
 	auto index = RetinaSegmentModel::classIndexRnfl();
-	auto width = RetinaSegmentModel::outputWidth();
-	auto height = RetinaSegmentModel::outputHeight();
+	auto width = probMapWidth();
+	auto height = probMapHeight();
 	auto* p = impl().probMaps.data() + index * width * height;
 	return p;
 }
@@ -100,8 +125,8 @@ const float* SemtRetina::RetinaInferPipeline::probMapRnfl(void) const
 const float* SemtRetina::RetinaInferPipeline::probMapIplOpl(void) const
 {
 	auto index = RetinaSegmentModel::classIndexIplOpl();
-	auto width = RetinaSegmentModel::outputWidth();
-	auto height = RetinaSegmentModel::outputHeight();
+	auto width = probMapWidth();
+	auto height = probMapHeight();
 	auto* p = impl().probMaps.data() + index * width * height;
 	return p;
 }
@@ -109,8 +134,8 @@ const float* SemtRetina::RetinaInferPipeline::probMapIplOpl(void) const
 const float* SemtRetina::RetinaInferPipeline::probMapOnl(void) const
 {
 	auto index = RetinaSegmentModel::classIndexOnl();
-	auto width = RetinaSegmentModel::outputWidth();
-	auto height = RetinaSegmentModel::outputHeight();
+	auto width = probMapWidth();
+	auto height = probMapHeight();
 	auto* p = impl().probMaps.data() + index * width * height;
 	return p;
 }
@@ -118,8 +143,8 @@ const float* SemtRetina::RetinaInferPipeline::probMapOnl(void) const
 const float* SemtRetina::RetinaInferPipeline::probMapRpe(void) const
 {
 	auto index = RetinaSegmentModel::classIndexRpe();
-	auto width = RetinaSegmentModel::outputWidth();
-	auto height = RetinaSegmentModel::outputHeight();
+	auto width = probMapWidth();
+	auto height = probMapHeight();
 	auto* p = impl().probMaps.data() + index * width * height;
 	return p;
 }
@@ -127,8 +152,8 @@ const float* SemtRetina::RetinaInferPipeline::probMapRpe(void) const
 const float* SemtRetina::RetinaInferPipeline::probMapChoroid(void) const
 {
 	auto index = RetinaSegmentModel::classIndexChoroid();
-	auto width = RetinaSegmentModel::outputWidth();
-	auto height = RetinaSegmentModel::outputHeight();
+	auto width = probMapWidth();
+	auto height = probMapHeight();
 	auto* p = impl().probMaps.data() + index * width * height;
 	return p;
 }
@@ -136,8 +161,8 @@ const float* SemtRetina::RetinaInferPipeline::probMapChoroid(void) const
 const float* SemtRetina::RetinaInferPipeline::probMapSclera(void) const
 {
 	auto index = RetinaSegmentModel::classIndexSclera();
-	auto width = RetinaSegmentModel::outputWidth();
-	auto height = RetinaSegmentModel::outputHeight();
+	auto width = probMapWidth();
+	auto height = probMapHeight();
 	auto* p = impl().probMaps.data() + index * width * height;
 	return p;
 }
@@ -145,8 +170,8 @@ const float* SemtRetina::RetinaInferPipeline::probMapSclera(void) const
 const float* SemtRetina::RetinaInferPipeline::probMapDiscHead(void) const
 {
 	auto index = RetinaSegmentModel::classIndexDiscHead();
-	auto width = RetinaSegmentModel::outputWidth();
-	auto height = RetinaSegmentModel::outputHeight();
+	auto width = probMapWidth();
+	auto height = probMapHeight();
 	auto* p = impl().probMaps.data() + index * width * height;
 	return p;
 }
