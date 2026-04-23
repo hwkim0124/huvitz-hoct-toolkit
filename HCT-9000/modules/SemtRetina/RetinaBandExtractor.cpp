@@ -76,13 +76,17 @@ bool SemtRetina::RetinaBandExtractor::estimateHorizontalBounds(void)
 {
 	auto* segm = impl().segm;
 	auto* resa = segm->bscanResampler();
+	auto* crta = segm->retinaSegmCriteria();
+
 	auto* image = resa->imageCoarse();
+	auto img_w = image->getWidth();
+	auto img_h = image->getHeight();
 
 	auto snrs = image->columnSnRatios();
 	auto size = (int)snrs.size();
 
-	const float OBJ_SNR_MIN = 18.0f; // 24.0f;
-	const int WINDOW_SIZE = 7;
+	const float OBJ_SNR_MIN = COLUMN_OBJ_SN_RATIO_MIN;
+	const int WINDOW_SIZE = crta->getColumnSnRatiosSmoothWindow();
 	const int DEGREE = 1;
 	auto filts = CppUtil::SgFilter::smoothFloats(snrs, WINDOW_SIZE, DEGREE);
 
@@ -102,7 +106,7 @@ bool SemtRetina::RetinaBandExtractor::estimateHorizontalBounds(void)
 	}
 
 	int width = x2 - x1 + 1;
-	int height = image->getHeight();
+	int height = img_h;
 	if (width <= 0) {
 		return false;
 	}
@@ -112,8 +116,8 @@ bool SemtRetina::RetinaBandExtractor::estimateHorizontalBounds(void)
 		xs.push_back(x);
 	}
 
-	if (xs.size() != width) {
-		LogD() << "Sampling index: " << resa->sampleIndex() << ", retina x1: " << x1 << ", x2: " << x2 << ", size: " << xs.size();
+	if (img_w != width) {
+		LogD() << "Sampling index: " << resa->sampleIndex() << ", retina x1: " << x1 << ", x2: " << x2 << ", size: " << xs.size() << ", img width: " << img_w;
 	}
 
 	impl().retinaBeginX = x1;
@@ -124,6 +128,7 @@ bool SemtRetina::RetinaBandExtractor::estimateHorizontalBounds(void)
 	return true;
 }
 
+
 bool SemtRetina::RetinaBandExtractor::detectInnerRetinaBoundary(void)
 {
 	auto* segm = impl().segm;
@@ -132,7 +137,7 @@ bool SemtRetina::RetinaBandExtractor::detectInnerRetinaBoundary(void)
 	auto* image = resa->imageCoarse();
 
 	auto* pipe = segm->retinaInferPipeline();
-	auto* prob = pipe->probMapVitreous();
+	auto* indice = pipe->classIndices();
 	
 	auto x_beg = impl().retinaBeginX;
 	auto x_end = impl().retinaEndX;
@@ -142,28 +147,27 @@ bool SemtRetina::RetinaBandExtractor::detectInnerRetinaBoundary(void)
 	auto width = image->getWidth();
 	auto height = image->getHeight();
 
-	const float PROB_THRESH = 0.5f;
 	const int SEARCH_BAND = crta->getVitreousSizeToTriggerMidpoint();
 
 	vector<int> y_locs;
-
 	for (int x = x_beg; x <= x_end; x++) {
 		vector<int> vits;
 		for (int y = 0; y < y_span; y++) {
-			auto val = prob[y * width + x];
-			if (val >= PROB_THRESH) {
+			auto val = indice[y * width + x];
+			if (val == CLASS_VITREOUS) {
 				vits.push_back(y);
 			}
 		}
 
 		int row_start = 0;
-		if (static_cast<int>(vits.size()) > SEARCH_BAND) {
-			row_start = vits[vits.size() / 2];
+		int vits_size = static_cast<int>(vits.size());
+		if (vits_size > SEARCH_BAND) {
+			row_start = vits[vits_size / 2];
 
 			// Search downward from row_start
 			for (int y = row_start; y < height; ++y) {
-				float val = prob[y * width + x];
-				if (val < PROB_THRESH) {
+				auto val = indice[y * width + x];
+				if (val != CLASS_VITREOUS) {
 					row_start = y;
 					break;
 				}
@@ -172,13 +176,13 @@ bool SemtRetina::RetinaBandExtractor::detectInnerRetinaBoundary(void)
 			// Count values below threshold before row_start
 			int not_count = 0;
 			for (int y = 0; y < row_start; ++y) {
-				float val = prob[y * width + x];
-				if (val < PROB_THRESH) {
+				auto val = indice[y * width + x];
+				if (val != CLASS_VITREOUS) {
 					not_count++;
 				}
 			}
 
-			if (not_count > static_cast<int>(vits.size()) / 2) {
+			if (not_count > (vits_size / 2)) {
 				row_start = 0;
 			}
 		}
@@ -189,8 +193,8 @@ bool SemtRetina::RetinaBandExtractor::detectInnerRetinaBoundary(void)
 		if (row_start == 0) {
 			// Find first row where value < 0.5
 			for (int y = 0; y < height; ++y) {
-				float val = prob[y * width + x];
-				if (val < PROB_THRESH) {
+				auto val = indice[y * width + x];
+				if (val != CLASS_VITREOUS) {
 					row_start = y;
 					break;
 				}
@@ -247,7 +251,7 @@ bool SemtRetina::RetinaBandExtractor::detectOuterRetinaBoundary(void)
 	auto img_mat = image->getCvMatConst();
 
 	auto* pipe = segm->retinaInferPipeline();
-	auto* prob = pipe->probMapSclera();
+	auto* indice = pipe->classIndices();
 
 	auto x_beg = impl().retinaBeginX;
 	auto x_end = impl().retinaEndX;
@@ -259,7 +263,6 @@ bool SemtRetina::RetinaBandExtractor::detectOuterRetinaBoundary(void)
 
 	auto col_means = image->columnMeans();
 	auto img_stdev = image->imageStdev();
-	const float PROB_THRESH = 0.5f;
 	
 	vector<int> y_inns = impl().innerYs;
 	vector<int> y_locs;
@@ -269,8 +272,8 @@ bool SemtRetina::RetinaBandExtractor::detectOuterRetinaBoundary(void)
 
 		int row_start = y_inns[k];
 		for (int y = row_start; y < height; y++) {
-			auto val = prob[y * width + x];
-			if (val >= PROB_THRESH) {
+			auto val = indice[y * width + x];
+			if (val == CLASS_SCLERA) {
 				row_start = y;
 				break;
 			}
@@ -333,12 +336,7 @@ bool SemtRetina::RetinaBandExtractor::detectOpticNerveHeadRegion(void)
 	auto* image = resa->imageCoarse();
 
 	auto* pipe = segm->retinaInferPipeline();
-	auto* nfls = pipe->probMapRnfl();
-	auto* rpes = pipe->probMapRpe();
-	auto* onls = pipe->probMapOnl();
-	auto* chos = pipe->probMapChoroid();
-	auto* head = pipe->probMapDiscHead();
-	auto* scls = pipe->probMapSclera();
+	auto* indice = pipe->classIndices();
 
 	auto width = image->getWidth();
 	auto height = image->getHeight();
@@ -349,9 +347,9 @@ bool SemtRetina::RetinaBandExtractor::detectOpticNerveHeadRegion(void)
 	auto outs = outerYsFull();
 
 	const float PROB_THRESH = 0.5f;
-	const int HEAD_WIDTH_MIN = crta->getOpticDiscHeadWidthMin(); // 24; // 32;
-	const int PERI_WIDTH_MIN = crta->getOpticDiscSideWidthMin(); // 8;
-	const int HEAD_DEPTH_MIN = crta->getOpticDiscHeadDepthMin(); // 24;
+	const int HEAD_WIDTH_MIN = crta->getOpticDiscHeadWidthMin(); 
+	const int PERI_WIDTH_MIN = crta->getOpticDiscSideWidthMin(); 
+	const int HEAD_DEPTH_MIN = crta->getOpticDiscHeadDepthMin(); 
 	const int HEAD_MERGE_MAX = crta->getOpticDiscHeadMergeDist();
 
 	auto xsum = 0;
@@ -373,15 +371,16 @@ bool SemtRetina::RetinaBandExtractor::detectOpticNerveHeadRegion(void)
 		auto rcnt = 0;
 		for (int y = y1; y <= y2; y++) {
 			auto idx = y * width + x;
-			if (head[idx] >= PROB_THRESH) {
+			auto cls = indice[idx];
+			if (cls == CLASS_DISC_HEAD) {
 				xacc += x;
 				yacc += y;
 				zcnt++;
 			}
-			if (nfls[idx] >= PROB_THRESH) {
+			if (cls == CLASS_RNFL) {
 				rcnt++;
 			}
-			if (scls[idx] >= PROB_THRESH) {
+			if (cls == CLASS_SCLERA) {
 				break;
 			}
 		}
@@ -449,6 +448,103 @@ bool SemtRetina::RetinaBandExtractor::detectOpticNerveHeadRegion(void)
 	}
 	return true;
 }
+
+
+bool SemtRetina::RetinaBandExtractor::adjustOpticNerveDiscMargins(void)
+{
+	auto* segm = impl().segm;
+	auto* crta = segm->retinaSegmCriteria();
+	auto* resa = segm->bscanResampler();
+
+	auto* image = resa->imageSample();
+	auto width = image->getWidth();
+	auto height = image->getHeight();
+
+	auto* pipe = segm->retinaInferPipeline();
+	auto* indice = pipe->classIndices();
+
+	auto* bilm = segm->boundaryILM();
+	auto ilms = bilm->sampleYs();
+	auto* bonl = segm->boundaryONL();
+	auto onls = bonl->sampleYs();
+
+	if (isNerveHeadRangeValid()) {
+		auto disc_x1 = impl().opticDiscMinX;
+		auto disc_x2 = impl().opticDiscMaxX;
+		auto disc_cx = (disc_x1 + disc_x2) / 2;
+		auto new_x1 = disc_x1;
+		auto new_x2 = disc_x2;
+
+		for (int x = disc_x1; x < disc_cx; x++) {
+			auto y1 = onls[x];
+			auto idx1 = y1 * width + x;
+			if (indice[idx1] == CLASS_DISC_HEAD) {
+				break;
+			}
+
+			for (int y = y1; y < height; y++) {
+				auto idx = y * width + x;
+				if (indice[idx] == CLASS_ONL) {
+					continue;
+				}
+				else {
+					if (indice[idx] == CLASS_RPE) {
+						new_x1 = x + 1;
+					}
+					break;
+				}
+			}
+		}
+
+		for (int x = disc_x2; x > disc_cx; x--) {
+			auto y1 = onls[x];
+			auto idx1 = y1 * width + x;
+			if (indice[idx1] == CLASS_DISC_HEAD) {
+				break;
+			}
+
+			for (int y = y1; y < height; y++) {
+				auto idx = y * width + x;
+				if (indice[idx] == CLASS_ONL) {
+					continue;
+				}
+				else {
+					if (indice[idx] == CLASS_RPE) {
+						new_x2 = x - 1;
+					}
+					break;
+				}
+			}
+		}
+
+		int ilm_y1 = ilms[new_x1];
+		int ilm_y2 = ilms[new_x2];
+		int ilm_cy = (ilm_y1 + ilm_y2) / 2;
+		int CUP_MIN = crta->getOpticDiscCupDepthMin();
+
+		for (int x = new_x1; x <= new_x2; x++) {
+			int pass = ilms[x] - ilm_cy;
+			if (pass >= CUP_MIN) {
+				impl().isDiscCupShaped = true;
+				break;
+			}
+		}
+
+		/*
+		for (int x = new_x1; x <= new_x2; x++) {
+			if (ilms[x] >= onls[x]) {
+				impl().isDiscCupShaped = true;
+				break;
+			}
+		}
+		*/
+		impl().opticDiscMinX = new_x1;
+		impl().opticDiscMaxX = new_x2;
+		LogD() << "Optic Nerve Head margins adjusted, old x1: " << disc_x1 << ", x2: " << disc_x2 << ", new x1: " << new_x1 << ", new x2: " << new_x2 << ", cup shaped: " << impl().isDiscCupShaped << ", index: " << resa->sampleIndex();
+	}
+	return true;
+}
+
 
 void SemtRetina::RetinaBandExtractor::upscaleToSourceDimensions(void)
 {

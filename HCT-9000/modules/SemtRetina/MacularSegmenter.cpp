@@ -51,8 +51,9 @@ bool SemtRetina::MacularSegmenter::segment(bool angio)
 	if (!resam->checkRetinaSegmentable()) {
 		return false;
 	}
+
 	auto* pipe = retinaInferPipeline();
-	if (!pipe->inferLayerProbMaps()) {
+	if (!pipe->inferProbabilityMaps()) {
 		return false;
 	}
 
@@ -89,16 +90,12 @@ bool SemtRetina::MacularSegmenter::segment(bool angio)
 		return false;
 	}
 
+	if (!band->adjustOpticNerveDiscMargins()) {
+		return false;
+	}
+
 	auto* bnfl = boundaryNFL();
 	if (!bnfl->detectBoundary()) {
-		return false;
-	}
-	auto* bopl = boundaryOPL();
-	if (!bopl->detectBoundary()) {
-		return false;
-	}
-	auto* bipl = boundaryIPL();
-	if (!bipl->detectBoundary()) {
 		return false;
 	}
 
@@ -115,45 +112,31 @@ bool SemtRetina::MacularSegmenter::segment(bool angio)
 		return false;
 	}
 
+	auto* bopl = boundaryOPL();
+	if (!bopl->detectBoundary()) {
+		return false;
+	}
+	auto* bipl = boundaryIPL();
+	if (!bipl->detectBoundary()) {
+		return false;
+	}
+
 	crta->enableSourceDimensions();
 	band->upscaleToSourceDimensions();
 
 	bios->reconstructLayer();
-	brpe->reconstructLayer();
 	bbrm->reconstructLayer();
+	brpe->reconstructLayer();
 
 	bnfl->reconstructLayer();
 	bipl->reconstructLayer();
 	bopl->reconstructLayer();
 	bilm->reconstructLayer();
-	return true;
 
-	/*
-
-
-	if (!bilm->refineBoundary()) {
-		return false;
-	}
-
-
-	// LogD() << "Boundary detected elapsed: " << CppUtil::ClockTimer::elapsedMsec();
-
-	bnfl->enforceSourceOrder();
-	bipl->enforceSourceOrder();
-	bopl->enforceSourceOrder();
-	bios->enforceSourceOrder();
-	brpe->enforceSourceOrder();
-	bbrm->enforceSourceOrder();
-	*/
 	if (band->isNerveHeadRangeValid()) {
 		auto* onhm = onhMorphometrics();
 		onhm->accumulateDiscRimVoxels();
 		onhm->accumulateDiscCupVoxels();
-		/*
-		if (!bbrm->refineBoundary()) {
-			return false;
-		}
-		*/
 	}
 	return true;
 }

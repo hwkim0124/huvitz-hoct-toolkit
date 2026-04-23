@@ -30,7 +30,7 @@ SemtRetina::OpticDiscSegmFrame::OpticDiscSegmFrame(OpticDiscSegmFrame&& rhs) = d
 OpticDiscSegmFrame& SemtRetina::OpticDiscSegmFrame::operator=(OpticDiscSegmFrame&& rhs) = default;
 
 
-bool SemtRetina::OpticDiscSegmFrame::segmentMacularLayers(bool angio)
+bool SemtRetina::OpticDiscSegmFrame::segmentLayers(bool angio)
 {
 	resetRetinaSegmenter();
 

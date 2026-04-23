@@ -30,7 +30,7 @@ SemtRetina::MacularSegmFrame::MacularSegmFrame(MacularSegmFrame&& rhs) = default
 MacularSegmFrame& SemtRetina::MacularSegmFrame::operator=(MacularSegmFrame&& rhs) = default;
 
 
-bool SemtRetina::MacularSegmFrame::segmentMacularLayers(bool angio)
+bool SemtRetina::MacularSegmFrame::segmentLayers(bool angio)
 {
 	resetRetinaSegmenter();
 

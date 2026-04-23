@@ -70,16 +70,32 @@ bool SemtRetina::BoundaryNFL::reconstructLayer(void)
 	auto lows = std::vector<int>(width, 0);
 	auto delt = std::vector<int>(width, range);
 
+	auto* bilm = segm->boundaryILM();
+	auto ilms = bilm->sourceYs();
 	auto* bipl = segm->boundaryIPL();
 	auto ipls = bipl->sourceYs();
 	auto nfls = sourceYs();
 
-	const int OFFS_MIN = crta->getLayerOffsetMinNFL();
-	const int OFFS_MAX = crta->getLayerOffsetMaxNFL();
+	const int UPPER_OFFS = crta->getLayerUpperSpaceMinNFL();
 
 	for (int i = 0; i < width; i++) {
-		upps[i] = min(nfls[i] + OFFS_MIN, ipls[i]);
-		lows[i] = min(nfls[i] + OFFS_MAX, ipls[i]);
+		auto size1 = nfls[i] - ilms[i];
+		auto size2 = ipls[i] - nfls[i];
+		auto offs1 = (int)(size1 * 0.50f);
+		auto offs2 = (int)(size2 * 0.35f);
+		auto y1 = max((int)(ilms[i] + offs1), nfls[i]); // -UPPER_OFFS);
+		auto y2 = min((int)(nfls[i] + offs2), ipls[i]);
+		upps[i] = y1;
+		lows[i] = y2;
+	}
+
+	auto ret_x1 = band->retinaBeginX();
+	auto ret_x2 = band->retinaEndX();
+	for (int i = 0; i < ret_x1; i++) {
+		delt[i] = 1;
+	}
+	for (int i = ret_x2 + 1; i < width; i++) {
+		delt[i] = 1;
 	}
 
 	this->upperYs() = upps;
@@ -121,29 +137,38 @@ bool SemtRetina::BoundaryNFL::designPathConstraints(void)
 	auto* band = segm->retinaBandExtractor();
 	auto outs = band->outerYsFull();
 
-	auto range = crta->getPathCostRangeDeltaNFL();
+	auto moves = crta->getPathCostRangeDeltaNFL();
 	auto upps = std::vector<int>(width, 0);
 	auto lows = std::vector<int>(width, 0);
-	auto delt = std::vector<int>(width, range);
+	auto delt = std::vector<int>(width, moves);
+
+	auto ret_x1 = band->retinaBeginX();
+	auto ret_x2 = band->retinaEndX();
+	for (int i = 0; i < ret_x1; i++) {
+		delt[i] = 1;
+	}
+	for (int i = ret_x2 + 1; i < width; i++) {
+		delt[i] = 1;
+	}
 
 	for (int i = 0; i < width; i++) {
 		upps[i] = ilms[i] ;
 		lows[i] = onls[i] ;
 	}
 
-	if (band->isNerveHeadRangeValid() && band->isNerveHeadDiscCupShaped()) {
+	if (band->isNerveHeadRangeValid()) {
 		auto disc_x1 = band->opticDiscMinX();
 		auto disc_x2 = band->opticDiscMaxX();
 
-		const int UPPER_MARGIN = crta->getPathDiscRangeSpaceNFL();
-		range = crta->getPathDiscRangeDeltaNFL();
+		int UPPER_MARGIN = 0; 
+		if (band->isNerveHeadDiscCupShaped()) {
+			moves = crta->getPathDiscRangeDeltaNFL();
+			UPPER_MARGIN = crta->getPathDiscUpperSpaceNFL();
+		}
 		for (int x = disc_x1; x <= disc_x2; ++x) {
-			auto offs = UPPER_MARGIN - (lows[x] - upps[x]);
-			if (offs > 0) {
-				lows[x] += offs;
-			}
+			upps[x] = min(ilms[x] + UPPER_MARGIN, outs[x]);
 			lows[x] = outs[x];
-			delt[x] = range;
+			delt[x] = moves;
 		}
 	}
 
@@ -160,6 +185,7 @@ bool SemtRetina::BoundaryNFL::designPathConstraints(void)
 	this->deltaYs() = del2;
 	return true;
 }
+
 
 bool SemtRetina::BoundaryNFL::prepareGradientMap(void)
 {
@@ -189,10 +215,9 @@ bool SemtRetina::BoundaryNFL::prepareGradientMap(void)
 		matOut.copyTo(this->pathEdgeMat());
 	}
 
-	/*
 	{
 		auto* pipe = segm->retinaInferPipeline();
-		auto* prob_nfl = pipe->probMapRnfl();
+		auto* p_rnfl = pipe->probMapRnfl();
 
 		auto width = pipe->probMapWidth();
 		auto height = pipe->probMapHeight();
@@ -200,29 +225,13 @@ bool SemtRetina::BoundaryNFL::prepareGradientMap(void)
 
 		Mat matProb = Mat::zeros(height, width, CV_32F);
 		float* dst = matProb.ptr<float>(0);
-
-		for (int i = 0; i < N; ++i) {
-			float val1 = prob_nfl[i];
-			dst[i] = val1;
-		}
-		matProb.copyTo(this->pathProbMat());
-	}
-	*/
-	{
-		auto* pipe = segm->retinaInferPipeline();
-		auto* prob = pipe->probMapRnfl();
-
-		auto width = pipe->probMapWidth();
-		auto height = pipe->probMapHeight();
-		auto N = width * height;
-
-		Mat matProb = Mat::zeros(height, width, CV_32F);
-		float* dst = matProb.ptr<float>(0);
-
+		memcpy(dst, p_rnfl, N * sizeof(float));
+		/*
 		for (int i = 0; i < N; ++i) {
 			float val = prob[i];
 			dst[i] = val;
 		}
+		*/
 
 		auto mean = cv::mean(matProb);
 		Mat matDst, matGrad, matOut;
@@ -265,17 +274,13 @@ bool SemtRetina::BoundaryNFL::preparePathCostMap(void)
 			auto y2 = lows[x];
 			for (int y = y1; y <= y2; y++) {
 				auto idx = y * width + x;
-				p_prob[idx] = p_edge[idx];
-				// p_prob[idx] = 0.1f;
+				p_prob[idx] += p_edge[idx];
 			}
 		}
 	}
 
 	Mat matCost;
-	// cv::multiply(matProb, matEdge, matCost);
-	// cv::add(matProb, matEdge, matCost);
 	matProb.copyTo(matCost);
-
 	matCost *= -1.0f;
 	matCost.copyTo(this->pathCostMat());
 	return true;
@@ -308,6 +313,7 @@ bool SemtRetina::BoundaryNFL::smoothBoundaryNFL(void)
 	this->sampleYs() = filt;
 	return true;
 }
+
 
 bool SemtRetina::BoundaryNFL::smoothRefinedNFL(void)
 {

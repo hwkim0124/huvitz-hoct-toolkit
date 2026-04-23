@@ -70,21 +70,6 @@ SegmScan::DiscBsegm::DiscBsegm(DiscBsegm && rhs) = default;
 DiscBsegm & SegmScan::DiscBsegm::operator=(DiscBsegm && rhs) = default;
 
 
-/*
-SegmScan::DiscBsegm::DiscBsegm(const DiscBsegm & rhs)
-	: d_ptr(make_unique<DiscBsegmImpl>(*rhs.d_ptr))
-{
-}
-
-
-DiscBsegm & SegmScan::DiscBsegm::operator=(const DiscBsegm & rhs)
-{
-	*d_ptr = *rhs.d_ptr;
-	return *this;
-}
-*/
-
-
 bool SegmScan::DiscBsegm::performAnalysis(bool meye)
 {
 	if (source()->isEmpty()) {
@@ -101,50 +86,6 @@ bool SegmScan::DiscBsegm::performAnalysis(bool meye)
 	bool useSemtVersion = false;
 	useSemtVersion = SemtRetina::RetinaSegmentModel::isInitialized();
 
-/*
-#ifdef __USE_SEMT_SEGM__	
-	bool useVersion2 = false;
-	//useVersion2 = (rangeX < 9.0f && getPatternDescript().isDiscScan() && InferenceModel::isInitialized());
-	useVersion2 = (getPatternDescript().isDiscScan() && InferenceModel::isInitialized());
-
-	if (useVersion2) 
-	{
-		getImpl().bscan.setImageSource(source()->getBitsData(), source()->getWidth(), source()->getHeight(), rangeX, getImageIndex());
-		if (!getImpl().bscan.performSegmentation()) {
-			goto failed;
-		}
-
-		int w = source()->getWidth();
-		int h = source()->getHeight();
-		layerILM()->initialize(getImpl().bscan.getBoundaryILM(), w, h);
-		layerNFL()->initialize(getImpl().bscan.getBoundaryNFL(), w, h);
-		layerIPL()->initialize(getImpl().bscan.getBoundaryIPL(), w, h);
-		layerOPL()->initialize(getImpl().bscan.getBoundaryOPL(), w, h);
-		layerIOS()->initialize(getImpl().bscan.getBoundaryIOS(), w, h);
-		layerRPE()->initialize(getImpl().bscan.getBoundaryRPE(), w, h);
-		layerBRM()->initialize(getImpl().bscan.getBoundaryBRM(), w, h);
-		layerOPR()->initialize(getImpl().bscan.getBoundaryOPR(), w, h);
-
-		auto baseLine = layerRPE()->getYs();
-		transform(baseLine.cbegin(), baseLine.cend(), baseLine.begin(), [=](int elem) { return elem + 45; });
-		layerBASE()->initialize(baseLine, source()->getWidth(), source()->getHeight());
-
-		auto layers = getRetinaLayers();
-		layers->setRegionSize(source()->getWidth(), source()->getHeight());
-
-		getImpl().disc_x1 = getImpl().bscan.getOpticDiscX1();
-		getImpl().disc_x2 = getImpl().bscan.getOpticDiscX2();
-		getImpl().cup_x1 = getImpl().bscan.getOpticCupX1();
-		getImpl().cup_x2 = getImpl().bscan.getOpticCupX2();
-		getImpl().disc_pixels = getImpl().bscan.getOpticDiscPixels();
-		getImpl().cup_pixels = getImpl().bscan.getOpticCupPixels();
-		getImpl().isOpticDisc = getImpl().bscan.isOpticDiscRegion();
-		getImpl().isOpticCup = getImpl().bscan.isOpticCupRegion();
-	}
-	else 
-#endif
-*/
-
 	if (useSemtVersion) {
 		auto d_ptr = source()->getBitsData();
 		auto src_w = source()->getWidth();
@@ -153,7 +94,7 @@ bool SegmScan::DiscBsegm::performAnalysis(bool meye)
 
 		auto& frame = getImpl().segmFrame;
 		frame.setBscanImage(d_ptr, src_w, src_h, rangeX, index);
-		if (!frame.segmentMacularLayers(isAngio)) {
+		if (!frame.segmentLayers(isAngio)) {
 			goto failed;
 		}
 
@@ -165,8 +106,8 @@ bool SegmScan::DiscBsegm::performAnalysis(bool meye)
 		layerRPE()->initialize(frame.boundaryRPE(), src_w, src_h);
 		layerBRM()->initialize(frame.boundaryBRM(), src_w, src_h);
 
-		layerInn()->initialize(frame.boundaryONL(), src_w, src_h);
-		layerOut()->initialize(frame.boundaryOUT(), src_w, src_h);
+		layerInn()->initialize(frame.boundaryINN(), src_w, src_h);
+		layerOut()->initialize(frame.boundaryONL(), src_w, src_h);
 		layerBASE()->initialize(frame.boundaryBRM(), src_w, src_h);
 
 		auto layers = getRetinaLayers();

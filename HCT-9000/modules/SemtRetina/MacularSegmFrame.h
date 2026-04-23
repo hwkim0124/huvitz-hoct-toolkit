@@ -20,7 +20,7 @@ namespace SemtRetina
 		MacularSegmFrame& operator=(const MacularSegmFrame& rhs) = delete;
 
 	public:
-		bool segmentMacularLayers(bool angio);
+		bool segmentLayers(bool angio);
 
 	protected:
 		void resetRetinaSegmenter() override;

@@ -96,6 +96,7 @@ bool SemtRetina::RetinaBoundary::searchPathMinCost()
 				}
 			}
 			matAccm.at<float>(r, c) += minCost;
+			// LogD() << "Cost at (" << r << ", " << c << ") = " << matAccm.at<float>(r, c);
 		}
 	}
 
@@ -316,7 +317,7 @@ bool SemtRetina::RetinaBoundary::resizeBoundaryPath(std::vector<int> path, int s
 	return true;
 }
 
-std::vector<int> SemtRetina::RetinaBoundary::smoothOptimalPath(int filt_size, int degree, bool nerve_head)
+std::vector<int> SemtRetina::RetinaBoundary::smoothOptimalPath(int filt_size, int degree, bool nerve_head, std::vector<int> ilms)
 {
 	auto* segm = retinaSegmenter();
 	auto* band = segm->retinaBandExtractor();
@@ -362,8 +363,34 @@ std::vector<int> SemtRetina::RetinaBoundary::smoothOptimalPath(int filt_size, in
 			auto y2 = r_marg.front();
 			auto x2 = head_x2 + 1;
 			auto slope = (float)(y2 - y1) / (float)(x2 - x1);
+			auto sx = x1 + 1;
+			auto ex = x2 - 1;
 			for (auto i = (x1 + 1), k = 1; i <= (x2 - 1); i++, k++) {
 				path[i] = (int)(y1 + k * slope);
+			}
+			if (ilms.size() == width) {
+				bool is_cup = false;
+				auto bott_x = 0;
+				auto bott_y = 0;
+				for (auto i = sx; i <= ex; i++) {
+					if (ilms[i] > path[i]) {
+						is_cup = true;
+						if (ilms[i] > bott_y) {
+							bott_y = ilms[i];
+							bott_x = i;
+						}
+					}
+				}
+				if (is_cup) {
+					slope = (float)(bott_y - y1) / (float)(bott_x - x1);
+					for (auto i = sx; i <= bott_x; i++) {
+						path[i] = (int)(y1 + slope * (i - x1));
+					}
+					slope = (float)(y2 - bott_y) / (float)(x2 - bott_x);
+					for (auto i = bott_x; i <= ex; i++) {
+						path[i] = (int)(bott_y + slope * (i - bott_x));
+					}
+				}
 			}
 		}
 		else if (band->isRetinaOnNerveHeadMarginLeft()) {

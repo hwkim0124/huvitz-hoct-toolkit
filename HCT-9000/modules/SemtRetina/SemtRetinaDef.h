@@ -13,6 +13,16 @@ namespace RetSegm {
 
 namespace SemtRetina
 {
+	constexpr int CLASS_VITREOUS = 0;
+	constexpr int CLASS_RNFL = 1;
+	constexpr int CLASS_IPL_OPL = 2;
+	constexpr int CLASS_ONL = 3;
+	constexpr int CLASS_RPE = 4;
+	constexpr int CLASS_CHOROID = 5;
+	constexpr int CLASS_SCLERA = 6;
+	constexpr int CLASS_DISC_HEAD = 7;
+	constexpr int NUM_LAYER_CLASSES = 8;
+
 	constexpr int SAMPLE_WIDTH_S = 384;
 	constexpr int SAMPLE_WIDTH_M = 512;
 	constexpr int SAMPLE_HEIGHT_S = 384; // 768;
@@ -32,6 +42,9 @@ namespace SemtRetina
 	constexpr int COARSE_GUIDED_RADIUS_M = 5;
 	constexpr double COARSE_GUIDED_EPSILON_S = 0.05;
 	constexpr double COARSE_GUIDED_EPSILON_M = 0.05;
+
+	constexpr float COLUMN_OBJ_SN_RATIO_MIN = 18.0f;
+	constexpr float COLUMN_VALID_RATIO_MIN = 0.45f;
 
 
 	constexpr int MODEL_INPUT_WIDTH = 512;

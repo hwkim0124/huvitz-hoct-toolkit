@@ -16,6 +16,7 @@ struct BscanImageData::BscanImageDataImpl
 {
 	vector<float> col_means;
 	vector<float> col_stdev;
+    vector<float> row_means;
 
 	vector<float> col_bgd_stdev;
 	vector<float> col_bgd_means;
@@ -71,6 +72,13 @@ void SemtRetina::BscanImageData::estimateStatitics(void)
 		means[c] = (float)matOut.at<uchar>(0, c);
 	}
 	impl().col_means = means;
+
+	reduce(matSrc, matOut, 1, CV_REDUCE_AVG);
+	auto row_means = std::vector<float>(matOut.rows);
+    for (int r = 0; r < matOut.rows; r++) {
+        row_means[r] = (float)matOut.at<uchar>(r, 0);
+    }
+	impl().row_means = row_means;
     return;
 }
 
@@ -277,6 +285,11 @@ const std::vector<float>& SemtRetina::BscanImageData::columnObjStdev(void) const
 const std::vector<float>& SemtRetina::BscanImageData::columnSnRatios(void) const
 {
     return impl().col_snr_ratio;
+}
+
+const std::vector<float>& SemtRetina::BscanImageData::rowMeans(void) const
+{
+    return impl().row_means;
 }
 
 BscanImageData::BscanImageDataImpl& SemtRetina::BscanImageData::impl(void) const

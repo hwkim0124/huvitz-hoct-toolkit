@@ -144,7 +144,6 @@ void CHctReportView::createBitmapOfPattern(void)
 
 					auto thicks = bscan->getLayerThickness(OcularLayerType::ILM, OcularLayerType::RPE, width, height);
 
-
 					auto inner = bscan->getLayerPoints(OcularLayerType::INNER, width, height);
 					for (int j = 0; j < inner.size(); j++) {
 						if (inner[j] >= 0) {
@@ -155,8 +154,8 @@ void CHctReportView::createBitmapOfPattern(void)
 					auto outer = bscan->getLayerPoints(OcularLayerType::OUTER, width, height);
 					for (int j = 0; j < outer.size(); j++) {
 						if (outer[j] >= 0) {
-							braw->SetPixel(j, outer[j], Gdiplus::Color(224, 224, 224));
-							// braw->SetPixel(j, outer[j] + 1, Gdiplus::Color(224, 224, 224));
+							braw->SetPixel(j, outer[j], Gdiplus::Color(255, 0, 128));
+							braw->SetPixel(j, outer[j] + 1, Gdiplus::Color(255, 0, 128));
 						}
 					}
 
@@ -171,8 +170,8 @@ void CHctReportView::createBitmapOfPattern(void)
 					auto nfls = bscan->getLayerPoints(OcularLayerType::NFL, width, height);
 					for (int j = 0; j < nfls.size(); j++) {
 						if (nfls[j] >= 0) {
-							braw->SetPixel(j, nfls[j], Gdiplus::Color(255, 0, 128));
-							braw->SetPixel(j, nfls[j] + 1, Gdiplus::Color(255, 0, 128));
+							braw->SetPixel(j, nfls[j], Gdiplus::Color(255, 0, 255));
+							braw->SetPixel(j, nfls[j] + 1, Gdiplus::Color(255, 0, 255));
 						}
 					}
 
@@ -417,8 +416,8 @@ void CHctReportView::updateLayoutOfImages(void)
 	}
 
 	_screenWidth = wScreen + CHART_WIDTH;
-	_screenHeight = (int)(hScreen * 1.2);
-	_screenHeight += 1024;
+	_screenHeight = (int)(hScreen * 1.1);
+	// _screenHeight += 1024;
 	return;
 }
 

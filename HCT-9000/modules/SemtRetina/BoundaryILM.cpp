@@ -75,9 +75,12 @@ bool SemtRetina::BoundaryILM::reconstructLayer(void)
 	auto lows = std::vector<int>(width, 0);
 	auto delt = std::vector<int>(width, range);
 
+	const int UPPER_OFFS = crta->getlayerUpperSpaceMinILM();
 	for (int i = 0; i < width; i++) {
-		upps[i] = max(ilms[i]-24, 0);
-		lows[i] = ilms[i];
+		auto size = nfls[i] - ilms[i];
+		auto offs = (int)(size * 0.5f);
+		upps[i] = max(ilms[i] - UPPER_OFFS, 0);
+		lows[i] = min(ilms[i] + offs, nfls[i]);
 	}
 
 	if (band->isNerveHeadRangeValid() && band->isNerveHeadDiscCupShaped()) {
@@ -85,8 +88,21 @@ bool SemtRetina::BoundaryILM::reconstructLayer(void)
 		auto x2 = band->opticDiscMaxX();
 		range = crta->getPathDiscRangeDeltaILM();
 		for (int x = x1; x <= x2; ++x) {
+			auto size = nfls[x] - ilms[x];
+			auto offs = (int)(size * 0.5f);
+			upps[x] = max(ilms[x] - UPPER_OFFS*2, 0);
+			lows[x] = min(ilms[x] + offs, nfls[x]);
 			delt[x] = range;
 		}
+	}
+
+	auto ret_x1 = band->retinaBeginX();
+	auto ret_x2 = band->retinaEndX();
+	for (int i = 0; i < ret_x1; i++) {
+		delt[i] = 1;
+	}
+	for (int i = ret_x2 + 1; i < width; i++) {
+		delt[i] = 1;
 	}
 
 	this->upperYs() = upps;
@@ -125,14 +141,23 @@ bool SemtRetina::BoundaryILM::designPathConstraints(void)
 	auto inns = band->innerYsFull();
 	auto outs = band->outerYsFull();
 
-	auto range = crta->getPathCostRangeDeltaILM();
+	auto moves = crta->getPathCostRangeDeltaILM();
 	auto upps = std::vector<int>(width, 0);
 	auto lows = std::vector<int>(width, 0);
-	auto delt = std::vector<int>(width, range);
+	auto delt = std::vector<int>(width, moves);
 
 	for (int i = 0; i < width; i++) {
 		upps[i] = inns[i];
 		lows[i] = outs[i];
+	}
+
+	auto ret_x1 = band->retinaBeginX();
+	auto ret_x2 = band->retinaEndX();
+	for (int i = 0; i < ret_x1; i++) {
+		delt[i] = 1;
+	}
+	for (int i = ret_x2 + 1; i < width; i++) {
+		delt[i] = 1;
 	}
 
 	const float THRESH_MIN = 45.0f;
@@ -190,10 +215,10 @@ bool SemtRetina::BoundaryILM::designPathConstraints(void)
 		auto x2 = band->opticDiscMaxX();
 		auto min_upp = *std::min_element(upps.begin(), upps.end());
 
-		range = crta->getPathDiscRangeDeltaILM();
+		moves = crta->getPathDiscRangeDeltaILM();
 		for (int x = x1; x <= x2; ++x) {
 			upps[x] = min_upp;
-			delt[x] = range;
+			delt[x] = moves;
 		}
 	}
 
@@ -246,7 +271,7 @@ bool SemtRetina::BoundaryILM::prepareGradientMap(void)
 
 	{
 		auto* pipe = segm->retinaInferPipeline();
-		auto* prob_nfl = pipe->probMapRnfl();
+		auto* p_rnfl = pipe->probMapRnfl();
 
 		auto width = pipe->probMapWidth();
 		auto height = pipe->probMapHeight();
@@ -254,48 +279,15 @@ bool SemtRetina::BoundaryILM::prepareGradientMap(void)
 
 		Mat matProb = Mat::zeros(height, width, CV_32F);
 		float* dst = matProb.ptr<float>(0);
-
+		memcpy(dst, p_rnfl, N * sizeof(float));
+		/*
 		for (int i = 0; i < N; ++i) {
 			float val1 = prob_nfl[i];
 			dst[i] = val1;
 		}
+		*/
 		matProb.copyTo(this->pathProbMat());
 	}
-
-	/*
-	// Normalized gradient map by the RNFL & IPL probability maps.
-	{
-		auto* pipe = segm->retinaInferPipeline();
-		auto* prob_nfl = pipe->probMapRnfl();
-		auto* prob_ipl = pipe->probMapIplOpl();
-
-		auto width = pipe->probMapWidth();
-		auto height = pipe->probMapHeight();
-		auto N = width * height;
-
-		Mat matProb = Mat::zeros(height, width, CV_32F);
-		float* dst = matProb.ptr<float>(0);
-
-		for (int i = 0; i < N; ++i) {
-			float val1 = prob_nfl[i];
-			float val2 = prob_ipl[i];
-			// dst[i] = std::max(val1, val2);
-			dst[i] = val1 + val2;
-		}
-
-		auto mean = cv::mean(matProb);
-		Mat matSrc, matDst, matGrad, matOut;
-
-		matSrc = matProb;
-		cv::copyMakeBorder(matSrc, matDst, 9, 9, 0, 0, cv::BORDER_CONSTANT, mean);
-		cv::filter2D(matDst, matGrad, CV_32F, kernel, Point(-1, -1), 0.0, cv::BORDER_REFLECT);
-		matOut = matGrad(cv::Rect(0, 9, matGrad.cols, matGrad.rows - 18));
-
-		matOut.setTo(0.0f, (matOut < 0.0f));
-		cv::normalize(matOut, matOut, 0.0, 1.0, cv::NORM_MINMAX);
-		matOut.copyTo(this->pathProbMat());
-	}
-	*/
 	return true;
 }
 
@@ -308,7 +300,6 @@ bool SemtRetina::BoundaryILM::preparePathCostMap(void)
 
 	auto* band = segm->retinaBandExtractor();
 	auto* pipe = segm->retinaInferPipeline();
-	auto* head = pipe->probMapDiscHead();
 
 	auto width = pipe->probMapWidth();
 	auto height = pipe->probMapHeight();
@@ -331,7 +322,6 @@ bool SemtRetina::BoundaryILM::preparePathCostMap(void)
 		for (int x = x1; x <= x2; ++x) {
 			for (int y = upps[x]; y < lows[x]; ++y) {
 				auto idx = y * width + x;
-				// p_prob[idx] = max(head[idx], p_prob[idx]);
 				p_prob[idx] = 0.5f;
 			}
 		}
@@ -343,48 +333,8 @@ bool SemtRetina::BoundaryILM::preparePathCostMap(void)
 	matCost *= -1.0f;
 	matCost.copyTo(this->pathCostMat());
 	return true;
-	/*
-	// As default, the path cost map is constructed using the gradient 
-	// derived from the model's probability map.
-	Mat matCost;
-	matProb.copyTo(matCost);
-
-	auto* segm = retinaSegmenter();
-	auto* resa = segm->bscanResampler();
-	auto* band = segm->retinaBandExtractor();
-
-	auto* image = resa->imageCoarse();
-	auto width = image->getWidth();
-	auto height = image->getHeight();
-	*/
-	/*
-	// Within optic disc region, the gradient derived from the intensity image
-	// should be added to the path cost. 
-	if (band->isNerveHeadRangeValid()) {
-		auto x1 = band->opticDiscMinX();
-		auto x2 = band->opticDiscMaxX();
-		auto upps = this->upperYs();
-		auto lows = this->lowerYs();
-
-		float* dst = matCost.ptr<float>(0);
-		for (int x = x1; x <= x2; ++x) {
-			for (int y = upps[x]; y < lows[x]; ++y) {
-				auto idx = y * width + x;
-				auto val1 = matEdge.at<float>(y, x);
-				auto val2 = matProb.at<float>(y, x);
-				auto cost = val1 + val2;
-				// auto cost = ((val2 + 0.5f) * val1);
-				dst[idx] = cost;
-				// dst[idx] = matEdge.at<float>(y, x);
-			}
-		}
-	}
-
-	matCost *= -1.0f;
-	matCost.copyTo(this->pathCostMat());
-	*/
-	return true;
 }
+
 
 bool SemtRetina::BoundaryILM::smoothBoundaryILM(void)
 {
@@ -411,6 +361,7 @@ bool SemtRetina::BoundaryILM::smoothBoundaryILM(void)
 	return true;
 }
 
+
 bool SemtRetina::BoundaryILM::smoothRefinedILM(void)
 {
 	auto* segm = retinaSegmenter();
@@ -424,7 +375,9 @@ bool SemtRetina::BoundaryILM::smoothRefinedILM(void)
 
 	auto* bnfl = segm->boundaryNFL();
 	auto outs = bnfl->sourceYs();
+
 	auto path = this->optimalPath();
+	transform(begin(path), end(path), begin(path), [=](int elm) { return elm + 1; });
 
 	const int WINDOW_SIZE = crta->getLayerSmoothWindowILM();
 	const int DEGREE = 1;
@@ -433,9 +386,10 @@ bool SemtRetina::BoundaryILM::smoothRefinedILM(void)
 	transform(cbegin(filt), cend(filt), cbegin(outs), begin(filt), [=](int elem1, int elem2) { return min(elem1, elem2); });
 	transform(begin(filt), end(filt), begin(filt), [=](int elm) { return min(max(elm, 0), height - 1); });
 
-	this->sampleYs() = filt;
+	this->sourceYs() = filt;
 	return true;
 }
+
 
 bool SemtRetina::BoundaryILM::resizeToMatchSource(void)
 {

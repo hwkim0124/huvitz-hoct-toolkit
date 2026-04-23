@@ -147,6 +147,7 @@ BEGIN
         BEGIN
             MENUITEM "512 x 96",                    ID_LOADCUBESCAN_512X96
             MENUITEM "512 x 128",                   ID_LOADCUBESCAN_512X128
+            MENUITEM "1024 x 128",                  ID_MACULARCUBESCAN_1024X128
             MENUITEM "256 x 256",                   ID_LOADCUBESCAN_256X256
         END
         POPUP "Macular Wide Scan"

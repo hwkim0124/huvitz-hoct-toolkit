@@ -44,7 +44,9 @@ namespace SemtRetina
 		BscanImageData* imageCoarse(void) const;
 
 		BscanImageData* sourceRiseEdge(void) const;
+		BscanImageData* sourceRiseEdgeHigh(void) const;
 		BscanImageData* sourceFallEdge(void) const;
+		BscanImageData* sourceFallEdgeHigh(void) const;
 
 	protected:
 

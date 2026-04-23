@@ -23,6 +23,7 @@ namespace SemtRetina
 		bool detectInnerRetinaBoundary(void);
 		bool detectOuterRetinaBoundary(void);
 		bool detectOpticNerveHeadRegion(void);
+		bool adjustOpticNerveDiscMargins(void);
 		void upscaleToSourceDimensions(void);
 
 		void setNerveHeadRangeX(int x1, int x2) const;

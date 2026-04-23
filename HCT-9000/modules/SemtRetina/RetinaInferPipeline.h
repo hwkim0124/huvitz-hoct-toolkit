@@ -18,7 +18,7 @@ namespace SemtRetina
 		RetinaInferPipeline& operator=(const RetinaInferPipeline& rhs) = delete;
 
 	public:
-		bool inferLayerProbMaps(void);
+		bool inferProbabilityMaps(void);
 		int probMapWidth(void) const;
 		int probMapHeight(void) const;
 
@@ -31,6 +31,8 @@ namespace SemtRetina
 		const float* probMapSclera(void) const;
 		const float* probMapDiscHead(void) const;
 
+		const int* classIndices(void) const;
+		
 	private:
 		struct RetinaInferPipelineImpl;
 		std::unique_ptr<RetinaInferPipelineImpl> d_ptr;

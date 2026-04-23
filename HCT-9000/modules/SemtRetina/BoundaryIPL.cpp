@@ -71,39 +71,35 @@ bool SemtRetina::BoundaryIPL::reconstructLayer(void)
 	auto opls = bopl->sourceYs();
 	auto ipls = sourceYs();
 
-	auto range = crta->getPathCostRangeDeltaIPL();
+	auto moves = crta->getPathCostRangeDeltaIPL();
 	auto upps = std::vector<int>(width, 0);
 	auto lows = std::vector<int>(width, 0);
-	auto delt = std::vector<int>(width, range);
-
-	const int OFFS_MIN = crta->getLayerOffsetMinIPL();
-	const int OFFS_MAX = crta->getLayerOffsetMaxIPL();
+	auto delt = std::vector<int>(width, moves);
 
 	for (int i = 0; i < width; i++) {
-		auto y1 = ipls[i];
-		auto y2 = opls[i];
-
-		auto size = y2 - y1 + 1;
-		auto dlim = (int)(size * 0.5f);
-		y1 = min(max(y1, nfls[i] + OFFS_MIN), y2);
-		y2 = min(y2 - dlim, y1);
+		auto size = (opls[i] - nfls[i]) + 1;
+		auto offs1 = (int)(size * 0.35f);
+		auto offs2 = (int)(size * 0.75f);
+		auto y1 = (int)(nfls[i] + offs1);
+		auto y2 = (int)(nfls[i] + offs2);
 		upps[i] = y1;
 		lows[i] = y2;
 	}
 
-	if (band->isNerveHeadRangeValid() && band->isNerveHeadDiscCupShaped()) {
-		auto x1 = band->opticDiscMinX();
-		auto x2 = band->opticDiscMaxX();
-		for (int x = x1; x <= x2; ++x) {
-			auto y1 = max(nfls[x] + OFFS_MIN, upps[x]);
-			auto y2 = max(nfls[x] + OFFS_MAX, lows[x]);
-		}
+	auto ret_x1 = band->retinaBeginX();
+	auto ret_x2 = band->retinaEndX();
+	for (int i = 0; i < ret_x1; i++) {
+		delt[i] = 1;
+	}
+	for (int i = ret_x2 + 1; i < width; i++) {
+		delt[i] = 1;
 	}
 
 	this->upperYs() = upps;
 	this->lowerYs() = lows;
 	this->deltaYs() = delt;
 
+	// auto* edge = resa->sourceFallEdgeHigh();
 	auto* edge = resa->sourceFallEdge();
 	Mat fall = edge->getCvMatConst();
 	Mat matCost;
@@ -125,6 +121,7 @@ bool SemtRetina::BoundaryIPL::designPathConstraints(void)
 	auto* segm = retinaSegmenter();
 	auto* crta = segm->retinaSegmCriteria();
 	auto* resa = segm->bscanResampler();
+	auto* band = segm->retinaBandExtractor();
 
 	auto* image = resa->imageSample();
 	auto width = image->getWidth();
@@ -135,18 +132,27 @@ bool SemtRetina::BoundaryIPL::designPathConstraints(void)
 	auto* bopl = segm->boundaryOPL();
 	auto opls = bopl->sampleYs();
 
-	auto range = crta->getPathCostRangeDeltaIPL();
+	auto moves = crta->getPathCostRangeDeltaIPL();
 	auto upps = std::vector<int>(width, 0);
 	auto lows = std::vector<int>(width, 0);
-	auto delt = std::vector<int>(width, range);
+	auto delt = std::vector<int>(width, moves);
+
+	auto ret_x1 = band->retinaBeginX();
+	auto ret_x2 = band->retinaEndX();
+	for (int i = 0; i < ret_x1; i++) {
+		delt[i] = 1;
+	}
+	for (int i = ret_x2 + 1; i < width; i++) {
+		delt[i] = 1;
+	}
 
 	for (int i = 0; i < width; i++) {
 		auto y1 = nfls[i];
 		auto y2 = opls[i];
 
 		auto size = y2 - y1 + 1;
-		auto mag1 = (int)(size * 0.45f);
-		auto mag2 = (int)(size * 0.15f);
+		auto mag1 = (int)(size * 0.25f);
+		auto mag2 = (int)(size * 0.25f);
 		y1 = min(y1 + mag1, y2);
 		y2 = max(y2 - mag2, y1);
 		upps[i] = y1;
@@ -185,11 +191,11 @@ bool SemtRetina::BoundaryIPL::prepareGradientMap(void)
 	{
 		auto mean = image->imageMean();
 		auto stdv = image->imageStdev();
-		int gmax = (int)(mean + stdv * 2.0f);
+		int gmin = (int)(mean + stdv * 1.0f);
 		Mat matDst, matGrad, matOut;
 
 		cv::copyMakeBorder(matSrc, matDst, 9, 9, 0, 0, cv::BORDER_CONSTANT, mean);
-		matDst.setTo(gmax, (matDst > gmax));
+		matDst.setTo(gmin, (matDst < gmin));
 		cv::filter2D(matDst, matGrad, CV_32F, kernel, Point(-1, -1), 0.0, cv::BORDER_REFLECT);
 		matOut = matGrad(cv::Rect(0, 9, matGrad.cols, matGrad.rows - 18));
 
@@ -240,6 +246,7 @@ bool SemtRetina::BoundaryIPL::smoothBoundaryIPL(void)
 	this->sampleYs() = filt;
 	return true;
 }
+
 
 bool SemtRetina::BoundaryIPL::smoothRefinedIPL(void)
 {

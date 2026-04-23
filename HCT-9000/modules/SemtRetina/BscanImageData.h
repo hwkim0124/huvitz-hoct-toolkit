@@ -41,6 +41,8 @@ namespace SemtRetina
 		const std::vector<float>& columnObjStdev(void) const;
 		const std::vector<float>& columnSnRatios(void) const;
 
+		const std::vector<float>& rowMeans(void) const;
+
 	private:
 		struct BscanImageDataImpl;
 		std::unique_ptr<BscanImageDataImpl> d_ptr;

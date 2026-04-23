@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "OpticDiscSegmenter.h"
+#include "OpticDiscSegmFrame.h"
 #include "MacularSegmFrame.h"
 
 #include "CppUtil2.h"
@@ -33,7 +34,7 @@ OpticDiscSegmenter& SemtRetina::OpticDiscSegmenter::operator=(OpticDiscSegmenter
 
 bool SemtRetina::OpticDiscSegmenter::segment(bool angio)
 {
-	auto frame = (MacularSegmFrame*)retinaSegmFrame();
+	auto frame = (OpticDiscSegmFrame*)retinaSegmFrame();
 	if (!frame->isImageSource()) {
 		return false;
 	}
@@ -41,6 +42,7 @@ bool SemtRetina::OpticDiscSegmenter::segment(bool angio)
 	resetAlgorithms();
 
 	auto* resam = bscanResampler();
+	auto* crta = retinaSegmCriteria();
 	auto& image = frame->bscanImage();
 	auto index = frame->bscanIndex();
 
@@ -50,17 +52,16 @@ bool SemtRetina::OpticDiscSegmenter::segment(bool angio)
 	if (!resam->checkRetinaSegmentable()) {
 		return false;
 	}
-
 	auto* pipe = retinaInferPipeline();
-	if (!pipe->inferLayerProbMaps()) {
+	if (!pipe->inferProbabilityMaps()) {
 		return false;
 	}
 
+	crta->enableSampleDimensions();
 	auto* band = retinaBandExtractor();
 	if (!band->estimateHorizontalBounds()) {
 		return false;
 	}
-
 	if (!band->detectInnerRetinaBoundary()) {
 		return false;
 	}
@@ -75,7 +76,6 @@ bool SemtRetina::OpticDiscSegmenter::segment(bool angio)
 	if (!binn->detectBoundary()) {
 		return false;
 	}
-
 	auto* bout = boundaryOUT();
 	if (!bout->detectBoundary()) {
 		return false;
@@ -85,29 +85,12 @@ bool SemtRetina::OpticDiscSegmenter::segment(bool angio)
 	if (!bilm->detectBoundary()) {
 		return false;
 	}
-
-	auto* brpe = boundaryRPE();
-	if (!brpe->detectBoundary()) {
-		return false;
-	}
-
-	auto* bbrm = boundaryBRM();
-	if (!bbrm->detectBoundary()) {
-		return false;
-	}
-
 	auto* bonl = boundaryONL();
 	if (!bonl->detectBoundary()) {
 		return false;
 	}
 
-	auto* bios = boundaryIOS();
-	if (!bios->detectBoundary()) {
-		return false;
-	}
-
-	auto* bopl = boundaryOPL();
-	if (!bopl->detectBoundary()) {
+	if (!band->adjustOpticNerveDiscMargins()) {
 		return false;
 	}
 
@@ -116,29 +99,44 @@ bool SemtRetina::OpticDiscSegmenter::segment(bool angio)
 		return false;
 	}
 
+	auto* bbrm = boundaryBRM();
+	if (!bbrm->detectBoundary()) {
+		return false;
+	}
+	auto* bios = boundaryIOS();
+	if (!bios->detectBoundary()) {
+		return false;
+	}
+	auto* brpe = boundaryRPE();
+	if (!brpe->detectBoundary()) {
+		return false;
+	}
+
+	auto* bopl = boundaryOPL();
+	if (!bopl->detectBoundary()) {
+		return false;
+	}
 	auto* bipl = boundaryIPL();
 	if (!bipl->detectBoundary()) {
 		return false;
 	}
 
+	crta->enableSourceDimensions();
+	band->upscaleToSourceDimensions();
 
+	bios->reconstructLayer();
+	bbrm->reconstructLayer();
+	brpe->reconstructLayer();
 
-	bnfl->enforceSourceOrder();
-	bipl->enforceSourceOrder();
-	bopl->enforceSourceOrder();
-	bios->enforceSourceOrder();
-	brpe->enforceSourceOrder();
-	bbrm->enforceSourceOrder();
+	bnfl->reconstructLayer();
+	bipl->reconstructLayer();
+	bopl->reconstructLayer();
+	bilm->reconstructLayer();
 
 	if (band->isNerveHeadRangeValid()) {
 		auto* onhm = onhMorphometrics();
 		onhm->accumulateDiscRimVoxels();
 		onhm->accumulateDiscCupVoxels();
-		/*
-		if (!bbrm->refineBoundary()) {
-			return false;
-		}
-		*/
 	}
 	return true;
 }

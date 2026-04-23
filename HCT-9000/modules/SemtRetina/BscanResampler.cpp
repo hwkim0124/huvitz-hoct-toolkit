@@ -21,7 +21,9 @@ struct BscanResampler::BscanResamplerImpl
 	BscanImageData coarse;
 
 	BscanImageData srcRiseEdge;
+	BscanImageData srcRiseEdgeHigh;
 	BscanImageData srcFallEdge;
+	BscanImageData srcFallEdgeHigh;
 
 	int sampleIndex = 0;
 	bool isAngio = false;
@@ -69,7 +71,6 @@ bool SemtRetina::BscanResampler::runResampling(OctScanImage image, bool angio)
 		auto target_w = (angio ? SAMPLE_WIDTH_S : SAMPLE_WIDTH_M);
 		auto target_h = (angio ? SAMPLE_HEIGHT_S : SAMPLE_HEIGHT_M);
 		
-		// CppUtil::ClockTimer::start();
 		if (target_w != src_w || target_h != src_h) {
 			Size size(target_w, target_h);
 			if (target_w > src_w || target_h > src_h) {
@@ -85,37 +86,23 @@ bool SemtRetina::BscanResampler::runResampling(OctScanImage image, bool angio)
 			sample.getCvMat() = source.getCvMatConst();
 		}
 
-		//LogD() << "resize elapsed: " << CppUtil::ClockTimer::elapsedMsec();
-
-		auto coarse_w = target_w; // (angio ? COARSE_WIDTH_S : COARSE_WIDTH_M);
-		auto coarse_h = target_h; // (angio ? COARSE_HEIGHT_S : COARSE_HEIGHT_M);
+		auto coarse_w = target_w;
+		auto coarse_h = target_h;
 		auto radius = (angio ? COARSE_GUIDED_RADIUS_S : COARSE_GUIDED_RADIUS_M);
 		auto epsilon = (angio ? COARSE_GUIDED_EPSILON_S : COARSE_GUIDED_EPSILON_M);
 
-		cv::resize(sample.getCvMatConst(), coarse.getCvMat(), Size(coarse_w, coarse_h), 0.0, 0.0, INTER_AREA);
+		if (coarse_w != target_w || coarse_h != target_h) {
+			cv::resize(sample.getCvMatConst(), coarse.getCvMat(), Size(coarse_w, coarse_h), 0.0, 0.0, INTER_AREA);
+		}
+		else {
+			sample.copyTo(&coarse);
+		}
 		coarse.applyGuidedFilter(radius, epsilon);
-		
-		// sample.copyTo(&coarse);
-		// coarse.applyGuidedFilter(GUIDED_RADIUS, GUIDED_EPSILON);
-		/*
-		LogD() << "resize elapsed2: " << CppUtil::ClockTimer::elapsedMsec();
-		coarse.applyGuidedFilter(GUIDED_RADIUS, GUIDED_EPSILON);
-
-		LogD() << "guided elapsed2: " << CppUtil::ClockTimer::elapsedMsec();
-
-		sample.copyTo(&coarse);
-		coarse.applyGuidedFilter(GUIDED_RADIUS, GUIDED_EPSILON);
-		*/
-		//LogD() << "guided elapsed: " << CppUtil::ClockTimer::elapsedMsec();
 
 		sample.estimateStatitics();
 		coarse.estimateStatitics();
 		coarse.estimateColSnRatios();
-		
-		// coarse.resizeToMatchSample(target_w, target_h);
-		// coarse.upscaleStatistics(sample.getWidth(), sample.getHeight());
 
-		//LogD() << "ratio elapsed: " << CppUtil::ClockTimer::elapsedMsec();
 		// string path = format_string("corased_%d.jpg", image.getIndex());
 		// coarse.saveFile(path);
 
@@ -141,8 +128,8 @@ bool SemtRetina::BscanResampler::runResampling(OctScanImage image, bool angio)
 
 bool SemtRetina::BscanResampler::checkRetinaSegmentable(void) const
 {
-	const float OBJ_SNR_MIN = 18.0f; //  25.0f; // 33.0f;
-	const float OBJ_RATIO_MIN = 0.45f; // 0.6f;
+	const float OBJ_SNR_MIN = COLUMN_OBJ_SN_RATIO_MIN; // 18.0f; //  25.0f; // 33.0f;
+	const float OBJ_RATIO_MIN = COLUMN_VALID_RATIO_MIN; // 0.6f;
 
 	const auto& image = impl().coarse;
 	auto snrs = image.columnSnRatios();
@@ -167,12 +154,35 @@ bool SemtRetina::BscanResampler::checkRetinaSegmentable(void) const
 	if (ratio < OBJ_RATIO_MIN) {
 		return false;
 	}
+
+	/*
+	auto rows = image.rowMeans();
+	auto ysum = 0;
+	auto wsum = 0;
+	for (int y = 0; y < rows.size(); y++) {
+		auto w = rows[y];
+		w = w * w;
+		ysum += w * y;
+		wsum += w;
+	}
+
+	if (wsum > 0) {
+		auto ycen = (int)(ysum / wsum + 0.5f);
+		auto height = image.getHeight();
+		auto limit = (int)(height * 0.15f);
+		if (ycen < limit) {
+			LogD() << "Sampling index: " << impl().sampleIndex << ", retina center y: " << ycen << ", height: " << image.getHeight();
+			return false;
+		}
+	}
+	*/
 	return true;
 }
 
 bool SemtRetina::BscanResampler::createSourceEdgeMaps(void) const
 {
 	auto* image = imageSource();
+	auto* sample = imageSample();
 	const int KERNEL_ROWS = 15;
 	const int KERNEL_COLS = 5;
 
@@ -182,13 +192,13 @@ bool SemtRetina::BscanResampler::createSourceEdgeMaps(void) const
 	kernel.rowRange(KERNEL_ROWS / 2 + 1, KERNEL_ROWS).setTo(+1.0f);
 
 	{
-		auto mean = image->imageMean();
-		auto stdv = image->imageStdev();
+		auto mean = sample->imageMean();
+		auto stdv = sample->imageStdev();
 		int gmax = (int)(mean + stdv * 2.0f);
 
 		Mat matDst, matGrad, matOut;
 		cv::copyMakeBorder(matSrc, matDst, 9, 9, 0, 0, cv::BORDER_CONSTANT, mean);
-		matDst.setTo(gmax, (matDst > gmax));
+		// matDst.setTo(gmax, (matDst > gmax));
 		cv::filter2D(matDst, matGrad, CV_32F, kernel, Point(-1, -1), 0.0, cv::BORDER_REFLECT);
 		matOut = matGrad(cv::Rect(0, 9, matGrad.cols, matGrad.rows - 18));
 
@@ -196,14 +206,34 @@ bool SemtRetina::BscanResampler::createSourceEdgeMaps(void) const
 		cv::normalize(matOut, matOut, 0.0f, 1.0f, cv::NORM_MINMAX);
 		impl().srcRiseEdge.getCvMat() = matOut;
 	}
+	/*
+	{
+		auto mean = sample->imageMean();
+		auto stdv = sample->imageStdev();
+		int gmin = (int)(mean + stdv * 1.0f);
 
+		Mat matDst, matGrad, matOut;
+		cv::copyMakeBorder(matSrc, matDst, 9, 9, 0, 0, cv::BORDER_CONSTANT, mean);
+		matDst.setTo(gmin, (matDst < gmin));
+		cv::filter2D(matDst, matGrad, CV_32F, kernel, Point(-1, -1), 0.0, cv::BORDER_REFLECT);
+		matOut = matGrad(cv::Rect(0, 9, matGrad.cols, matGrad.rows - 18));
+
+		matOut.setTo(0.0f, (matOut < 0.0f));
+		cv::normalize(matOut, matOut, 0.0f, 1.0f, cv::NORM_MINMAX);
+		impl().srcRiseEdgeHigh.getCvMat() = matOut;
+	}
+	*/
 	kernel.rowRange(0, KERNEL_ROWS / 2).setTo(+1.0f);
 	kernel.rowRange(KERNEL_ROWS / 2 + 1, KERNEL_ROWS).setTo(-1.0f);
 
 	{
-		auto mean = image->imageMean();
+		auto mean = sample->imageMean();
+		auto stdv = sample->imageStdev();
+		int gmax = (int)(mean + stdv * 2.0f);
+
 		Mat matDst, matGrad, matOut;
 		cv::copyMakeBorder(matSrc, matDst, 9, 9, 0, 0, cv::BORDER_CONSTANT, mean);
+		// matDst.setTo(gmax, (matDst > gmax));
 		cv::filter2D(matDst, matGrad, CV_32F, kernel, Point(-1, -1), 0.0, cv::BORDER_REFLECT);
 		matOut = matGrad(cv::Rect(0, 9, matGrad.cols, matGrad.rows - 18));
 
@@ -211,6 +241,24 @@ bool SemtRetina::BscanResampler::createSourceEdgeMaps(void) const
 		cv::normalize(matOut, matOut, 0.0f, 1.0f, cv::NORM_MINMAX);
 		impl().srcFallEdge.getCvMat() = matOut;
 	}
+
+	/*
+	{
+		auto mean = sample->imageMean();
+		auto stdv = sample->imageStdev();
+		int gmin = (int)(mean + stdv * 1.0f);
+
+		Mat matDst, matGrad, matOut;
+		cv::copyMakeBorder(matSrc, matDst, 9, 9, 0, 0, cv::BORDER_CONSTANT, mean);
+		matDst.setTo(gmin, (matDst < gmin));
+		cv::filter2D(matDst, matGrad, CV_32F, kernel, Point(-1, -1), 0.0, cv::BORDER_REFLECT);
+		matOut = matGrad(cv::Rect(0, 9, matGrad.cols, matGrad.rows - 18));
+
+		matOut.setTo(0.0f, (matOut < 0.0f));
+		cv::normalize(matOut, matOut, 0.0f, 1.0f, cv::NORM_MINMAX);
+		impl().srcFallEdgeHigh.getCvMat() = matOut;
+	}
+	*/
 	return true;
 }
 
@@ -330,9 +378,19 @@ BscanImageData* SemtRetina::BscanResampler::sourceRiseEdge(void) const
 	return &(impl().srcRiseEdge);
 }
 
+BscanImageData* SemtRetina::BscanResampler::sourceRiseEdgeHigh(void) const
+{
+	return &(impl().srcRiseEdgeHigh);
+}
+
 BscanImageData* SemtRetina::BscanResampler::sourceFallEdge(void) const
 {
 	return &(impl().srcFallEdge);
+}
+
+BscanImageData* SemtRetina::BscanResampler::sourceFallEdgeHigh(void) const
+{
+	return &(impl().srcFallEdgeHigh);
 }
 
 

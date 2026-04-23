@@ -47,20 +47,6 @@ SegmScan::MacularBsegm::~MacularBsegm() = default;
 SegmScan::MacularBsegm::MacularBsegm(MacularBsegm && rhs) = default;
 MacularBsegm & SegmScan::MacularBsegm::operator=(MacularBsegm && rhs) = default;
 
-/*
-SegmScan::MacularBsegm::MacularBsegm(const MacularBsegm & rhs)
-	: d_ptr(make_unique<MacularBsegmImpl>(*rhs.d_ptr))
-{
-}
-
-
-MacularBsegm & SegmScan::MacularBsegm::operator=(const MacularBsegm & rhs)
-{
-	*d_ptr = *rhs.d_ptr;
-	return *this;
-}
-*/
-
 
 bool SegmScan::MacularBsegm::performAnalysis(bool meye)
 {
@@ -82,16 +68,6 @@ bool SegmScan::MacularBsegm::performAnalysis(bool meye)
 
 	bool useSemtVersion = false;
 	useSemtVersion = SemtRetina::RetinaSegmentModel::isInitialized();
-	/*
-	bool useSemtVersion = false;
-	if (true || isAngio) {
-		useSemtVersion = SemtRetina::RetinaSegmentModel::isInitialized();
-	}
-	
-	if (rangeX > 9.0f) {
-		useSemtVersion = false;
-	}
-	*/
 
 	if (useSemtVersion) {
 		auto d_ptr = source()->getBitsData();
@@ -101,7 +77,7 @@ bool SegmScan::MacularBsegm::performAnalysis(bool meye)
 
 		auto& frame = getImpl().segmFrame;
 		frame.setBscanImage(d_ptr, src_w, src_h, rangeX, index);
-		if (!frame.segmentMacularLayers(true)) {
+		if (!frame.segmentLayers(isAngio)) {
 			goto failed;
 		}
 
@@ -115,7 +91,7 @@ bool SegmScan::MacularBsegm::performAnalysis(bool meye)
 
 		layerInn()->initialize(frame.boundaryINN(), src_w, src_h);
 		layerOut()->initialize(frame.boundaryONL(), src_w, src_h);
-		layerOPR()->initialize(frame.boundaryONL(), src_w, src_h);
+		// layerOPR()->initialize(frame.boundaryONL(), src_w, src_h);
 
 		auto layers = getRetinaLayers();
 		layers->setRegionSize(src_w, src_h);

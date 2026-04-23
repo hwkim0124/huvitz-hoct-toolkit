@@ -27,7 +27,7 @@ namespace SemtRetina
 		bool searchPathMinCost();
 		bool searchPathMinCostInRange(void);
 		bool resizeBoundaryPath(std::vector<int> path, int src_w, int src_h, int targ_w, int targ_h, std::vector<int>& outs);
-		std::vector<int> smoothOptimalPath(int filt_size, int degree, bool nerve_head);
+		std::vector<int> smoothOptimalPath(int filt_size, int degree, bool nerve_head, std::vector<int> ilms = std::vector<int>());
 
 		std::vector<int>& upperYs(void) const;
 		std::vector<int>& lowerYs(void) const;

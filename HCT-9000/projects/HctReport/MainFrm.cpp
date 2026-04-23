@@ -48,6 +48,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWnd)
 	ON_COMMAND(ID_BIOMETER_LENSTHICKNESS, &CMainFrame::OnBiometerLensthickness)
 	ON_COMMAND(ID_MACULARWIDESCAN_512X128, &CMainFrame::OnMacularwidescan512x128)
 	ON_COMMAND(ID_DISCWIDESCAN_512X128, &CMainFrame::OnDiscwidescan512x128)
+	ON_COMMAND(ID_MACULARCUBESCAN_1024X128, &CMainFrame::OnMacularcubescan1024x128)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -249,6 +250,12 @@ void CMainFrame::OnLoadcubescan512x128()
 	openNewDocumentOfPattern(PatternName::Macular3D, 512, 128, 6.0f);
 }
 
+void CMainFrame::OnMacularcubescan1024x128()
+{
+	// TODO: Add your command handler code here
+	openNewDocumentOfPattern(PatternName::Macular3D, 1024, 128, 6.0f);
+}
+
 
 void CMainFrame::OnLoadcubescan512x96()
 {
@@ -421,4 +428,5 @@ void CMainFrame::OnBiometerLensthickness()
 	// TODO: Add your command handler code here
 	openNewDocumentOfLensThickness();
 }
+
 

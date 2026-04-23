@@ -90,6 +90,7 @@ public:
 	afx_msg void OnBiometerLensthickness();
 	afx_msg void OnMacularwidescan512x128();
 	afx_msg void OnDiscwidescan512x128();
+	afx_msg void OnMacularcubescan1024x128();
 };
 
 

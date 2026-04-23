@@ -70,34 +70,33 @@ bool SemtRetina::BoundaryOPL::reconstructLayer(void)
 	auto lows = std::vector<int>(width, 0);
 	auto delt = std::vector<int>(width, range);
 
-	auto* bipl = segm->boundaryNFL();
+	auto* bipl = segm->boundaryIPL();
 	auto ipls = bipl->sourceYs();
-	auto* bios = segm->boundaryONL();
+	auto* bios = segm->boundaryIOS();
 	auto ioss = bios->sourceYs();
 	auto opls = sourceYs();
 
-	const int OFFS_MIN = crta->getLayerOffsetMinOPL();
-	const int OFFS_MAX = crta->getLayerOffsetMaxOPL();
-
+	const int UPPER_OFFS = crta->getLayerUpperSpaceMinOPL();
+	const int LOWER_OFFS = crta->getLayerLowerSpaceMaxOPL();
 	for (int i = 0; i < width; i++) {
-		auto y1 = opls[i];
-		auto y2 = ioss[i];
+		auto size1 = (opls[i] - ipls[i]) + 1;
+		auto size2 = (ioss[i] - opls[i]) + 1;
+		auto offs1 = (int)(size1 * 0.50f);
+		auto offs2 = (int)(size2 * 0.35f);
 
-		auto size = y2 - y1 + 1;
-		auto dlim = (int)(size * 0.25f);
-		y1 = min(max(y1, ipls[i] + OFFS_MIN), y2);
-		y2 = min(y2 - dlim, y1);
-		upps[i] = min(y1, y2);
-		lows[i] = min(y1, y2);
+		auto y1 = min(opls[i], ipls[i] + offs1);
+		auto y2 = min(ioss[i], opls[i] + offs2);
+		upps[i] = y1;
+		lows[i] = y2;
 	}
 
-	if (band->isNerveHeadRangeValid() && band->isNerveHeadDiscCupShaped()) {
-		auto x1 = band->opticDiscMinX();
-		auto x2 = band->opticDiscMaxX();
-		for (int x = x1; x <= x2; ++x) {
-			auto y1 = max(ipls[x] + OFFS_MIN, upps[x]);
-			auto y2 = max(ipls[x] + OFFS_MAX, lows[x]);
-		}
+	auto ret_x1 = band->retinaBeginX();
+	auto ret_x2 = band->retinaEndX();
+	for (int i = 0; i < ret_x1; i++) {
+		delt[i] = 1;
+	}
+	for (int i = ret_x2 + 1; i < width; i++) {
+		delt[i] = 1;
 	}
 
 	this->upperYs() = upps;
@@ -134,38 +133,44 @@ bool SemtRetina::BoundaryOPL::designPathConstraints(void)
 
 	auto* bnfl = segm->boundaryNFL();
 	auto nfls = bnfl->sampleYs();
+	auto* bios = segm->boundaryIOS();
+	auto ioss = bios->sampleYs();
 	auto* bonl = segm->boundaryONL();
 	auto onls = bonl->sampleYs();
 
 	auto* band = segm->retinaBandExtractor();
 	auto outs = band->outerYsFull();
 
-	auto range = crta->getPathCostRangeDeltaOPL();
+	auto moves = crta->getPathCostRangeDeltaOPL();
 	auto upps = std::vector<int>(width, 0);
 	auto lows = std::vector<int>(width, 0);
-	auto delt = std::vector<int>(width, range);
+	auto delt = std::vector<int>(width, moves);
 
-	for (int i = 0; i < width; i++) {
-		auto y1 = nfls[i];
-		auto y2 = onls[i];
-		auto lim1 = y1 + (int)((y2 - y1) * 0.5f);  
-		upps[i] = min(lim1, y2);
-		lows[i] = y2;
+	auto ret_x1 = band->retinaBeginX();
+	auto ret_x2 = band->retinaEndX();
+	for (int i = 0; i < ret_x1; i++) {
+		delt[i] = 1;
+	}
+	for (int i = ret_x2 + 1; i < width; i++) {
+		delt[i] = 1;
 	}
 
-	if (band->isNerveHeadRangeValid() && band->isNerveHeadDiscCupShaped()) {
+	for (int i = 0; i < width; i++) {
+		upps[i] = nfls[i];
+		lows[i] = ioss[i];
+	}
+
+	if (band->isNerveHeadRangeValid()) {
 		auto disc_x1 = band->opticDiscMinX();
 		auto disc_x2 = band->opticDiscMaxX();
 
-		const int UPPER_MARGIN = crta->getPathDiscUpwardMarginOPL();
-		range = crta->getPathDiscRangeDeltaOPL();
 		for (int x = disc_x1; x <= disc_x2; ++x) {
-			auto ulim = onls[x] - UPPER_MARGIN;
-			auto y1 = max(ulim, nfls[x]);
-
+			auto dist = (ioss[x] - nfls[x]) + 1;
+			auto dlim = (int)(dist * 0.5f);
+			auto y1 = min(max(nfls[x], ioss[x] - dlim), ioss[x]);
+			auto y2 = ioss[x];
 			upps[x] = y1;
-			lows[x] = outs[x];
-			delt[x] = range;
+			lows[x] = y2;
 		}
 	}
 
@@ -178,7 +183,7 @@ bool SemtRetina::BoundaryOPL::designPathConstraints(void)
 
 	this->upperYs() = upp2;
 	this->lowerYs() = low2;
-	this->deltaYs() = delt;;
+	this->deltaYs() = delt;
 	return true;
 }
 
@@ -224,10 +229,13 @@ bool SemtRetina::BoundaryOPL::prepareGradientMap(void)
 
 		Mat matProb = Mat::zeros(height, width, CV_32F);
 		float* dst = matProb.ptr<float>(0);
+		memcpy(dst, p_opls, N * sizeof(float));
+		/*
 		for (int i = 0; i < N; ++i) {
 			float val = p_opls[i];
 			dst[i] = val;
 		}
+		*/
 
 		Mat matDst, matGrad, matOut;
 		auto mean = cv::mean(matProb);
@@ -259,7 +267,7 @@ bool SemtRetina::BoundaryOPL::preparePathCostMap(void)
 	float* p_edge = matEdge.ptr<float>(0);
 	float* p_prob = matProb.ptr<float>(0);
 
-	if (band->isNerveHeadRangeValid() && band->isNerveHeadDiscCupShaped()) {
+	if (band->isNerveHeadRangeValid()) {
 		auto disc_x1 = band->opticDiscMinX();
 		auto disc_x2 = band->opticDiscMaxX();
 		auto upps = this->upperYs();
@@ -270,16 +278,13 @@ bool SemtRetina::BoundaryOPL::preparePathCostMap(void)
 			auto y2 = lows[x];
 			for (int y = y1; y <= y2; y++) {
 				auto idx = y * width + x;
-				p_prob[idx] = p_edge[idx];
-				// p_prob[idx] = 0.5f;
+				p_prob[idx] += p_edge[idx];
 			}
 		}
 	}
 
 	Mat matCost;
-	// cv::multiply(matProb, matEdge, matCost);
 	matProb.copyTo(matCost);
-
 	matCost *= -1.0f;
 	matCost.copyTo(this->pathCostMat());
 	return true;
@@ -312,6 +317,7 @@ bool SemtRetina::BoundaryOPL::smoothBoundaryOPL(void)
 	this->sampleYs() = filt;
 	return true;
 }
+
 
 bool SemtRetina::BoundaryOPL::smoothRefinedOPL(void)
 {
