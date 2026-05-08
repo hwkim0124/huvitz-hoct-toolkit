@@ -108,7 +108,7 @@ bool SemtRetina::ONHMorphometrics::accumulateDiscRimVoxels(void)
 		}
 	}
 
-	LogD() << "ONH disc margin, x1: " << dsc_x1 << ", x2: " << dsc_x2 << ", rim voxels: " << count << ", imageIdx: " << sidx;
+	LogD() << "Line index: " << sidx << ", ONH disc margin, x1: " << dsc_x1 << ", x2 : " << dsc_x2 << ", rim voxels : " << count;
 	impl().discMarginMinX = dsc_x1;
 	impl().discMarginMaxX = dsc_x2;
 	impl().discRimCount = count;
@@ -161,7 +161,7 @@ bool SemtRetina::ONHMorphometrics::accumulateDiscCupVoxels(void)
 
 	for (int x = dsc_x1, k = 0; x <= dsc_x2; x++, k++) {
 		tpos = max((int)(top_y1 + k * slope), 0);
-		if (ilms[k] >= tpos) {
+		if (ilms[x] >= tpos) {
 			cup_x1 = x;
 			break;
 		}
@@ -170,7 +170,7 @@ bool SemtRetina::ONHMorphometrics::accumulateDiscCupVoxels(void)
 	if (cup_x1 >= 0) {
 		for (int x = dsc_x2, k = 0; x >= dsc_x1; x--, k++) {
 			tpos = max((int)(top_y2 - k * slope), 0);
-			if (ilms[k] >= tpos) {
+			if (ilms[x] >= tpos) {
 				cup_x2 = x;
 				break;
 			}
@@ -184,12 +184,12 @@ bool SemtRetina::ONHMorphometrics::accumulateDiscCupVoxels(void)
 	int count = 0;
 	for (int x = cup_x1, k = (cup_x1 - dsc_x1); x <= cup_x2; x++, k++) {
 		tpos = max((int)(top_y1 + k * slope), 0);
-		if (ilms[k] >= tpos) {
-			count += (ilms[k] - tpos + 1);
+		if (ilms[x] >= tpos) {
+			count += (ilms[x] - tpos + 1);
 		}
 	}
 
-	LogD() << "ONH cup opening, x1: " << cup_x1 << ", x2: " << cup_x2 << ", cup voxels: " << count << ", imageIdx: " << sidx;
+	LogD() << "Line index: " << sidx << ", ONH cup opening, x1: " << cup_x1 << ", x2: " << cup_x2 << ", cup voxels: " << count;
 	impl().cupOpeningMinX = cup_x1;
 	impl().cupOpeningMaxX = cup_x2;
 	impl().discRimCount = count;
