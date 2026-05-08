@@ -1,0 +1,24 @@
+# Clangd / clang: paths relative to this directory (projects/RetiSegEval).
+-xc++
+-std=c++17
+-I../../modules/CppUtil
+-I../../modules/OctSystem
+-I../../modules/OctConfig
+-I../../modules/OctDevice
+-I../../modules/OctData
+-I../../modules/OctResult
+-I../../modules/OctReport
+-I../../modules/OctGlobal
+-I../../modules/SegmScan
+-I../../modules/RetSegm
+-I../../modules/SemtSegm
+-I../../modules/CorTopo
+-I../../modules/SigProc
+-I../../modules/SigChain
+-I../../modules/KerFocus
+-I../../modules/RetFocus
+-I../../modules/ImgProc
+-I../../modules/OctAngio
+-I../../externs/boost/boost_1_59_0
+-I../../externs/Spinnaker/include
+-I../../externs/openvino_toolkit/runtime/include
