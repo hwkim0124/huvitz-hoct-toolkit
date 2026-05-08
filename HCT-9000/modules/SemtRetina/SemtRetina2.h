@@ -7,3 +7,5 @@
 #include "OpticDiscSegmenter.h"
 #include "OpticDiscSegmFrame.h"
 
+#include "BmoSmoother.h"
+

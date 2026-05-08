@@ -20,6 +20,8 @@ namespace SegmProc
 		virtual bool rectify(void) override;
 
 	protected:
+		void delineateOpticDiscMargins(void);
+
 		void determineDiscRange(void);
 		bool makeBRMImage(OctScanPattern pattern);
 		bool elaborateDiscRange(OctScanPattern pattern);

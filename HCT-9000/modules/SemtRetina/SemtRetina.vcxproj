@@ -191,6 +191,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BmoSmoother.cpp" />
     <ClCompile Include="BoundaryBRM.cpp" />
     <ClCompile Include="BoundaryILM.cpp" />
     <ClCompile Include="BoundaryINN.cpp" />
@@ -225,6 +226,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BmoSmoother.h" />
     <ClInclude Include="BoundaryBRM.h" />
     <ClInclude Include="BoundaryILM.h" />
     <ClInclude Include="BoundaryINN.h" />

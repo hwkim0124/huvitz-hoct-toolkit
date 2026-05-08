@@ -12,6 +12,8 @@
 */
 
 #include "opencv.hpp"
+#include <memory>
+#include <vector>
 
 using namespace SegmProc;
 /*
@@ -65,7 +67,7 @@ bool SegmProc::DiscSession::initialize(void)
 			return false;
 		}
 
-		auto bsegm = make_unique<DiscBsegm>();
+		auto bsegm = std::make_unique<DiscBsegm>();
 		// if (!(i % overlaps)) {
 			bsegm->loadSource(bscan->getImageBuffer(), bscan->getImageWidth(), bscan->getImageHeight());
 		// }
@@ -81,8 +83,7 @@ bool SegmProc::DiscSession::initialize(void)
 			LogW() << i << "th preview data is empty!";
 			return false;
 		}
-
-		auto bsegm = make_unique<DiscBsegm>();
+		auto bsegm = std::make_unique<DiscBsegm>();
 		bsegm->loadSource(bscan->getImageBuffer(), bscan->getImageWidth(), bscan->getImageHeight());
 		bsegm->setPatternDescript(getScanData()->getDescript());
 		addPreviewBsegm(std::move(bsegm));
@@ -108,8 +109,100 @@ bool SegmProc::DiscSession::initialize(void)
 
 bool SegmProc::DiscSession::rectify(void)
 {
-	determineDiscRange();
+	if (SemtRetina::RetinaSegmentModel::isInitialized()) {
+		delineateOpticDiscMargins();
+	}
+	else {
+		determineDiscRange();
+	}
 	return true;
+}
+
+
+void SegmProc::DiscSession::delineateOpticDiscMargins(void)
+{
+	if (!filterOpticDiscSet()) {
+		return;
+	}
+
+	auto bsegm = getOcularBsegm(0);
+	auto pattern = bsegm->getPatternDescript();
+	auto patternName = pattern.getPatternName();
+
+	auto width = pattern.getNumberOfScanPoints();
+	auto height = pattern.getNumberOfScanPoints();
+	auto bmos1 = vector<SemtRetina::BmoPoint>();
+	auto bmos2 = vector<SemtRetina::BmoPoint>();
+	auto input = vector<SemtRetina::BmoPoint>();
+	auto output = vector<SemtRetina::BmoPoint>();
+	auto indice = vector<int>();
+
+	auto nscans = countOcularBsegms();
+	for (int i = 0; i < nscans; i++) {
+		auto bsegm = getOcularBsegm(i);
+		if (bsegm != nullptr) {
+			int x1, x2;
+			SemtRetina::BmoPoint disc1, disc2;
+
+			if (bsegm->getOpticNerveDiscRange(x1, x2)) {
+				disc1.x = ((float)x1 / pattern.getNumberOfScanPoints() * width);
+				disc1.y = ((float)i / (pattern.getNumberOfScanLines() - 1) * height);
+				disc2.x = ((float)x2 / pattern.getNumberOfScanPoints() * width);
+				disc2.y = ((float)i / (pattern.getNumberOfScanLines() - 1) * height);
+
+				if (pattern.getDirection() == 1) {
+					std::swap(disc1.x, disc1.y);
+					std::swap(disc2.x, disc2.y);
+				}
+				bmos1.push_back(disc1);
+				bmos2.push_back(disc2);
+				indice.push_back(i);
+			}
+		}
+		else {
+			return;
+		}
+	}
+
+	auto nline = indice.size();
+	for (int i = 0; i < bmos1.size(); i++) {
+		input.push_back(bmos1[i]);
+	}
+	for (int i = bmos2.size() - 1; i >= 0; i--) {
+		input.push_back(bmos2[i]);
+	}
+
+	if (SemtRetina::BmoSmoother::smoothBmoPoints(input, output)) {
+		if (pattern.getDirection() == 1) {
+			for (auto i = 0; i < output.size(); i++) {
+				std::swap(output[i].x, output[i].y);
+			}
+		}
+		for (auto i = 0; i < bmos1.size(); i++) {
+			bmos1[i] = output[i];
+		}
+		for (auto i = 0; i < bmos2.size(); i++) {
+			bmos2[i] = output[output.size() - i - 1];
+		}
+
+		double ratioX = (float)pattern.getNumberOfScanPoints() / width;
+		double ratioY = (float)pattern.getNumberOfScanLines() / height;
+
+		for (int i = 0; i < nline; i++) {
+			auto index = indice[i];
+			auto bsegm = getOcularBsegm(index);
+			Point disc1, disc2;
+
+			disc1.x = (int)(bmos1[i].x * ratioX + 0.5f);
+			disc1.y = (int)(bmos1[i].y * ratioY + 0.5f);
+			disc2.x = (int)(bmos2[i].x * ratioX + 0.5f);
+			disc2.y = (int)(bmos2[i].y * ratioY + 0.5f);
+
+			bsegm->setOpticNerveDiscRange(disc1.x, disc2.x);
+			bsegm->elaborateParams(bsegm->getRetinaLayers()->getILM(), bsegm->getRetinaLayers()->getBRM());
+		}
+	}
+	return;
 }
 
 
@@ -122,7 +215,7 @@ void SegmProc::DiscSession::determineDiscRange(void)
 	auto bsegm = getOcularBsegm(0);
 	auto pattern = bsegm->getPatternDescript();
 	auto patternName = pattern.getPatternName();
-	
+
 	// if ((patternName == PatternName::Disc3D || patternName == PatternName::MacularDisc) && pattern.getScanRangeX() < 12.0f)
 	{
 		d_ptr->enfaceHeight = 512;
@@ -180,7 +273,7 @@ bool SegmProc::DiscSession::makeBRMImage(OctScanPattern pattern)
 					std::swap(disc1.x, disc1.y);
 					std::swap(disc2.x, disc2.y);
 				}
-				if (x1 > 1 && x2 > 1 && i >= size / 3 && i <= size / 3 * 2) {
+				if (x1 > 1 && x2 > 1 && i >= (size / 3) && i <= (size / 3) * 2) {
 					discVector.insert(discVector.begin(), disc1);
 					discVector.insert(discVector.end(), disc2);
 				}
@@ -232,7 +325,6 @@ bool SegmProc::DiscSession::makeBRMImage(OctScanPattern pattern)
 
 	getImpl().enfaceBMO = enface;
 	getImpl().discPoint = discVector;
-
 	return true;
 }
 
@@ -398,6 +490,7 @@ bool SegmProc::DiscSession::preprocessingEnface(Mat& enfaceImg)
 		else 
 #endif
 		*/
+
 		if (SemtRetina::RetinaSegmentModel::isInitialized()) {
 			majorAxis *= 1.1f;
 			minorAxis *= 1.15f;
@@ -460,7 +553,6 @@ bool SegmProc::DiscSession::modifyDiscPoint(Mat& resizeDisc, int rows, int cols,
 			}
 
 			auto bsegm = getOcularBsegm(i);
-
 			bsegm->setOpticNerveDiscRange(disc1.x, disc2.x);
 			bsegm->elaborateParams(bsegm->getRetinaLayers()->getILM(), bsegm->getRetinaLayers()->getBRM());
 		}
@@ -501,7 +593,6 @@ bool SegmProc::DiscSession::modifyDiscPoint(Mat& resizeDisc, int rows, int cols,
 			}
 
 			auto bsegm = getOcularBsegm(i);
-
 			bsegm->setOpticNerveDiscRange(disc1.y, disc2.y);
 			bsegm->elaborateParams(bsegm->getRetinaLayers()->getILM(), bsegm->getRetinaLayers()->getBRM());
 		}
@@ -556,13 +647,14 @@ bool SegmProc::DiscSession::filterOpticDiscSet(void)
 			}
 		}
 	}
+	if (size <= 0) {
+		return false;
+	}
 
 	float rangeY = getOcularBsegm(0)->getPatternDescript().getScanRangeY();
 	int linePerMM = (int)ceil(size / rangeY);
-	int emptyLinesMax = min(max((int)(linePerMM * 0.5f), 3), 9);
-	// int discLinesMin = min(max((int)(linePerMM * 0.35f), 3), 9);
+	int emptyLinesMax = max((int)(linePerMM * 0.5f), 3);
 
-	// const int EMPTY_DISC_LINES_MAX = 5; //  3;
 	const int VALID_DISC_LINES_MIN = 3; // 5;
 
 	auto founds = list.size();
