@@ -24,6 +24,7 @@ namespace SemtRetina
 		bool detectOuterRetinaBoundary(void);
 		bool detectOpticNerveHeadRegion(void);
 		bool adjustOpticNerveDiscMargins(void);
+		bool refineOpticNerveDiscMargins(void);
 		void upscaleToSourceDimensions(void);
 
 		void setNerveHeadRangeX(int x1, int x2) const;
@@ -44,8 +45,8 @@ namespace SemtRetina
 		int opticDiscMinX(void) const;
 		int opticDiscMaxX(void) const;
 
-
 	protected:
+		void applyMedianFilter(const std::vector<int>& input, std::vector<int>& output, int window_size, bool is_circular = false);
 
 	private:
 		struct RetinaBandExtractorImpl;

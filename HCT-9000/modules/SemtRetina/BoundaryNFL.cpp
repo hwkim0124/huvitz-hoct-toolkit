@@ -159,19 +159,28 @@ bool SemtRetina::BoundaryNFL::designPathConstraints(void)
 	if (band->isNerveHeadRangeValid()) {
 		auto disc_x1 = band->opticDiscMinX();
 		auto disc_x2 = band->opticDiscMaxX();
+		auto disc_cx = (disc_x1 + disc_x2) / 2;
 
-		int UPPER_MARGIN = 0; 
-		if (band->isNerveHeadDiscCupShaped()) {
-			moves = crta->getPathDiscRangeDeltaNFL();
-			UPPER_MARGIN = crta->getPathDiscUpperSpaceNFL();
+		auto min_nervs = crta->getPathDiscUpperSpaceNFL();
+		auto est_nerv1 = max((int)((onls[disc_x1] - ilms[disc_x1]) * 0.5f), min_nervs);
+		auto est_nerv2 = max((int)((onls[disc_x2] - ilms[disc_x2]) * 0.5f), min_nervs);
+		auto moves = (band->isNerveHeadDiscCupShaped()) ? crta->getPathDiscRangeDeltaNFL() : crta->getPathCostRangeDeltaNFL();
+
+		for (int x = disc_x1; x <= disc_cx; ++x) {
+			lows[x] = min(max(onls[x], ilms[x] + est_nerv1), height-1);
+			delt[x] = moves;
 		}
-		for (int x = disc_x1; x <= disc_x2; ++x) {
-			upps[x] = min(ilms[x] + UPPER_MARGIN, outs[x]);
-			lows[x] = outs[x];
+		for (int x = disc_x2; x >= disc_cx; --x) {
+			lows[x] = min(max(onls[x], ilms[x] + est_nerv2), height-1);
 			delt[x] = moves;
 		}
 	}
 
+	this->upperYs() = upps;
+	this->lowerYs() = lows;
+	this->deltaYs() = delt;
+
+	/*
 	const int WINDOW_SIZE = crta->getPathSmoothWindowNFL();
 	const int DEGREE = 1;
 	auto upp2 = CppUtil::SgFilter::smoothInts(upps, WINDOW_SIZE, DEGREE);
@@ -183,6 +192,7 @@ bool SemtRetina::BoundaryNFL::designPathConstraints(void)
 	this->upperYs() = upp2;
 	this->lowerYs() = low2;
 	this->deltaYs() = del2;
+	*/
 	return true;
 }
 
@@ -226,12 +236,6 @@ bool SemtRetina::BoundaryNFL::prepareGradientMap(void)
 		Mat matProb = Mat::zeros(height, width, CV_32F);
 		float* dst = matProb.ptr<float>(0);
 		memcpy(dst, p_rnfl, N * sizeof(float));
-		/*
-		for (int i = 0; i < N; ++i) {
-			float val = prob[i];
-			dst[i] = val;
-		}
-		*/
 
 		auto mean = cv::mean(matProb);
 		Mat matDst, matGrad, matOut;

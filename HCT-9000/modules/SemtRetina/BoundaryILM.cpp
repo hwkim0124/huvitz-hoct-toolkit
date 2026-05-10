@@ -280,12 +280,6 @@ bool SemtRetina::BoundaryILM::prepareGradientMap(void)
 		Mat matProb = Mat::zeros(height, width, CV_32F);
 		float* dst = matProb.ptr<float>(0);
 		memcpy(dst, p_rnfl, N * sizeof(float));
-		/*
-		for (int i = 0; i < N; ++i) {
-			float val1 = prob_nfl[i];
-			dst[i] = val1;
-		}
-		*/
 		matProb.copyTo(this->pathProbMat());
 	}
 	return true;

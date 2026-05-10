@@ -159,6 +159,17 @@ bool SemtRetina::BoundaryRPE::designPathConstraints(void)
 		lows[i] = min(y1 + offs2, y2);
 	}
 
+	if (band->isNerveHeadRangeValid()) {
+		auto disc_x1 = band->opticDiscMinX();
+		auto disc_x2 = band->opticDiscMaxX();
+		if (band->isNerveHeadDiscCupShaped()) {
+			const int moves = crta->getPathDiscRangeDeltaRPE();
+			for (int x = disc_x1; x <= disc_x2; ++x) {
+				delt[x] = moves;
+			}
+		}
+	}
+
 	this->upperYs() = upps;
 	this->lowerYs() = lows;
 	this->deltaYs() = delt;
@@ -233,11 +244,16 @@ bool SemtRetina::BoundaryRPE::smoothBoundaryRPE(void)
 	auto filt = path;
 	if (band->isNerveHeadRangeValid() && !band->isNerveHeadDiscCupShaped()) {
 		const int WINDOW_SIZE1 = crta->getLayerSmoothWindowRPE(true);
-		const int DEGREE = 1;
-		path = smoothOptimalPath(WINDOW_SIZE1, DEGREE, true);
-
 		const int WINDOW_SIZE2 = crta->getLayerSmoothWindowRPE(true);
-		filt = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE2, DEGREE);
+		const int DEGREE = 1;
+		if (band->isNerveHeadDiscCupShaped()) {
+			path = smoothOptimalPathWithMultiSize(WINDOW_SIZE1, DEGREE, WINDOW_SIZE2, DEGREE, true);
+			filt = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE2, DEGREE);
+		}
+		else {
+			path = smoothOptimalPathWithLinearFit(WINDOW_SIZE1, DEGREE, true);
+			filt = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE2, DEGREE);
+		}
 	}
 	else {
 		const int WINDOW_SIZE = crta->getLayerSmoothWindowRPE(true);

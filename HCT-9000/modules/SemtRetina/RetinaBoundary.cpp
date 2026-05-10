@@ -368,6 +368,7 @@ std::vector<int> SemtRetina::RetinaBoundary::smoothOptimalPath(int filt_size, in
 			for (auto i = (x1 + 1), k = 1; i <= (x2 - 1); i++, k++) {
 				path[i] = (int)(y1 + k * slope);
 			}
+
 			if (ilms.size() == width) {
 				bool is_cup = false;
 				auto bott_x = 0;
@@ -383,12 +384,16 @@ std::vector<int> SemtRetina::RetinaBoundary::smoothOptimalPath(int filt_size, in
 				}
 				if (is_cup) {
 					slope = (float)(bott_y - y1) / (float)(bott_x - x1);
-					for (auto i = sx; i <= bott_x; i++) {
-						path[i] = (int)(y1 + slope * (i - x1));
+					for (auto i = sx, ylim = 1; i <= bott_x; i++, ylim++) {
+						auto yinc = (int)(slope * (i - x1));
+						yinc = (yinc >= ylim ? ylim : yinc);
+						path[i] = (int)(y1 + yinc);
 					}
 					slope = (float)(y2 - bott_y) / (float)(x2 - bott_x);
-					for (auto i = bott_x; i <= ex; i++) {
-						path[i] = (int)(bott_y + slope * (i - bott_x));
+					for (auto i = bott_x, ylim = 1; i <= ex; i++, ylim++) {
+						auto yinc = (int)(slope * (i - bott_x));
+						yinc = (yinc >= ylim ? ylim : yinc);
+						path[i] = (int)(bott_y + yinc);
 					}
 				}
 			}
@@ -407,6 +412,198 @@ std::vector<int> SemtRetina::RetinaBoundary::smoothOptimalPath(int filt_size, in
 	else {
 		auto filt = CppUtil::SgFilter::smoothInts(path, filt_size, degree);
 		path = filt;
+	}
+	return path;
+}
+
+std::vector<int> SemtRetina::RetinaBoundary::smoothOptimalPathWithLinearFit(int filt_size, int degree, bool nerve_head)
+{
+	auto* segm = retinaSegmenter();
+	auto* band = segm->retinaBandExtractor();
+	auto* resa = segm->bscanResampler();
+	auto* image = resa->imageSample();
+
+	auto width = image->getWidth();
+	auto height = image->getHeight();
+	auto path = this->optimalPath();
+
+	if (resa->sampleIndex() == 31) {
+		int i = 0; 
+		i = 1;
+	}
+
+	auto curvs = CppUtil::SgFilter::smoothInts(path, filt_size, degree);
+
+	int head_x1, head_x2;
+	if (band->getNerveHeadRangeX(head_x1, head_x2) && nerve_head)
+	{
+		auto l_marg = std::vector<int>();
+		auto r_marg = std::vector<int>();
+		if (band->isRetinaOnNerveHeadMarginLeft()) {
+			for (auto i = 0; i < head_x1; i++) {
+				l_marg.push_back(path[i]);
+			}
+			if (l_marg.size() > (filt_size * 2 + 1)) {
+				auto filt = CppUtil::SgFilter::smoothInts(l_marg, filt_size, degree);
+				for (auto i = 0, k = 0; i < head_x1; i++, k++) {
+					path[i] = filt[k];
+				}
+			}
+			else {
+				for (auto i = 0; i < head_x1; i++) {
+					path[i] = curvs[i];
+				}
+			}
+		}
+		if (band->isRetinaOnNerveHeadMarginRight()) {
+			for (auto i = head_x2 + 1; i < width; i++) {
+				r_marg.push_back(path[i]);
+			}
+			if (r_marg.size() > (filt_size * 2 + 1)) {
+				auto filt = CppUtil::SgFilter::smoothInts(r_marg, filt_size, degree);
+				for (auto i = head_x2 + 1, k = 0; i < width; i++, k++) {
+					path[i] = filt[k];
+				}
+			}
+			else {
+				for (auto i = head_x2 + 1; i < width; i++) {
+					path[i] = curvs[i];
+				}
+			}
+		}
+
+		if (band->isRetinaOnNerveHeadMarginBoth()) {
+			auto y1 = l_marg.back();
+			auto x1 = head_x1 - 1;
+			auto y2 = r_marg.front();
+			auto x2 = head_x2 + 1;
+			auto slope = (float)(y2 - y1) / (float)(x2 - x1);
+			auto sx = x1 + 1;
+			auto ex = x2 - 1;
+			for (auto i = (x1 + 1), k = 1; i <= (x2 - 1); i++, k++) {
+				path[i] = (int)(y1 + k * slope);
+			}
+		}
+		else if (band->isRetinaOnNerveHeadMarginLeft()) {
+			auto dend = path[head_x1 - 1];
+			for (auto i = head_x1; i < width; i++) {
+				path[i] = dend;
+			}
+		}
+		else if (band->isRetinaOnNerveHeadMarginRight()) {
+			auto dend = path[head_x2 + 1];
+			for (auto i = head_x2; i >= 0; i--) {
+				path[i] = dend;
+			}
+		}
+	}
+	else {
+		path = curvs;
+	}
+	return path;
+}
+
+
+std::vector<int> SemtRetina::RetinaBoundary::smoothOptimalPathWithMultiSize(int filt_size1, int degree1, int filt_size2, int degree2, bool nerve_head)
+{
+	auto* segm = retinaSegmenter();
+	auto* band = segm->retinaBandExtractor();
+	auto* resa = segm->bscanResampler();
+	auto* image = resa->imageSample();
+
+	auto width = image->getWidth();
+	auto height = image->getHeight();
+	auto path = this->optimalPath();
+
+	auto curvs = CppUtil::SgFilter::smoothInts(path, filt_size1, degree1);
+
+	int head_x1, head_x2;
+	if (band->getNerveHeadRangeX(head_x1, head_x2) && nerve_head)
+	{
+		auto l_marg = std::vector<int>();
+		auto r_marg = std::vector<int>();
+		if (band->isRetinaOnNerveHeadMarginLeft()) {
+			for (auto i = 0; i < head_x1; i++) {
+				l_marg.push_back(path[i]);
+			}
+			if (l_marg.size() > (filt_size1 * 2 + 1)) {
+				auto filt = CppUtil::SgFilter::smoothInts(l_marg, filt_size1, degree1);
+				for (auto i = 0, k = 0; i < head_x1; i++, k++) {
+					path[i] = filt[k];
+				}
+			}
+			else {
+				for (auto i = 0; i < head_x1; i++) {
+					path[i] = curvs[i];
+				}
+			}
+		}
+		if (band->isRetinaOnNerveHeadMarginRight()) {
+			for (auto i = head_x2 + 1; i < width; i++) {
+				r_marg.push_back(path[i]);
+			}
+			if (r_marg.size() > (filt_size1 * 2 + 1)) {
+				auto filt = CppUtil::SgFilter::smoothInts(r_marg, filt_size1, degree1);
+				for (auto i = head_x2 + 1, k = 0; i < width; i++, k++) {
+					path[i] = filt[k];
+				}
+			}
+			else {
+				for (auto i = head_x2 + 1; i < width; i++) {
+					path[i] = curvs[i];
+				}
+			}
+		}
+
+		if (band->isRetinaOnNerveHeadMarginBoth()) {
+			auto heads = std::vector<int>();
+			for (auto i = head_x1; i <= head_x2; i++) {
+				heads.push_back(path[i]);
+			}
+			if (heads.size() > (filt_size2 * 2 + 1)) {
+				auto filt = CppUtil::SgFilter::smoothInts(heads, filt_size2, degree2);
+				for (auto i = head_x1, k = 0; i <= head_x2; i++, k++) {
+					path[i] = filt[k];
+				}
+			}
+		}
+		else if (band->isRetinaOnNerveHeadMarginLeft()) {
+			auto heads = std::vector<int>();
+			for (auto i = head_x1; i < width; i++) {
+				heads.push_back(path[i]);
+			}
+			if (heads.size() > (filt_size2 * 2 + 1)) {
+				auto filt = CppUtil::SgFilter::smoothInts(heads, filt_size2, degree2);
+				for (auto i = head_x1, k = 0; i < width; i++, k++) {
+					path[i] = filt[k];
+				}
+			}
+			else {
+				for (auto i = head_x1; i < width; i++) {
+					path[i] = curvs[i];
+				}
+			}
+		}
+		else if (band->isRetinaOnNerveHeadMarginRight()) {
+			auto heads = std::vector<int>();
+			for (auto i = head_x2; i >= 0; i--) {
+				heads.push_back(path[i]);
+			}
+			if (heads.size() > (filt_size2 * 2 + 1)) {
+				auto filt = CppUtil::SgFilter::smoothInts(heads, filt_size2, degree2);
+				for (auto i = head_x2, k = 0; i >= 0; i--, k++) {
+					path[i] = filt[k];
+				}
+			}
+			else {
+				for (auto i = head_x2; i >= 0; i--) {
+					path[i] = curvs[i];
+				}
+			}
+		}
+	}
+	else {
+		path = curvs;
 	}
 	return path;
 }

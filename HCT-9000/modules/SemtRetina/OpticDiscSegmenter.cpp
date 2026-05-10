@@ -85,6 +85,7 @@ bool SemtRetina::OpticDiscSegmenter::segment(bool angio)
 	if (!bilm->detectBoundary()) {
 		return false;
 	}
+
 	auto* bonl = boundaryONL();
 	if (!bonl->detectBoundary()) {
 		return false;
@@ -99,14 +100,16 @@ bool SemtRetina::OpticDiscSegmenter::segment(bool angio)
 		return false;
 	}
 
-	auto* bbrm = boundaryBRM();
-	if (!bbrm->detectBoundary()) {
-		return false;
-	}
 	auto* bios = boundaryIOS();
 	if (!bios->detectBoundary()) {
 		return false;
 	}
+
+	auto* bbrm = boundaryBRM();
+	if (!bbrm->detectBoundary()) {
+		return false;
+	}
+
 	auto* brpe = boundaryRPE();
 	if (!brpe->detectBoundary()) {
 		return false;
@@ -116,10 +119,14 @@ bool SemtRetina::OpticDiscSegmenter::segment(bool angio)
 	if (!bopl->detectBoundary()) {
 		return false;
 	}
+	return true;
+
 	auto* bipl = boundaryIPL();
 	if (!bipl->detectBoundary()) {
 		return false;
 	}
+
+	return true;
 
 	crta->enableSourceDimensions();
 	band->upscaleToSourceDimensions();

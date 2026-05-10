@@ -32,8 +32,12 @@ namespace SemtRetina
 		float imageScaleY(void) const;
 		float pixelSpaceX(void) const;
 		float pixelSpaceY(void) const;
+		float imageScanRangeX(void) const;
+
+		int deltaByPixelSpaceX(float factor = 1.0f, int minval = 1, int maxval = 51) const;
 
 	public:
+		void setImageScanRangeX(float range);
 		void setSampleScaleFactors(float scaleX, float scaleY);
 		void setSampleDimensions(int width, int height, float spaceX, float spaceY);
 		void setSourceDimensions(int width, int height, float spaceX, float spaceY);
@@ -106,8 +110,9 @@ namespace SemtRetina
 		int getGradientKernelRowsIOS(void) const;
 		int getGradientKernelColsIOS(void) const;
 		int getPathCostRangeDeltaIOS(void) const;
-		int getPathDiscLowerSpaceMinIOS(void) const;
-		int getPathDiscLowerSpaceMaxIOS(void) const;
+		int getPathDiscRangeDeltaIOS(void) const;
+		int getPathDiscUpperOffsetIOS(void) const;
+		int getPathDiscLowerSpaceIOS(void) const;
 		int getLayerUpperSpaceMaxIOS(void) const;
 		int getLayerLowerSpaceMaxIOS(void) const;
 		int getLayerSmoothWindowIOS(bool local) const;
@@ -115,9 +120,7 @@ namespace SemtRetina
 		int getGradientKernelRowsRPE(void) const;
 		int getGradientKernelColsRPE(void) const;
 		int getPathCostRangeDeltaRPE(void) const;
-		int getPathSmoothWindowRPE(void) const;
-		int getPathCostRangeLimitRPE(void) const;
-		int getPathUpwardOffsetRPE(void) const;
+		int getPathDiscRangeDeltaRPE(void) const;
 		int getLayerLowerOffsetMinRPE(void) const;
 		int getLayerLowerOffsetMaxRPE(void) const;
 		int getLayerDistanceMinRPE(void) const;
@@ -127,8 +130,9 @@ namespace SemtRetina
 		int getGradientKernelRowsBRM(void) const;
 		int getGradientKernelColsBRM(void) const;
 		int getPathCostRangeDeltaBRM(void) const;
-		int getPathDiscUpperSpaceMinBRM(void) const;
-		int getPathDiscUpperSpaceMaxBRM(void) const;
+		int getPathDiscRangeDeltaBRM(void) const;
+		int getPathDiscUpperMarginMinBRM(void) const;
+		int getPathDiscUpperMarginMaxBRM(void) const;
 		int getPathDownwardOffsetBRM(void) const;
 		int getLayerLowerSpaceMinBRM(void) const;
 		int getLayerLowerSpaceMaxBRM(void) const;

@@ -1,0 +1,26 @@
+# Clangd: MSVC solution has no compile_commands.json; mirror RetiSegEval module includes.
+CompileFlags:
+  Add:
+    - -xc++
+    - -std=c++17
+    - -Imodules/CppUtil
+    - -Imodules/OctSystem
+    - -Imodules/OctConfig
+    - -Imodules/OctDevice
+    - -Imodules/OctData
+    - -Imodules/OctResult
+    - -Imodules/OctReport
+    - -Imodules/OctGlobal
+    - -Imodules/SegmScan
+    - -Imodules/RetSegm
+    - -Imodules/SemtSegm
+    - -Imodules/CorTopo
+    - -Imodules/SigProc
+    - -Imodules/SigChain
+    - -Imodules/KerFocus
+    - -Imodules/RetFocus
+    - -Imodules/ImgProc
+    - -Imodules/OctAngio
+    - -Iexterns/boost/boost_1_59_0
+    - -Iexterns/Spinnaker/include
+    - -Iexterns/openvino_toolkit/runtime/include

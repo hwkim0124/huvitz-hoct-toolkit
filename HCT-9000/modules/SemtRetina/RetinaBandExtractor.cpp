@@ -117,7 +117,7 @@ bool SemtRetina::RetinaBandExtractor::estimateHorizontalBounds(void)
 	}
 
 	if (img_w != width) {
-		LogD() << "Sampling index: " << resa->sampleIndex() << ", retina x1: " << x1 << ", x2: " << x2 << ", size: " << xs.size() << ", img width: " << img_w;
+		LogD() << "Line index: " << resa->sampleIndex() << ", retina x1: " << x1 << ", x2: " << x2 << ", size: " << xs.size() << ", img width: " << img_w;
 	}
 
 	impl().retinaBeginX = x1;
@@ -272,9 +272,9 @@ bool SemtRetina::RetinaBandExtractor::detectOuterRetinaBoundary(void)
 
 		int row_start = y_inns[k];
 		for (int y = row_start; y < height; y++) {
+			row_start = y;
 			auto val = indice[y * width + x];
 			if (val == CLASS_SCLERA) {
-				row_start = y;
 				break;
 			}
 		}
@@ -426,8 +426,20 @@ bool SemtRetina::RetinaBandExtractor::detectOpticNerveHeadRegion(void)
 		if (disc_w >= HEAD_WIDTH_MIN) {
 			auto rnfl_w = 0;
 			for (int x = disc_x1; x <= disc_x2; x++) {
-				if (rnfl_list[x] > 0) {
-					rnfl_w++;
+				auto y1 = inns[x];
+				auto y2 = outs[x];
+				for (int y = y1; y <= y2; y++) {
+					auto idx = y * width + x;
+					auto cls = indice[idx];
+					if (cls == CLASS_VITREOUS) {
+						continue;
+					}
+					else {
+						if (cls == CLASS_RNFL) {
+							rnfl_w++;
+						}
+						break;
+					}
 				}
 			}
 			if (rnfl_w >= (disc_w * 0.9f)) {
@@ -443,7 +455,7 @@ bool SemtRetina::RetinaBandExtractor::detectOpticNerveHeadRegion(void)
 				disc_x2 = width - 1;
 			}
 			setNerveHeadRangeX(disc_x1, disc_x2);
-			LogD() << "Optic Nerve Head region detected, x1: " << disc_x1 << ", x2: " << disc_x2 << ", width: " << disc_w << ", cup shaped: " << impl().isDiscCupShaped << ", index: " << resa->sampleIndex();
+			LogD() << "Line index: " << resa->sampleIndex() << ", ONH region detected x1: " << disc_x1 << ", x2 : " << disc_x2 << ", width : " << disc_w << ", cup shaped : " << impl().isDiscCupShaped ;
 		}
 	}
 	return true;
@@ -471,13 +483,15 @@ bool SemtRetina::RetinaBandExtractor::adjustOpticNerveDiscMargins(void)
 	if (isNerveHeadRangeValid()) {
 		auto disc_x1 = impl().opticDiscMinX;
 		auto disc_x2 = impl().opticDiscMaxX;
-		auto disc_cx = (disc_x1 + disc_x2) / 2;
+		auto disc_c1 = disc_x1 + (int)((disc_x2 - disc_x1) * 0.25f);
+		auto disc_c2 = disc_x1 + (int)((disc_x2 - disc_x1) * 0.75f);
 		auto new_x1 = disc_x1;
 		auto new_x2 = disc_x2;
 
-		for (int x = disc_x1; x < disc_cx; x++) {
+		for (int x = disc_x1; x < disc_c1; x++) {
 			auto y1 = onls[x];
 			auto idx1 = y1 * width + x;
+			auto found = false;
 			if (indice[idx1] == CLASS_DISC_HEAD) {
 				break;
 			}
@@ -490,15 +504,20 @@ bool SemtRetina::RetinaBandExtractor::adjustOpticNerveDiscMargins(void)
 				else {
 					if (indice[idx] == CLASS_RPE) {
 						new_x1 = x + 1;
+						found = true;
 					}
 					break;
 				}
 			}
+			if (!found) {
+				break;
+			}
 		}
 
-		for (int x = disc_x2; x > disc_cx; x--) {
+		for (int x = disc_x2; x > disc_c2; x--) {
 			auto y1 = onls[x];
 			auto idx1 = y1 * width + x;
+			auto found = false;
 			if (indice[idx1] == CLASS_DISC_HEAD) {
 				break;
 			}
@@ -511,12 +530,17 @@ bool SemtRetina::RetinaBandExtractor::adjustOpticNerveDiscMargins(void)
 				else {
 					if (indice[idx] == CLASS_RPE) {
 						new_x2 = x - 1;
+						found = true;
 					}
 					break;
 				}
 			}
+			if (!found) {
+				break;
+			}
 		}
 
+		/*
 		int ilm_y1 = ilms[new_x1];
 		int ilm_y2 = ilms[new_x2];
 		int ilm_cy = (ilm_y1 + ilm_y2) / 2;
@@ -529,6 +553,7 @@ bool SemtRetina::RetinaBandExtractor::adjustOpticNerveDiscMargins(void)
 				break;
 			}
 		}
+		*/
 
 		/*
 		for (int x = new_x1; x <= new_x2; x++) {
@@ -538,9 +563,118 @@ bool SemtRetina::RetinaBandExtractor::adjustOpticNerveDiscMargins(void)
 			}
 		}
 		*/
-		impl().opticDiscMinX = new_x1;
-		impl().opticDiscMaxX = new_x2;
-		LogD() << "Optic Nerve Head margins adjusted, old x1: " << disc_x1 << ", x2: " << disc_x2 << ", new x1: " << new_x1 << ", new x2: " << new_x2 << ", cup shaped: " << impl().isDiscCupShaped << ", index: " << resa->sampleIndex();
+
+		bool cupShaped = false;
+		for (int x = new_x1; x <= new_x2; x++) {
+			if (ilms[x] >= onls[x]) {
+				cupShaped = true;
+				break;
+			}
+		}
+
+		if (impl().opticDiscMinX != new_x1 || impl().opticDiscMaxX != new_x2 || impl().isDiscCupShaped != cupShaped) {
+			impl().opticDiscMinX = new_x1;
+			impl().opticDiscMaxX = new_x2;
+			impl().isDiscCupShaped = cupShaped;
+			LogD() << "Line index: " << resa->sampleIndex() << ", ONH region adjusted, x1: " << disc_x1 << ", x2: " << disc_x2 << " => x1: " << new_x1 << ", new x2: " << new_x2 << ", cup shaped: " << impl().isDiscCupShaped;
+		}
+	}
+	return true;
+}
+
+bool SemtRetina::RetinaBandExtractor::refineOpticNerveDiscMargins(void)
+{
+	auto* segm = impl().segm;
+	auto* crta = segm->retinaSegmCriteria();
+	auto* resa = segm->bscanResampler();
+
+	auto* image = resa->imageSample();
+	auto width = image->getWidth();
+	auto height = image->getHeight();
+
+	auto* pipe = segm->retinaInferPipeline();
+	auto* indice = pipe->classIndices();
+
+	auto* bios = segm->boundaryIOS();
+	auto ioss = bios->sampleYs();
+	auto* bbrm = segm->boundaryBRM();
+	auto brms = bbrm->sampleYs();
+	auto* bilm = segm->boundaryILM();
+	auto ilms = bilm->sampleYs();
+	auto* bonl = segm->boundaryONL();
+	auto onls = bonl->sampleYs();
+	auto* bnfl = segm->boundaryNFL();
+	auto nfls = bnfl->sampleYs();
+
+	if (isNerveHeadRangeValid()) {
+		auto disc_x1 = impl().opticDiscMinX;
+		auto disc_x2 = impl().opticDiscMaxX;
+		auto disc_cx = (disc_x1 + disc_x2) / 2;
+		auto new_x1 = disc_x1;
+		auto new_x2 = disc_x2;
+
+		for (int x = disc_x1; x < disc_cx; x++) {
+			auto y1 = ioss[x];
+			auto y2 = brms[x];
+			auto found = false;
+			for (int y = y1; y <= y2; y++) {
+				auto idx = y * width + x;
+				if (indice[idx] == CLASS_RPE) {
+					new_x1 = x + 1;
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				break;
+			}
+		}
+
+		for (int x = disc_x2; x > disc_cx; x--) {
+			auto y1 = ioss[x];
+			auto y2 = brms[x];
+			auto found = false;
+			for (int y = y1; y <= y2; y++) {
+				auto idx = y * width + x;
+				if (indice[idx] == CLASS_RPE) {
+					new_x2 = x - 1;
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				break;
+			}
+		}
+		/*
+		int ilm_y1 = ilms[new_x1];
+		int ilm_y2 = ilms[new_x2];
+		int ilm_cy = (ilm_y1 + ilm_y2) / 2;
+		int CUP_MIN = crta->getOpticDiscCupDepthMin();
+
+		for (int x = new_x1; x <= new_x2; x++) {
+			int pass = ilms[x] - ilm_cy;
+			if (pass >= CUP_MIN) {
+				impl().isDiscCupShaped = true;
+				break;
+			}
+		}
+		*/
+
+		bool cupShaped = false;
+		for (int x = new_x1; x <= new_x2; x++) {
+			if (nfls[x] >= onls[x]) {
+				cupShaped = true;
+				break;
+			}
+		}
+
+		if (impl().opticDiscMinX != new_x1 || impl().opticDiscMaxX != new_x2 || impl().isDiscCupShaped != cupShaped) {
+			impl().opticDiscMinX = new_x1;
+			impl().opticDiscMaxX = new_x2;
+			impl().isDiscCupShaped = cupShaped;
+			LogD() << "Line index: " << resa->sampleIndex() << ", ONH region refined, x1: " << disc_x1 << ", x2: " << disc_x2 << " => x1: " << new_x1 << ", new x2: " << new_x2 << ", cup shaped: " << impl().isDiscCupShaped;
+		}
 	}
 	return true;
 }
@@ -669,6 +803,48 @@ int SemtRetina::RetinaBandExtractor::opticDiscMaxX(void) const
 {
 	auto x = impl().opticDiscMaxX;
 	return x;
+}
+
+void SemtRetina::RetinaBandExtractor::applyMedianFilter(const std::vector<int>& input, std::vector<int>& output, int window_size, bool is_circular)
+{
+	const size_t n = input.size();
+	if (n == 0) {
+		return;
+	}
+
+	if (window_size < 3) {
+		output = std::vector<int>(input);
+		return;
+	}
+
+	std::vector<int> result(n);
+	const int half_win = window_size / 2;
+
+	for (size_t i = 0; i < n; ++i) {
+		std::vector<int> window;
+		window.reserve(window_size);
+
+		for (int j = -half_win; j <= half_win; ++j) {
+			int idx = static_cast<int>(i) + j;
+
+			if (is_circular) {
+				idx = (idx % static_cast<int>(n) + static_cast<int>(n)) % static_cast<int>(n);
+				window.push_back(input[static_cast<size_t>(idx)]);
+			}
+			else {
+				// Clamp to edges for non-circular data
+				if (idx >= 0 && idx < static_cast<int>(n)) {
+					window.push_back(input[static_cast<size_t>(idx)]);
+				}
+			}
+		}
+
+		auto median_it = window.begin() + (window.size() / 2);
+		std::nth_element(window.begin(), median_it, window.end());
+		result[i] = *median_it;
+	}
+	output = result;
+	return;
 }
 
 

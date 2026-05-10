@@ -107,7 +107,8 @@ bool SegmScan::DiscBsegm::performAnalysis(bool meye)
 		layerBRM()->initialize(frame.boundaryBRM(), src_w, src_h);
 
 		layerInn()->initialize(frame.boundaryINN(), src_w, src_h);
-		layerOut()->initialize(frame.boundaryONL(), src_w, src_h);
+		layerOut()->initialize(frame.boundaryOUT(), src_w, src_h);
+		layerOPR()->initialize(frame.boundaryONL(), src_w, src_h);
 		layerBASE()->initialize(frame.boundaryBRM(), src_w, src_h);
 
 		auto layers = getRetinaLayers();

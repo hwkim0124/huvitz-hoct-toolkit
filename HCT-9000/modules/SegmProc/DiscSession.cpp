@@ -647,14 +647,13 @@ bool SegmProc::DiscSession::filterOpticDiscSet(void)
 			}
 		}
 	}
-	if (size <= 0) {
-		return false;
-	}
 
 	float rangeY = getOcularBsegm(0)->getPatternDescript().getScanRangeY();
 	int linePerMM = (int)ceil(size / rangeY);
-	int emptyLinesMax = max((int)(linePerMM * 0.5f), 3);
+	int emptyLinesMax = min(max((int)(linePerMM * 0.5f), 3), 9);
+	// int discLinesMin = min(max((int)(linePerMM * 0.35f), 3), 9);
 
+	// const int EMPTY_DISC_LINES_MAX = 5; //  3;
 	const int VALID_DISC_LINES_MIN = 3; // 5;
 
 	auto founds = list.size();

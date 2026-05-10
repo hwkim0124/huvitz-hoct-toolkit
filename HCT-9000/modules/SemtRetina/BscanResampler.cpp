@@ -110,10 +110,12 @@ bool SemtRetina::BscanResampler::runResampling(OctScanImage image, bool angio)
 		float scaleY = sampleScaleRatioY();
 		float spaceX = samplePixelSpaceX();
 		float spaceY = samplePixelSpaceY();
+		float rangeX = impl().rangeX;
 
 		auto* crt = impl().segm->retinaSegmCriteria();
 		crt->setSampleScaleFactors(scaleX, scaleY);
 		crt->setSampleDimensions(target_w, target_h, spaceX, spaceY);
+		crt->setImageScanRangeX(rangeX);
 
 		spaceX = sourcePixelSpaceX();
 		spaceY = sourcePixelSpaceY();
@@ -150,7 +152,7 @@ bool SemtRetina::BscanResampler::checkRetinaSegmentable(void) const
 	float stddev = image.imageStdev();
 	float snr_avg = ssum / snrs.size();
 
-	LogD() << "Sampling index: " << impl().sampleIndex << ", mean: " << mean << ", stdev: " << stddev << ", snr_avg: " << snr_avg << ", object ratios : " << ratio;
+	LogD() << "Line index: " << impl().sampleIndex << ", mean: " << mean << ", stdev: " << stddev << ", snr_avg: " << snr_avg << ", object ratios : " << ratio;
 	if (ratio < OBJ_RATIO_MIN) {
 		return false;
 	}

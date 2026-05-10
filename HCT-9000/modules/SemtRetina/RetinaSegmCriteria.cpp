@@ -32,6 +32,8 @@ struct RetinaSegmCriteria::RetinaSegmCriteriaImpl
 	float sampleScaleX = 0.0f;
 	float sampleScaleY = 0.0f;
 
+	float scanRangeX = 6.0f;
+
 	bool useSampleDim = false; 
 
 	RetinaSegmCriteriaImpl()
@@ -121,6 +123,31 @@ float SemtRetina::RetinaSegmCriteria::pixelSpaceY(void) const
 	return space;
 }
 
+float SemtRetina::RetinaSegmCriteria::imageScanRangeX(void) const
+{
+	float range = impl().scanRangeX;
+	return range;
+}
+
+int SemtRetina::RetinaSegmCriteria::deltaByPixelSpaceX(float factor, int minval, int maxval) const
+{
+	// 3 mm / 512 = 0.0058, 3 mm / 384 = 0.0078 => 70% 4.04 50% 2.9, 40% 2.3, 30% 1.74, 25% 1.45, 150% 8.7
+	// 6 mm / 512 = 0.0117, 6 mm / 384 = 0.0156 => 70% 8.21 50% 5.8, 40% 4.7, 30% 3.51, 25% 2.92, 150% 17.4
+	// 9 mm / 512 = 0.0175, 9 mm / 384 = 0.0234 => 70% 12.25 50% 8.7, 40% 7, 30% 5.25, 25% 4.25, 150% 26.1
+	// 12 mm / 512 = 0.0234, 12 mm / 384 = 0.0312 => 70% 16.3 50% 11.7, 40% 9.36, 30% 7.02, 25% 5.75, 150% 34.8
+	float space = pixelSpaceX();
+	int delta = (int)(space * 1000.0f * factor);
+	delta += (delta % 2 ? 0 : 1);
+	delta = min(max(minval, delta), maxval);
+	return delta;
+}
+
+void SemtRetina::RetinaSegmCriteria::setImageScanRangeX(float range)
+{
+	impl().scanRangeX = range;
+	return;
+}
+
 void SemtRetina::RetinaSegmCriteria::setSampleScaleFactors(float scaleX, float scaleY)
 {
 	impl().sampleScaleX = scaleX;
@@ -203,7 +230,8 @@ int SemtRetina::RetinaSegmCriteria::getDownwardOffsetToOuterBound(void) const
 
 int SemtRetina::RetinaSegmCriteria::getSmoothWindowToOuterBound(void) const
 {
-	const float SIZE = 0.54f;  // 35 pixs in angio 384
+	// const float SIZE = 0.54f;  // 35 pixs in angio 384
+	const float SIZE = 0.72f;  // 48 pixs in angio 384
 	int size = (int)(SIZE / pixelSpaceX() + 0.5f);
 	size = (size % 2 == 0) ? (size + 1) : size;
 	return size;
@@ -263,15 +291,19 @@ int SemtRetina::RetinaSegmCriteria::getGradientKernelColsILM(void) const
 
 int SemtRetina::RetinaSegmCriteria::getPathCostRangeDeltaILM(void) const
 {
-	const int DELTA = 5; // 9;
-	int delta = (int)(DELTA * imageScaleY() + 0.5f);
+	// const int DELTA = 5; // 9;
+	// int delta = (int)(DELTA * imageScaleY() + 0.5f);
+	int delta = deltaByPixelSpaceX(0.5f, 3, 9);
+	delta = (int)(delta * imageScaleY() + 0.5f);
 	return delta;
 }
 
 int SemtRetina::RetinaSegmCriteria::getPathDiscRangeDeltaILM(void) const
 {
-	const int DELTA = 15;
-	int delta = (int)(DELTA * imageScaleY() + 0.5f);
+	// const int DELTA = 19; // 15;
+	// int delta = (int)(DELTA * imageScaleY() + 0.5f);
+	int delta = deltaByPixelSpaceX(1.5f, 9, 27);
+	delta = (int)(delta * imageScaleY() + 0.5f);
 	return delta;
 }
 
@@ -314,15 +346,19 @@ int SemtRetina::RetinaSegmCriteria::getPathSideMarginSlopeWidth(void) const
 
 int SemtRetina::RetinaSegmCriteria::getPathCostRangeDeltaONL(void) const
 {
-	const int DELTA = 5;   
-	int delta = (int)(DELTA * imageScaleY() + 0.5f);
+	// const int DELTA = 5; // 9;
+	// int delta = (int)(DELTA * imageScaleY() + 0.5f);
+	int delta = deltaByPixelSpaceX(0.5f, 3, 9);
+	delta = (int)(delta * imageScaleY() + 0.5f);
 	return delta;
 }
 
 int SemtRetina::RetinaSegmCriteria::getPathDiscRangeDeltaONL(void) const
 {
-	const int DELTA = 11;  
-	int delta = (int)(DELTA * imageScaleY() + 0.5f);
+	// const int DELTA = 19; // 15;
+	// int delta = (int)(DELTA * imageScaleY() + 0.5f);
+	int delta = deltaByPixelSpaceX(1.5f, 9, 27);
+	delta = (int)(delta * imageScaleY() + 0.5f);
 	return delta;
 }
 
@@ -368,21 +404,25 @@ int SemtRetina::RetinaSegmCriteria::getGradientKernelColsNFL(void) const
 
 int SemtRetina::RetinaSegmCriteria::getPathCostRangeDeltaNFL(void) const
 {
-	const int DELTA = 5;
-	int delta = (int)(DELTA * imageScaleY() + 0.5f);
+	// const int DELTA = 5;
+	// int delta = (int)(DELTA * imageScaleY() + 0.5f);
+	int delta = deltaByPixelSpaceX(0.5f, 3, 9);
+	delta = (int)(delta * imageScaleY() + 0.5f);
 	return delta;
 }
 
 int SemtRetina::RetinaSegmCriteria::getPathDiscRangeDeltaNFL(void) const
 {
-	const int DELTA = 11;
-	int delta = (int)(DELTA * imageScaleY() + 0.5f);
+	// const int DELTA = 11;
+	// int delta = (int)(DELTA * imageScaleY() + 0.5f);
+	int delta = deltaByPixelSpaceX(1.5f, 9, 27);
+	delta = (int)(delta * imageScaleY() + 0.5f);
 	return delta;
 }
 
 int SemtRetina::RetinaSegmCriteria::getPathDiscUpperSpaceNFL(void) const
 {
-	const int MARGIN = 36;
+	const int MARGIN = 24; // 36
 	int margin = (int)(MARGIN * imageScaleY() + 0.5f);
 	return margin;
 }
@@ -583,21 +623,31 @@ int SemtRetina::RetinaSegmCriteria::getGradientKernelColsIOS(void) const
 
 int SemtRetina::RetinaSegmCriteria::getPathCostRangeDeltaIOS(void) const
 {
-	const int DELTA = 5;
-	int delta = (int)(DELTA * imageScaleY() + 0.5f);
+	// const int DELTA = 5;
+	// int delta = (int)(DELTA * imageScaleY() + 0.5f);
+	int delta = deltaByPixelSpaceX(0.5f, 3, 9);
+	delta = (int)(delta * imageScaleY() + 0.5f);
 	return delta;
 }
 
-int SemtRetina::RetinaSegmCriteria::getPathDiscLowerSpaceMinIOS(void) const
+int SemtRetina::RetinaSegmCriteria::getPathDiscRangeDeltaIOS(void) const
 {
-	const int MARGIN = 5;
+	// int delta = deltaByPixelSpaceX(0.5f, 5, 13);
+	int delta = deltaByPixelSpaceX(1.5f, 9, 27);
+	delta = (int)(delta * imageScaleY() + 0.5f);
+	return delta;
+}
+
+int SemtRetina::RetinaSegmCriteria::getPathDiscUpperOffsetIOS(void) const
+{
+	const int MARGIN = 16;
 	int margin = (int)(MARGIN * imageScaleY() + 0.5f);
 	return margin;
 }
 
-int SemtRetina::RetinaSegmCriteria::getPathDiscLowerSpaceMaxIOS(void) const
+int SemtRetina::RetinaSegmCriteria::getPathDiscLowerSpaceIOS(void) const
 {
-	const int MARGIN = 16;
+	const int MARGIN = 32;
 	int margin = (int)(MARGIN * imageScaleY() + 0.5f);
 	return margin;
 }
@@ -644,31 +694,16 @@ int SemtRetina::RetinaSegmCriteria::getGradientKernelColsRPE(void) const
 
 int SemtRetina::RetinaSegmCriteria::getPathCostRangeDeltaRPE(void) const
 {
-	const int DELTA = 5;
-	int delta = (int)(DELTA * imageScaleY() + 0.5f);
+	int delta = deltaByPixelSpaceX(0.5f, 3, 9);
+	delta = (int)(delta * imageScaleY() + 0.5f);
 	return delta;
 }
 
-int SemtRetina::RetinaSegmCriteria::getPathSmoothWindowRPE(void) const
+int SemtRetina::RetinaSegmCriteria::getPathDiscRangeDeltaRPE(void) const
 {
-	const float WINDOW_SIZE = 0.09f;  // 5.76 pixs in angio 384.
-	int size = (int)(WINDOW_SIZE / pixelSpaceX() + 0.5f);
-	size = (size % 2 == 0) ? (size + 1) : size;
-	return size;
-}
-
-int SemtRetina::RetinaSegmCriteria::getPathCostRangeLimitRPE(void) const
-{
-	const int SIZE = 12;
-	int size = (int)(SIZE * imageScaleY() + 0.5f);
-	return size;
-}
-
-int SemtRetina::RetinaSegmCriteria::getPathUpwardOffsetRPE(void) const
-{
-	const int SIZE = 3;
-	int size = (int)(SIZE * imageScaleY() + 0.5f);
-	return size;
+	int delta = deltaByPixelSpaceX(1.5f, 9, 27);
+	delta = (int)(delta * imageScaleY() + 0.5f);
+	return delta;
 }
 
 int SemtRetina::RetinaSegmCriteria::getLayerLowerOffsetMinRPE(void) const
@@ -727,21 +762,30 @@ int SemtRetina::RetinaSegmCriteria::getGradientKernelColsBRM(void) const
 
 int SemtRetina::RetinaSegmCriteria::getPathCostRangeDeltaBRM(void) const
 {
-	const int DELTA = 5;   
-	int delta = (int)(DELTA * imageScaleY() + 0.5f);
+	// const int DELTA = 5;   
+	// int delta = (int)(DELTA * imageScaleY() + 0.5f);
+	int delta = deltaByPixelSpaceX(0.5f, 3, 9);
+	delta = (int)(delta * imageScaleY() + 0.5f);
 	return delta;
 }
 
-int SemtRetina::RetinaSegmCriteria::getPathDiscUpperSpaceMinBRM(void) const
+int SemtRetina::RetinaSegmCriteria::getPathDiscRangeDeltaBRM(void) const
 {
-	const int MARGIN = 36;
+	int delta = deltaByPixelSpaceX(1.5f, 9, 27);
+	delta = (int)(delta * imageScaleY() + 0.5f);
+	return delta;
+}
+
+int SemtRetina::RetinaSegmCriteria::getPathDiscUpperMarginMinBRM(void) const
+{
+	const int MARGIN = 5; // 36;
 	int margin = (int)(MARGIN * imageScaleY() + 0.5f);
 	return margin;
 }
 
-int SemtRetina::RetinaSegmCriteria::getPathDiscUpperSpaceMaxBRM(void) const
+int SemtRetina::RetinaSegmCriteria::getPathDiscUpperMarginMaxBRM(void) const
 {
-	const int MARGIN = 72;
+	const int MARGIN = 24; // 72;
 	int margin = (int)(MARGIN * imageScaleY() + 0.5f);
 	return margin;
 }
