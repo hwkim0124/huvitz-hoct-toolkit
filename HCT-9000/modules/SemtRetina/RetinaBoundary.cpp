@@ -314,6 +314,8 @@ bool SemtRetina::RetinaBoundary::resizeBoundaryPath(std::vector<int> path, int s
 			}
 		}
 	}
+
+	transform(begin(outs), end(outs), begin(outs), [=](int elm) { return min(max(elm, 0), targ_h - 1); });
 	return true;
 }
 

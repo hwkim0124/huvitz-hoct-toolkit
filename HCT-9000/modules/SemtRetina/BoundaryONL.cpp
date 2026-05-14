@@ -66,7 +66,7 @@ bool SemtRetina::BoundaryONL::designPathConstraints(void)
 	auto ilms = bilm->sampleYs();
 	auto* band = segm->retinaBandExtractor();
 	auto* bout = segm->boundaryOUT();
-	auto outs = bout->sourceYs();
+	auto outs = bout->sampleYs();
 
 	auto* pipe = segm->retinaInferPipeline();
 	auto* indice = pipe->classIndices();
@@ -93,6 +93,13 @@ bool SemtRetina::BoundaryONL::designPathConstraints(void)
 		auto y2 = outs[x];
 		upps[x] = y1;
 		lows[x] = y2;
+	}
+
+	const int TOP_MARGIN = crta->getPathTopOverMarginILM();
+	for (int x = 0; x < width; x++) {
+		if (ilms[x] <= TOP_MARGIN) {
+			delt[x] = 1;
+		}
 	}
 
 	auto col_means = image->columnMeans();
@@ -235,7 +242,7 @@ bool SemtRetina::BoundaryONL::smoothBoundaryONL(void)
 	auto* bilm = segm->boundaryILM();
 	auto inns = bilm->sampleYs();
 	auto* bout = segm->boundaryOUT();
-	auto outs = bout->sourceYs();
+	auto outs = bout->sampleYs();
 
 	auto path = this->optimalPath();
 	auto filt = path;

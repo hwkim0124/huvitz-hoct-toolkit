@@ -65,8 +65,9 @@ namespace SemtRetina
 		int getPathCostRangeDeltaILM(void) const;
 		int getPathDiscRangeDeltaILM(void) const;
 		int getPathDownwardMarginILM(void) const;
+		int getPathTopOverMarginILM(void) const;
 		int getPathSmoothWindowILM(void) const;
-		int getLayerSmoothWindowILM(void) const;
+		int getLayerSmoothWindowILM(bool local) const;
 		int getPathSideMarginSlopeWidth(void) const;
 
 		int getlayerUpperSpaceMinILM(void) const;
@@ -107,6 +108,7 @@ namespace SemtRetina
 		int getPathDiscRangeDeltaIOS(void) const;
 		int getPathDiscUpperOffsetIOS(void) const;
 		int getPathDiscLowerSpaceIOS(void) const;
+		int getPathTopOverOffsetIOS(void) const;
 		int getPathSmoothWindowIOS(void) const;
 		int getLayerUpperSpaceMaxIOS(void) const;
 		int getLayerRefiningRangeIOS(void) const;

@@ -51,7 +51,6 @@ bool SemtRetina::MacularSegmenter::segment(bool angio)
 	if (!resam->checkRetinaSegmentable()) {
 		return false;
 	}
-
 	auto* pipe = retinaInferPipeline();
 	if (!pipe->inferProbabilityMaps()) {
 		return false;
@@ -99,14 +98,16 @@ bool SemtRetina::MacularSegmenter::segment(bool angio)
 		return false;
 	}
 
-	auto* bbrm = boundaryBRM();
-	if (!bbrm->detectBoundary()) {
-		return false;
-	}
 	auto* bios = boundaryIOS();
 	if (!bios->detectBoundary()) {
 		return false;
 	}
+
+	auto* bbrm = boundaryBRM();
+	if (!bbrm->detectBoundary()) {
+		return false;
+	}
+
 	auto* brpe = boundaryRPE();
 	if (!brpe->detectBoundary()) {
 		return false;
@@ -116,6 +117,7 @@ bool SemtRetina::MacularSegmenter::segment(bool angio)
 	if (!bopl->detectBoundary()) {
 		return false;
 	}
+
 	auto* bipl = boundaryIPL();
 	if (!bipl->detectBoundary()) {
 		return false;
@@ -129,8 +131,9 @@ bool SemtRetina::MacularSegmenter::segment(bool angio)
 	brpe->reconstructLayer();
 
 	bnfl->reconstructLayer();
-	bipl->reconstructLayer();
 	bopl->reconstructLayer();
+	bipl->reconstructLayer();
+
 	bilm->reconstructLayer();
 
 	if (band->isNerveHeadRangeValid()) {

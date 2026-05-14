@@ -132,9 +132,9 @@ bool SemtRetina::OpticDiscSegmenter::segment(bool angio)
 	bbrm->reconstructLayer();
 	brpe->reconstructLayer();
 
-	bnfl->reconstructLayer();
 	bopl->reconstructLayer();
 	bipl->reconstructLayer();
+	bnfl->reconstructLayer();
 
 	bilm->reconstructLayer();
 

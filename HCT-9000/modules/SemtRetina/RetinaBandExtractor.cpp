@@ -150,7 +150,9 @@ bool SemtRetina::RetinaBandExtractor::detectInnerRetinaBoundary(void)
 	const int SEARCH_BAND = crta->getVitreousSizeToTriggerMidpoint();
 
 	vector<int> y_locs;
-	for (int x = x_beg; x <= x_end; x++) {
+	auto y_exts = vector<int>(width, -1);
+
+	for (int x = 0; x < width; x++) {
 		vector<int> vits;
 		for (int y = 0; y < y_span; y++) {
 			auto val = indice[y * width + x];
@@ -200,22 +202,30 @@ bool SemtRetina::RetinaBandExtractor::detectInnerRetinaBoundary(void)
 				}
 			}
 		}
-		y_locs.push_back(row_start);
+
+		if (x >= x_beg && x <= x_end) {
+			y_locs.push_back(row_start);
+		}
+		y_exts[x] = row_start;
 	}
 
 	const int INNER_MARGIN = crta->getUpwardOffsetToInnerBound();
 	for (int i = 0; i < static_cast<int>(y_locs.size()); ++i) {
 		y_locs[i] = std::max(0, y_locs[i] - INNER_MARGIN);
 	}
+	for (int i = 0; i < static_cast<int>(y_exts.size()); ++i) {
+		y_exts[i] = std::max(0, y_exts[i] - INNER_MARGIN);
+	}
 
 	const int WINDOW_SIZE = crta->getSmoothWindowToInnerBound();
 	const int DEGREE = 1;
-	auto filts = CppUtil::SgFilter::smoothInts(y_locs, WINDOW_SIZE, DEGREE);
+	auto filts = CppUtil::SgFilter::smoothInts(y_exts, WINDOW_SIZE, DEGREE);
 
 	for (int i = 0; i < static_cast<int>(filts.size()); ++i) {
-		y_locs[i] = std::max(0, std::min(filts[i], height-1));
+		y_exts[i] = std::max(0, std::min(filts[i], height-1));
 	}
 
+	/*
 	auto y_exts = vector<int>(width, -1);
 	for (int i = 0; i < x_beg; i++) {
 		y_exts[i] = y_locs[0];
@@ -226,6 +236,7 @@ bool SemtRetina::RetinaBandExtractor::detectInnerRetinaBoundary(void)
 	for (int i = x_end + 1; i < width; i++) {
 		y_exts[i] = y_locs.back();
 	}
+	*/
 
 	impl().innerYs = y_locs;
 	impl().innerYsFull = y_exts;
@@ -248,6 +259,8 @@ bool SemtRetina::RetinaBandExtractor::detectOuterRetinaBoundary(void)
 	auto* crta = segm->retinaSegmCriteria();
 	auto* resa = segm->bscanResampler();
 	auto* image = resa->imageCoarse();
+	auto width = image->getWidth();
+	auto height = image->getHeight();
 	auto img_mat = image->getCvMatConst();
 
 	auto* pipe = segm->retinaInferPipeline();
@@ -258,20 +271,18 @@ bool SemtRetina::RetinaBandExtractor::detectOuterRetinaBoundary(void)
 	auto x_span = impl().retinaSpanX;
 	auto y_span = impl().retinaSpanY;
 
-	auto width = image->getWidth();
-	auto height = image->getHeight();
-
 	auto col_means = image->columnMeans();
 	auto img_stdev = image->imageStdev();
 	
-	vector<int> y_inns = impl().innerYs;
+	vector<int> y_inns_locs = impl().innerYs;
+	vector<int> y_inns_full = impl().innerYsFull;
 	vector<int> y_locs;
 
 	const int FILTER_SIZE = crta->getUpwardFilterSizeToOuterBound();
 
-	for (int x = x_beg, k = 0; x <= x_end; x++, k++) {
+	for (int x = x_beg; x <= x_end; x++) {
 		auto thresh = col_means[x] + img_stdev * 2.0f;
-		auto y1 = y_inns[k];
+		auto y1 = y_inns_full[x];
 		auto y2 = height - 1;
 		auto not_count = 0;
 
@@ -299,43 +310,59 @@ bool SemtRetina::RetinaBandExtractor::detectOuterRetinaBoundary(void)
 		y_locs.push_back(y2);
 	}
 
-	/*
-	for (int x = x_beg, k = 0; x <= x_end; x++, k++) {
-		auto thresh = col_means[x] + img_stdev * 2.0f;
-
-		int row_start = y_inns[k];
-		for (int y = row_start; y < height; y++) {
-			row_start = y;
-			auto val = indice[y * width + x];
-			if (val == CLASS_SCLERA) {
-				break;
-			}
+	auto y_exts = vector<int>(width, -1);
+	for (int x = 0; x < width; x++) {
+		if (x >= x_beg && x <= x_end) {
+			y_exts[x] = y_locs[x - x_beg];
 		}
+		else {
+			auto thresh = col_means[x] + img_stdev * 1.0f;
+			auto y1 = y_inns_full[x];
+			auto y2 = height - 1;
+			auto not_count = 0;
 
-		for (int y = height - 1; y >= row_start; y--) {
-			auto val = img_mat.at<uchar>(y, x);
-			if (val >= thresh) {
-				row_start = y;
-				break;
+			for (int y = y2; y >= y1; y--) {
+				auto idx = y * width + x;
+				auto cls = indice[idx];
+				if (cls != CLASS_SCLERA) {
+					if (not_count == 0) {
+						y2 = y;
+					}
+					if (++not_count > FILTER_SIZE) {
+						break;
+					}
+				}
+				else {
+					not_count = 0;
+				}
+
+				auto val = img_mat.at<uchar>(y, x);
+				if (val >= thresh) {
+					y2 = y;
+					break;
+				}
 			}
+			y_exts[x] = y2;
 		}
-		y_locs.push_back(row_start);
 	}
-	*/
 
 	const int OUTER_MARGIN = crta->getDownwardOffsetToOuterBound();
 	for (int i = 0; i < static_cast<int>(y_locs.size()); ++i) {
-		y_locs[i] = std::min(height-1, y_locs[i] + OUTER_MARGIN);
+		y_locs[i] = std::min(height - 1, y_locs[i] + OUTER_MARGIN);
+	}
+	for (int i = 0; i < static_cast<int>(y_exts.size()); ++i) {
+		y_exts[i] = std::min(height - 1, y_exts[i] + OUTER_MARGIN);
 	}
 
 	const int WINDOW_SIZE = crta->getSmoothWindowToOuterBound();
 	const int DEGREE = 1;
-	auto filts = CppUtil::SgFilter::smoothInts(y_locs, WINDOW_SIZE, DEGREE);
 
+	auto filts = CppUtil::SgFilter::smoothInts(y_exts, WINDOW_SIZE, DEGREE);
 	for (int i = 0; i < static_cast<int>(filts.size()); ++i) {
-		y_locs[i] = std::max(y_inns[i], std::min(filts[i], height - 1));
+		y_exts[i] = std::max(y_inns_full[i], std::min(filts[i], height - 1));
 	}
 
+	/*
 	auto y_exts = vector<int>(width, -1);
 	for (int i = 0; i < x_beg; i++) {
 		y_exts[i] = y_locs[0];
@@ -346,6 +373,7 @@ bool SemtRetina::RetinaBandExtractor::detectOuterRetinaBoundary(void)
 	for (int i = x_end + 1; i < width; i++) {
 		y_exts[i] = y_locs.back();
 	}
+	*/
 
 	impl().outerYs = y_locs;
 	impl().outerYsFull = y_exts;

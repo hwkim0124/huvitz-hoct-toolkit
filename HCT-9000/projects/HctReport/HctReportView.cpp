@@ -211,7 +211,6 @@ void CHctReportView::createBitmapOfPattern(void)
 							braw->SetPixel(j, brm[j] + 1, Gdiplus::Color(192, 64, 255));
 						}
 					}
-					/*
 					auto oprs = bscan->getLayerPoints(OcularLayerType::OPR, width, height);
 					for (int j = 0; j < oprs.size(); j++) {
 						if (oprs[j] >= 0) {
@@ -219,7 +218,6 @@ void CHctReportView::createBitmapOfPattern(void)
 							braw->SetPixel(j, oprs[j] + 1, Gdiplus::Color(255, 128, 0));
 						}
 					}
-					*/
 				}
 			}
 		}

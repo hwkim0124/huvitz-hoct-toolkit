@@ -149,7 +149,7 @@ bool SemtRetina::BoundaryNFL::designPathConstraints(void)
 
 	auto* band = segm->retinaBandExtractor();
 	auto* bout = segm->boundaryOUT();
-	auto outs = bout->sourceYs();
+	auto outs = bout->sampleYs();
 
 	auto moves = crta->getPathCostRangeDeltaNFL();
 	auto upps = std::vector<int>(width, 0);
@@ -311,7 +311,7 @@ bool SemtRetina::BoundaryNFL::smoothBoundaryNFL(void)
 	auto inns = bilm->sampleYs();
 	auto* band = segm->retinaBandExtractor();
 	auto* bout = segm->boundaryOUT();
-	auto outs = bout->sourceYs();
+	auto outs = bout->sampleYs();
 
 	const int WINDOW_SIZE1 = crta->getLayerSmoothWindowNFL(true);
 	const int WINDOW_SIZE2 = crta->getLayerSmoothWindowNFL(false);
@@ -332,6 +332,10 @@ bool SemtRetina::BoundaryNFL::smoothBoundaryNFL(void)
 	}
 	else {
 		filt = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE2, DEGREE);
+	}
+
+	if (resa->sampleScaleRatioY() < 1.0f) {
+		transform(begin(filt), end(filt), begin(filt), [=](int elm) { return min(max(elm + 1, 0), height - 1); });
 	}
 
 	transform(cbegin(filt), cend(filt), cbegin(inns), begin(filt), [=](int elem1, int elem2) { return max(elem1, elem2); });

@@ -43,7 +43,7 @@ bool SemtRetina::BoundaryILM::detectBoundary(void)
 		return false;
 	}
 
-	if (!searchPathMinCostInRange()) {
+	if (!searchPathMinCost()) {
 		return false;
 	}
 	if (!smoothBoundaryILM()) {
@@ -289,6 +289,7 @@ bool SemtRetina::BoundaryILM::prepareGradientMap(void)
 bool SemtRetina::BoundaryILM::preparePathCostMap(void)
 {
 	auto* segm = retinaSegmenter();
+	auto* crta = segm->retinaSegmCriteria();
 	auto* resa = segm->bscanResampler();
 	auto* image = resa->imageCoarse();
 
@@ -346,9 +347,43 @@ bool SemtRetina::BoundaryILM::smoothBoundaryILM(void)
 	auto* band = segm->retinaBandExtractor();
 	auto outs = band->outerYsFull();
 
-	const int WINDOW_SIZE = crta->getLayerSmoothWindowILM();
+	const int WINDOW_SIZE1 = crta->getLayerSmoothWindowILM(true);
+	const int WINDOW_SIZE2 = crta->getLayerSmoothWindowILM(false);
 	const int DEGREE = 1;
-	auto filt = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE, DEGREE);
+
+	auto filt = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE1, DEGREE);
+	auto curv = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE2, DEGREE);
+
+	const int TOP_MARGIN = crta->getPathTopOverMarginILM();
+	int ret_x1 = width / 4;
+	int ret_x2 = (width * 3) / 4;
+	bool overed = false;
+	for (int x = 0; x < ret_x1; x++) {
+		if (path[x] <= TOP_MARGIN) {
+			for (int k = 0; k <= x; k++) {
+				path[k] = curv[k];
+			}
+			overed = true;
+			break;
+		}
+	}
+	for (int x = width - 1; x >= ret_x2; x--) {
+		if (path[x] <= TOP_MARGIN) {
+			for (int k = width - 1; k >= x; k--) {
+				path[k] = curv[k];
+			}
+			overed = true;
+			break;
+		}
+	}
+
+	if (overed) {
+		filt = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE1, DEGREE);
+	}
+
+	if (resa->sampleScaleRatioY() < 1.0f) {
+		transform(begin(filt), end(filt), begin(filt), [=](int elm) { return min(max(elm + 1, 0), height - 1); });
+	}
 	
 	transform(cbegin(filt), cend(filt), cbegin(outs), begin(filt), [=](int elem1, int elem2) { return min(elem1, elem2); });
 	transform(begin(filt), end(filt), begin(filt), [=](int elm) { return min(max(elm, 0), height - 1); });
@@ -370,16 +405,45 @@ bool SemtRetina::BoundaryILM::smoothRefinedILM(void)
 	auto height = image->getHeight();
 
 	auto* bnfl = segm->boundaryNFL();
-	auto outs = bnfl->sourceYs();
-
+	auto nfls = bnfl->sourceYs();
 	auto path = this->optimalPath();
-	transform(begin(path), end(path), begin(path), [=](int elm) { return elm + 1; });
+	// transform(begin(path), end(path), begin(path), [=](int elm) { return elm + 1; });
 
-	const int WINDOW_SIZE = crta->getLayerSmoothWindowILM();
+	const int WINDOW_SIZE1 = crta->getLayerSmoothWindowILM(true);
+	const int WINDOW_SIZE2 = crta->getLayerSmoothWindowILM(false);
 	const int DEGREE = 1;
-	auto filt = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE, DEGREE);
 
-	transform(cbegin(filt), cend(filt), cbegin(outs), begin(filt), [=](int elem1, int elem2) { return min(elem1, elem2); });
+	auto filt = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE1, DEGREE);
+	auto curv = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE2, DEGREE);
+
+	const int TOP_MARGIN = crta->getPathTopOverMarginILM();
+	int ret_x1 = width / 4;
+	int ret_x2 = (width * 3) / 4;
+	bool overed = false;
+	for (int x = 0; x < ret_x1; x++) {
+		if (path[x] <= TOP_MARGIN) {
+			for (int k = 0; k <= x; k++) {
+				path[k] = curv[k];
+			}
+			overed = true;
+			break;
+		}
+	}
+	for (int x = width - 1; x >= ret_x2; x--) {
+		if (path[x] <= TOP_MARGIN) {
+			for (int k = width - 1; k >= x; k--) {
+				path[k] = curv[k];
+			}
+			overed = true;
+			break;
+		}
+	}
+
+	if (overed) {
+		filt = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE1, DEGREE);
+	}
+
+	transform(cbegin(filt), cend(filt), cbegin(nfls), begin(filt), [=](int elem1, int elem2) { return min(elem1, elem2); });
 	transform(begin(filt), end(filt), begin(filt), [=](int elm) { return min(max(elm, 0), height - 1); });
 
 	this->sourceYs() = filt;

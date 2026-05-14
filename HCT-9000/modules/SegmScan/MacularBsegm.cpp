@@ -92,7 +92,7 @@ bool SegmScan::MacularBsegm::performAnalysis(bool meye)
 		layerInn()->initialize(frame.boundaryINN(), src_w, src_h);
 		layerOut()->initialize(frame.boundaryONL(), src_w, src_h);
 		layerBASE()->initialize(frame.boundaryBRM(), src_w, src_h);
-		// layerOPR()->initialize(frame.boundaryONL(), src_w, src_h);
+		layerOPR()->initialize(frame.boundaryONL(), src_w, src_h);
 
 		auto layers = getRetinaLayers();
 		layers->setRegionSize(src_w, src_h);

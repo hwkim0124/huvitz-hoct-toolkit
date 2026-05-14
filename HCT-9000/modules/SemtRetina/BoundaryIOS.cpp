@@ -145,6 +145,8 @@ bool SemtRetina::BoundaryIOS::designPathConstraints(void)
 	auto width = image->getWidth();
 	auto height = image->getHeight();
 
+	auto* bilm = segm->boundaryILM();
+	auto ilms = bilm->sampleYs();
 	auto* bonl = segm->boundaryONL();
 	auto onls = bonl->sampleYs();
 	auto* bnfl = segm->boundaryNFL();
@@ -169,6 +171,15 @@ bool SemtRetina::BoundaryIOS::designPathConstraints(void)
 	for (int i = 0; i < width; i++) {
 		upps[i] = max(onls[i], nfls[i]);
 		lows[i] = outs[i];
+	}
+
+	const int TOP_MARGIN = crta->getPathTopOverMarginILM();
+	const int TOP_OFFSET = crta->getPathTopOverOffsetIOS();
+	for (int x = 0; x < width; x++) {
+		if (ilms[x] <= TOP_MARGIN) {
+			lows[x] = min(lows[x], upps[x] + TOP_OFFSET);
+			delt[x] = 1;
+		}
 	}
 
 	if (band->isNerveHeadRangeValid()) {
@@ -272,6 +283,7 @@ bool SemtRetina::BoundaryIOS::prepareGradientMap(void)
 bool SemtRetina::BoundaryIOS::preparePathCostMap(void)
 {
 	auto* segm = retinaSegmenter();
+	auto* crta = segm->retinaSegmCriteria();
 	auto* band = segm->retinaBandExtractor();
 	auto* pipe = segm->retinaInferPipeline();
 	auto* head = pipe->probMapDiscHead();
@@ -279,13 +291,32 @@ bool SemtRetina::BoundaryIOS::preparePathCostMap(void)
 	auto width = pipe->probMapWidth();
 	auto height = pipe->probMapHeight();
 	auto N = width * height;
-
+	
 	Mat& matEdge = this->pathEdgeMat();
 	Mat& matProb = this->pathProbMat();
 
+	float* p_edge = matEdge.ptr<float>(0);
+	float* p_prob = matProb.ptr<float>(0);
+
+	auto* bilm = segm->boundaryILM();
+	auto ilms = bilm->sampleYs();
+	auto* bnfl = segm->boundaryNFL();
+	auto nfls = bnfl->sampleYs();
+
+	const int TOP_MARGIN = crta->getPathTopOverMarginILM();
+	for (int x = 0; x < width; x++) {
+		if (ilms[x] <= TOP_MARGIN) {
+			for (int y = 0; y < height - 1; y++) {
+				auto idx = y * width + x;
+				p_prob[idx] = p_edge[idx];
+			}
+		}
+	}
+
 	Mat matCost;
 	// cv::add(matProb, matEdge, matCost); 
-	cv::multiply(matProb, matEdge, matCost); 
+	// cv::multiply(matProb, matEdge, matCost); 
+	matProb.copyTo(matCost);
 	matCost *= -1.0f;
 	matCost.copyTo(this->pathCostMat());
 	return true;
@@ -327,6 +358,10 @@ bool SemtRetina::BoundaryIOS::smoothBoundaryIOS(void)
 		filt = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE2, DEGREE);
 	}
 
+	if (resa->sampleScaleRatioY() < 1.0f) {
+		transform(begin(filt), end(filt), begin(filt), [=](int elm) { return min(max(elm + 1, 0), height - 1); });
+	}
+
 	transform(cbegin(filt), cend(filt), cbegin(inns), begin(filt), [=](int elem1, int elem2) { return max(elem1, elem2); });
 	transform(cbegin(filt), cend(filt), cbegin(outs), begin(filt), [=](int elem1, int elem2) { return min(elem1, elem2); });
 	transform(begin(filt), end(filt), begin(filt), [=](int elm) { return min(max(elm, 0), height - 1); });
@@ -362,8 +397,8 @@ bool SemtRetina::BoundaryIOS::smoothRefinedIOS(void)
 			// filt = CppUtil::SgFilter::smoothInts(filt, WINDOW_SIZE1, DEGREE);
 		}
 		else {
-			filt = smoothOptimalPathWithMultiSize(WINDOW_SIZE2, DEGREE, WINDOW_SIZE2, DEGREE, false, 1);
-			// filt = CppUtil::SgFilter::smoothInts(filt, WINDOW_SIZE1, DEGREE);
+			// filt = smoothOptimalPathWithMultiSize(WINDOW_SIZE2, DEGREE, WINDOW_SIZE2, DEGREE, false, 1);
+			filt = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE2, DEGREE);
 		}
 	}
 	else {
