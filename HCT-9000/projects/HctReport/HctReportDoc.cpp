@@ -65,7 +65,7 @@ BOOL CHctReportDoc::OnNewDocument()
 	// TODO:  Add your specialized creation code here
 	if (isScanSegment()) {
 		if (name == PatternName::Macular3D || name == PatternName::Disc3D || name == PatternName::Anterior3D ||
-			name == PatternName::MacularAngio) {
+			name == PatternName::MacularAngio || name == PatternName::DiscAngio) {
 			openCubeScanData(path);
 		}
 		else if (name == PatternName::MacularRadial || name == PatternName::DiscRadial || name == PatternName::AnteriorRadial) {

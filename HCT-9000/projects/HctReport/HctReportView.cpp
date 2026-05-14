@@ -174,7 +174,6 @@ void CHctReportView::createBitmapOfPattern(void)
 							braw->SetPixel(j, nfls[j] + 1, Gdiplus::Color(255, 0, 255));
 						}
 					}
-
 					auto ipls = bscan->getLayerPoints(OcularLayerType::IPL, width, height);
 					for (int j = 0; j < ipls.size(); j++) {
 						if (ipls[j] >= 0) {
@@ -189,12 +188,11 @@ void CHctReportView::createBitmapOfPattern(void)
 							braw->SetPixel(j, opls[j] + 1, Gdiplus::Color(255, 255, 64));
 						}
 					}
-
 					auto ioss = bscan->getLayerPoints(OcularLayerType::IOS, width, height);
 					for (int j = 0; j < ioss.size(); j++) {
 						if (ioss[j] >= 0) {
-							braw->SetPixel(j, ioss[j], Gdiplus::Color(64, 192, 255));
-							braw->SetPixel(j, ioss[j] + 1, Gdiplus::Color(64, 192, 255));
+							braw->SetPixel(j, ioss[j], Gdiplus::Color(0, 192, 255));
+							braw->SetPixel(j, ioss[j] + 1, Gdiplus::Color(0, 192, 255));
 						}
 					}
 
@@ -213,6 +211,7 @@ void CHctReportView::createBitmapOfPattern(void)
 							braw->SetPixel(j, brm[j] + 1, Gdiplus::Color(192, 64, 255));
 						}
 					}
+					/*
 					auto oprs = bscan->getLayerPoints(OcularLayerType::OPR, width, height);
 					for (int j = 0; j < oprs.size(); j++) {
 						if (oprs[j] >= 0) {
@@ -220,6 +219,7 @@ void CHctReportView::createBitmapOfPattern(void)
 							braw->SetPixel(j, oprs[j] + 1, Gdiplus::Color(255, 128, 0));
 						}
 					}
+					*/
 				}
 			}
 		}

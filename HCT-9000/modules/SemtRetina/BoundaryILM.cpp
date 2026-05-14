@@ -132,6 +132,7 @@ bool SemtRetina::BoundaryILM::designPathConstraints(void)
 	auto* crta = segm->retinaSegmCriteria();
 	auto* resa = segm->bscanResampler();
 
+	// Sample image is used for limiting the search range from the intensity in detail.
 	auto* image = resa->imageSample();
 	const auto imgMat = image->getCvMatConst();
 	auto width = image->getWidth();
@@ -161,19 +162,19 @@ bool SemtRetina::BoundaryILM::designPathConstraints(void)
 	}
 
 	const float THRESH_MIN = 45.0f;
-	const float PROB_THRESH = 0.5f;
 	const int LOWER_MARGIN = crta->getPathDownwardMarginILM();
 
+	// The downward search range is limited by the intensity and the superficial probability. 
 	auto col_means = image->columnMeans();
 	auto img_stdev = image->imageStdev();
 
 	auto* pipe = segm->retinaInferPipeline();
-	auto* nfls = pipe->probMapRnfl();
-	auto* ipls = pipe->probMapIplOpl();
+	auto* clss = pipe->classIndices();
 
 	for (int x = 0; x < width; x++) {
 		auto y1 = upps[x];
 		auto y2 = lows[x];
+
 		auto thresh = col_means[x] + img_stdev * 2.0f;
 		thresh = max(thresh, THRESH_MIN);
 
@@ -188,14 +189,11 @@ bool SemtRetina::BoundaryILM::designPathConstraints(void)
 				break;
 			}
 		}
-
 		// Also, check the superficial probability.
 		for (int y = y1; y <= y2; y++) {
 			auto idx = y * width + x;
-			auto val = max(nfls[idx], ipls[idx]);
-			if (val > PROB_THRESH) {
-				lim_y2 = min(y2, y + LOWER_MARGIN);
-				break;
+			if (clss[idx] == CLASS_RNFL) {
+				lim_y2 = y;
 			}
 		}
 
@@ -210,6 +208,7 @@ bool SemtRetina::BoundaryILM::designPathConstraints(void)
 		}
 	}
 
+	// Expand the search range within the optic disc region, especially when the disc is cup-shaped.
 	if (band->isNerveHeadRangeValid() && band->isNerveHeadDiscCupShaped()) {
 		auto x1 = band->opticDiscMinX();
 		auto x2 = band->opticDiscMaxX();
@@ -269,6 +268,7 @@ bool SemtRetina::BoundaryILM::prepareGradientMap(void)
 		matOut.copyTo(this->pathEdgeMat());
 	}
 
+	// Normalized probability map by the superficial layer probability.
 	{
 		auto* pipe = segm->retinaInferPipeline();
 		auto* p_rnfl = pipe->probMapRnfl();
@@ -294,6 +294,7 @@ bool SemtRetina::BoundaryILM::preparePathCostMap(void)
 
 	auto* band = segm->retinaBandExtractor();
 	auto* pipe = segm->retinaInferPipeline();
+	auto* head = pipe->probMapDiscHead();
 
 	auto width = pipe->probMapWidth();
 	auto height = pipe->probMapHeight();
@@ -316,14 +317,15 @@ bool SemtRetina::BoundaryILM::preparePathCostMap(void)
 		for (int x = x1; x <= x2; ++x) {
 			for (int y = upps[x]; y < lows[x]; ++y) {
 				auto idx = y * width + x;
-				p_prob[idx] = 0.5f;
+				// p_prob[idx] = 0.5f;
+				p_prob[idx] = max(p_prob[idx], head[idx]);
 			}
 		}
 	}
 
 	Mat matCost;
+	// cv::add(matProb, matEdge, matCost);
 	cv::multiply(matProb, matEdge, matCost);
-
 	matCost *= -1.0f;
 	matCost.copyTo(this->pathCostMat());
 	return true;

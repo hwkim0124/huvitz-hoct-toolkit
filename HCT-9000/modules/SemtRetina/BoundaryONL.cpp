@@ -48,7 +48,6 @@ bool SemtRetina::BoundaryONL::detectBoundary(void)
 	if (!smoothBoundaryONL()) {
 		return false;
 	}
-	// sampleYs() = lowerYs();
 	if (!resizeToMatchSource()) {
 		return false;
 	}
@@ -66,7 +65,8 @@ bool SemtRetina::BoundaryONL::designPathConstraints(void)
 	auto* bilm = segm->boundaryILM();
 	auto ilms = bilm->sampleYs();
 	auto* band = segm->retinaBandExtractor();
-	auto outs = band->outerYsFull();
+	auto* bout = segm->boundaryOUT();
+	auto outs = bout->sourceYs();
 
 	auto* pipe = segm->retinaInferPipeline();
 	auto* indice = pipe->classIndices();
@@ -234,25 +234,27 @@ bool SemtRetina::BoundaryONL::smoothBoundaryONL(void)
 	
 	auto* bilm = segm->boundaryILM();
 	auto inns = bilm->sampleYs();
-	auto outs = band->outerYsFull();
-	auto path = this->optimalPath();
+	auto* bout = segm->boundaryOUT();
+	auto outs = bout->sourceYs();
 
+	auto path = this->optimalPath();
 	auto filt = path;
 
+	const int WINDOW_SIZE1 = crta->getLayerSmoothWindowONL(true);
+	const int WINDOW_SIZE2 = crta->getLayerSmoothWindowONL(false);
+	const int DEGREE = 1;
+
 	if (band->isNerveHeadRangeValid()) {
-		const int WINDOW_SIZE1 = crta->getLayerSmoothWindowONL(true);
-		const int WINDOW_SIZE2 = crta->getLayerSmoothWindowONL(true);
-		const int DEGREE = 1;
-		// auto path = smoothOptimalPath(WINDOW_SIZE1, DEGREE, true, inns);
-		auto path = smoothOptimalPathWithLinearFit(WINDOW_SIZE1, DEGREE, true);
-		filt = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE2, DEGREE);
+		if (band->isNerveHeadDiscCupShaped()) {
+			filt = smoothOptimalPathWithCupBottom(WINDOW_SIZE2, DEGREE, inns);
+		}
+		else {
+			filt = smoothOptimalPathWithLinearFit(WINDOW_SIZE2, DEGREE, true);
+		}
 	}
 	else {
-		const int WINDOW_SIZE = crta->getLayerSmoothWindowONL(false);
-		const int DEGREE = 1;
-		filt = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE, DEGREE);
+		filt = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE2, DEGREE);
 	}
-
 
 	transform(cbegin(filt), cend(filt), cbegin(inns), begin(filt), [=](int elem1, int elem2) { return max(elem1, elem2); });
 	transform(cbegin(filt), cend(filt), cbegin(outs), begin(filt), [=](int elem1, int elem2) { return min(elem1, elem2); });
@@ -260,7 +262,6 @@ bool SemtRetina::BoundaryONL::smoothBoundaryONL(void)
 	this->sampleYs() = filt;
 	return true;
 }
-
 
 bool SemtRetina::BoundaryONL::resizeToMatchSource(void)
 {

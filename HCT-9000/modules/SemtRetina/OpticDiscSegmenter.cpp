@@ -119,14 +119,11 @@ bool SemtRetina::OpticDiscSegmenter::segment(bool angio)
 	if (!bopl->detectBoundary()) {
 		return false;
 	}
-	return true;
 
 	auto* bipl = boundaryIPL();
 	if (!bipl->detectBoundary()) {
 		return false;
 	}
-
-	return true;
 
 	crta->enableSourceDimensions();
 	band->upscaleToSourceDimensions();
@@ -136,8 +133,9 @@ bool SemtRetina::OpticDiscSegmenter::segment(bool angio)
 	brpe->reconstructLayer();
 
 	bnfl->reconstructLayer();
-	bipl->reconstructLayer();
 	bopl->reconstructLayer();
+	bipl->reconstructLayer();
+
 	bilm->reconstructLayer();
 
 	if (band->isNerveHeadRangeValid()) {

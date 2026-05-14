@@ -267,6 +267,39 @@ bool SemtRetina::RetinaBandExtractor::detectOuterRetinaBoundary(void)
 	vector<int> y_inns = impl().innerYs;
 	vector<int> y_locs;
 
+	const int FILTER_SIZE = crta->getUpwardFilterSizeToOuterBound();
+
+	for (int x = x_beg, k = 0; x <= x_end; x++, k++) {
+		auto thresh = col_means[x] + img_stdev * 2.0f;
+		auto y1 = y_inns[k];
+		auto y2 = height - 1;
+		auto not_count = 0;
+
+		for (int y = y2; y >= y1; y--) {
+			auto idx = y * width + x;
+			auto cls = indice[idx];
+			if (cls != CLASS_SCLERA) {
+				if (not_count == 0) {
+					y2 = y;
+				}
+				if (++not_count > FILTER_SIZE) {
+					break;
+				}
+			}
+			else {
+				not_count = 0;
+			}
+
+			auto val = img_mat.at<uchar>(y, x);
+			if (val >= thresh) {
+				y2 = y;
+				break;
+			}
+		}
+		y_locs.push_back(y2);
+	}
+
+	/*
 	for (int x = x_beg, k = 0; x <= x_end; x++, k++) {
 		auto thresh = col_means[x] + img_stdev * 2.0f;
 
@@ -288,6 +321,7 @@ bool SemtRetina::RetinaBandExtractor::detectOuterRetinaBoundary(void)
 		}
 		y_locs.push_back(row_start);
 	}
+	*/
 
 	const int OUTER_MARGIN = crta->getDownwardOffsetToOuterBound();
 	for (int i = 0; i < static_cast<int>(y_locs.size()); ++i) {
@@ -455,7 +489,7 @@ bool SemtRetina::RetinaBandExtractor::detectOpticNerveHeadRegion(void)
 				disc_x2 = width - 1;
 			}
 			setNerveHeadRangeX(disc_x1, disc_x2);
-			LogD() << "Line index: " << resa->sampleIndex() << ", ONH region detected x1: " << disc_x1 << ", x2 : " << disc_x2 << ", width : " << disc_w << ", cup shaped : " << impl().isDiscCupShaped ;
+			LogD() << "\t\tONH region detected, line index: " << resa->sampleIndex() << ", x1: " << disc_x1 << ", x2 : " << disc_x2 << ", width : " << disc_w << ", cup shaped : " << impl().isDiscCupShaped ;
 		}
 	}
 	return true;
@@ -479,6 +513,7 @@ bool SemtRetina::RetinaBandExtractor::adjustOpticNerveDiscMargins(void)
 	auto ilms = bilm->sampleYs();
 	auto* bonl = segm->boundaryONL();
 	auto onls = bonl->sampleYs();
+	auto outs = outerYsFull();
 
 	if (isNerveHeadRangeValid()) {
 		auto disc_x1 = impl().opticDiscMinX;
@@ -490,15 +525,16 @@ bool SemtRetina::RetinaBandExtractor::adjustOpticNerveDiscMargins(void)
 
 		for (int x = disc_x1; x < disc_c1; x++) {
 			auto y1 = onls[x];
+			auto y2 = outs[x];
 			auto idx1 = y1 * width + x;
 			auto found = false;
 			if (indice[idx1] == CLASS_DISC_HEAD) {
 				break;
 			}
 
-			for (int y = y1; y < height; y++) {
+			for (int y = y1; y < y2; y++) {
 				auto idx = y * width + x;
-				if (indice[idx] == CLASS_ONL) {
+				if (indice[idx] > CLASS_VITREOUS && indice[idx] <= CLASS_ONL) {
 					continue;
 				}
 				else {
@@ -516,15 +552,16 @@ bool SemtRetina::RetinaBandExtractor::adjustOpticNerveDiscMargins(void)
 
 		for (int x = disc_x2; x > disc_c2; x--) {
 			auto y1 = onls[x];
+			auto y2 = outs[x];
 			auto idx1 = y1 * width + x;
 			auto found = false;
 			if (indice[idx1] == CLASS_DISC_HEAD) {
 				break;
 			}
 
-			for (int y = y1; y < height; y++) {
+			for (int y = y1; y < y2; y++) {
 				auto idx = y * width + x;
-				if (indice[idx] == CLASS_ONL) {
+				if (indice[idx] > CLASS_VITREOUS && indice[idx] <= CLASS_ONL) {
 					continue;
 				}
 				else {
@@ -576,7 +613,7 @@ bool SemtRetina::RetinaBandExtractor::adjustOpticNerveDiscMargins(void)
 			impl().opticDiscMinX = new_x1;
 			impl().opticDiscMaxX = new_x2;
 			impl().isDiscCupShaped = cupShaped;
-			LogD() << "Line index: " << resa->sampleIndex() << ", ONH region adjusted, x1: " << disc_x1 << ", x2: " << disc_x2 << " => x1: " << new_x1 << ", new x2: " << new_x2 << ", cup shaped: " << impl().isDiscCupShaped;
+			LogD() << "\t\tONH region adjusted, line index: " << resa->sampleIndex() << ", x1: " << disc_x1 << ", x2 : " << disc_x2 << " = > x1: " << new_x1 << ", new x2 : " << new_x2 << ", cup shaped : " << impl().isDiscCupShaped;
 		}
 	}
 	return true;

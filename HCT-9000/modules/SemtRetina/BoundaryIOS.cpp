@@ -70,23 +70,11 @@ bool SemtRetina::BoundaryIOS::reconstructLayer(void)
 	auto lows = std::vector<int>(width, 0);
 	auto delt = std::vector<int>(width, moves);
 
-	auto* bonl = segm->boundaryONL();
-	auto onls = bonl->sourceYs();
+	auto* bopl = segm->boundaryOPL();
+	auto opls = bopl->sourceYs();
 	auto* brpe = segm->boundaryRPE();
 	auto rpes = brpe->sourceYs();
 	auto ioss = sourceYs();
-
-	// const int UPPER_OFFS = crta->getPathDiscLowerSpaceMaxIOS();
-	// const int LOWER_OFFS = crta->getPathDiscLowerSpaceMaxIOS();
-	const int UPPER_OFFS = crta->getPathDiscUpperOffsetIOS();
-	const int LOWER_OFFS = crta->getPathDiscUpperOffsetIOS();
-
-	for (int i = 0; i < width; i++) {
-		auto y1 = max(ioss[i] - UPPER_OFFS, (int)(onls[i] + (ioss[i] - onls[i]) * 0.5f));
-		auto y2 = min(ioss[i] + LOWER_OFFS, (int)(ioss[i] + (rpes[i] - ioss[i]) * 0.5f));
-		upps[i] = y1;
-		lows[i] = y2;
-	}
 
 	auto ret_x1 = band->retinaBeginX();
 	auto ret_x2 = band->retinaEndX();
@@ -95,6 +83,34 @@ bool SemtRetina::BoundaryIOS::reconstructLayer(void)
 	}
 	for (int i = ret_x2 + 1; i < width; i++) {
 		delt[i] = 1;
+	}
+
+	const int OFFSET = 1; // crta->getLayerRefiningRangeIOS();
+	for (int i = 0; i < width; i++) {
+		auto y1 = (int)(ioss[i] - OFFSET);
+		auto y2 = (int)(ioss[i] + OFFSET);
+		upps[i] = max(y1, opls[i]);
+		lows[i] = min(y2, rpes[i]);
+	}
+
+	if (band->isNerveHeadRangeValid()) {
+		auto disc_x1 = band->opticDiscMinX();
+		auto disc_x2 = band->opticDiscMaxX();
+
+		const int OFFSET_MIN = crta->getLayerDiscOffsetMinIOS();
+		const int OFFSET_MAX = crta->getLayerDiscOffsetMaxIOS();
+		const int moves = (band->isNerveHeadDiscCupShaped()) ? crta->getPathDiscRangeDeltaIOS() : crta->getPathCostRangeDeltaIOS();
+
+		for (int x = disc_x1; x <= disc_x2; x++) {
+			auto y1 = rpes[x] - OFFSET_MAX;
+			auto y2 = rpes[x] - OFFSET_MIN;
+			upps[x] = y1;
+			lows[x] = y2;
+			delt[x] = moves;
+		}
+
+		delt[disc_x1] = moves * 10;
+		delt[disc_x2] = moves * 10;
 	}
 
 	this->upperYs() = upps;
@@ -133,8 +149,6 @@ bool SemtRetina::BoundaryIOS::designPathConstraints(void)
 	auto onls = bonl->sampleYs();
 	auto* bnfl = segm->boundaryNFL();
 	auto nfls = bnfl->sampleYs();
-	auto* bbrm = segm->boundaryBRM();
-	auto brms = bbrm->sampleYs();
 	auto* bout = segm->boundaryOUT();
 	auto outs = bout->sampleYs();
 
@@ -169,12 +183,12 @@ bool SemtRetina::BoundaryIOS::designPathConstraints(void)
 			const int moves = crta->getPathDiscRangeDeltaIOS();
 
 			for (int x = disc_x1; x <= disc_cx; ++x) {
-				upps[x] = min(max(onls[x], nfls[x] + est_nerv1), height - 1);
+				upps[x] = min(max(onls[x], nfls[x] + est_nerv1), outs[x]);
 				lows[x] = max(upps[x], lows[x]);
 				delt[x] = moves;
 			}
 			for (int x = disc_x2; x >= disc_cx; --x) {
-				upps[x] = min(max(onls[x], nfls[x] + est_nerv2), height - 1);
+				upps[x] = min(max(onls[x], nfls[x] + est_nerv2), outs[x]);
 				lows[x] = max(upps[x], lows[x]);
 				delt[x] = moves;
 			}
@@ -182,9 +196,11 @@ bool SemtRetina::BoundaryIOS::designPathConstraints(void)
 		else {
 			const auto LOWER_SPACE = crta->getPathDiscLowerSpaceIOS();
 			for (int x = disc_x1; x <= disc_x2; ++x) {
-				lows[x] = min(upps[x] + LOWER_SPACE, height - 1);
+				lows[x] = min(upps[x] + LOWER_SPACE, outs[x]);
 			}
 		}
+		delt[disc_x1] *= 10;
+		delt[disc_x2] *= 10;
 	}
 
 	this->upperYs() = upps;
@@ -199,7 +215,7 @@ bool SemtRetina::BoundaryIOS::prepareGradientMap(void)
 	auto* segm = retinaSegmenter();
 	auto* crta = segm->retinaSegmCriteria();
 	auto* resa = segm->bscanResampler();
-	auto* image = resa->imageCoarse();
+	auto* image = resa->imageSample();
 
 	const int KERNEL_ROWS = crta->getGradientKernelRowsIOS();
 	const int KERNEL_COLS = crta->getGradientKernelColsIOS();
@@ -212,10 +228,12 @@ bool SemtRetina::BoundaryIOS::prepareGradientMap(void)
 	{
 		auto mean = image->imageMean();
 		auto stdv = image->imageStdev();
+		int gmin = (int)(mean + stdv * 1.0f);
 		int gmax = (int)(mean + stdv * 2.0f);
 		Mat matDst, matGrad, matOut;
 
 		cv::copyMakeBorder(matSrc, matDst, 9, 9, 0, 0, cv::BORDER_CONSTANT, mean);
+		// matDst.setTo(gmin, (matDst < gmin));
 		// matDst.setTo(gmax, (matDst > gmax));
 		cv::filter2D(matDst, matGrad, CV_32F, kernel, Point(-1, -1), 0.0, cv::BORDER_REFLECT);
 		matOut = matGrad(cv::Rect(0, 9, matGrad.cols, matGrad.rows - 18));
@@ -266,8 +284,8 @@ bool SemtRetina::BoundaryIOS::preparePathCostMap(void)
 	Mat& matProb = this->pathProbMat();
 
 	Mat matCost;
-	cv::add(matProb, matEdge, matCost); 
-	// cv::multiply(matProb, matEdge, matCost); 
+	// cv::add(matProb, matEdge, matCost); 
+	cv::multiply(matProb, matEdge, matCost); 
 	matCost *= -1.0f;
 	matCost.copyTo(this->pathCostMat());
 	return true;
@@ -291,24 +309,22 @@ bool SemtRetina::BoundaryIOS::smoothBoundaryIOS(void)
 	auto outs = bout->sampleYs();
 	auto path = this->optimalPath();
 
+	const int WINDOW_SIZE1 = crta->getLayerSmoothWindowIOS(true);
+	const int WINDOW_SIZE2 = crta->getLayerSmoothWindowIOS(false);
+	const int DEGREE = 1;
+
 	auto filt = path;
 	if (band->isNerveHeadRangeValid()) {
-		const int WINDOW_SIZE1 = crta->getLayerSmoothWindowIOS(true);
-		const int WINDOW_SIZE2 = crta->getLayerSmoothWindowIOS(true);
-		const int DEGREE = 1;
 		if (band->isNerveHeadDiscCupShaped()) {
-			path = smoothOptimalPathWithMultiSize(WINDOW_SIZE1, DEGREE, WINDOW_SIZE2, DEGREE, true);
-			filt = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE2, DEGREE);
+			filt = smoothOptimalPathWithMultiSize(WINDOW_SIZE2, DEGREE, WINDOW_SIZE2, DEGREE, true);
+			// filt = CppUtil::SgFilter::smoothInts(filt, WINDOW_SIZE1, DEGREE);
 		}
 		else {
-			path = smoothOptimalPathWithLinearFit(WINDOW_SIZE1, DEGREE, true);
 			filt = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE2, DEGREE);
 		}
 	}
 	else {
-		const int WINDOW_SIZE = crta->getLayerSmoothWindowIOS(true);
-		const int DEGREE = 1;
-		filt = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE, DEGREE);
+		filt = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE2, DEGREE);
 	}
 
 	transform(cbegin(filt), cend(filt), cbegin(inns), begin(filt), [=](int elem1, int elem2) { return max(elem1, elem2); });
@@ -330,17 +346,32 @@ bool SemtRetina::BoundaryIOS::smoothRefinedIOS(void)
 	auto height = image->getHeight();
 
 	auto* bopl = segm->boundaryOPL();
-	auto inns = bopl->sourceYs();
-	auto* brpe = segm->boundaryRPE();
-	auto outs = brpe->sourceYs();
+	auto opls = bopl->sourceYs();
+	auto* bbrm = segm->boundaryBRM();
+	auto brms = bbrm->sourceYs();
 	auto path = this->optimalPath();
 
-	const int WINDOW_SIZE = crta->getLayerSmoothWindowIOS(false);
+	const int WINDOW_SIZE1 = crta->getLayerSmoothWindowIOS(true);
+	const int WINDOW_SIZE2 = crta->getLayerSmoothWindowIOS(false);
 	const int DEGREE = 1;
-	auto filt = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE, DEGREE);
 
-	transform(cbegin(filt), cend(filt), cbegin(inns), begin(filt), [=](int elem1, int elem2) { return max(elem1, elem2); });
-	transform(cbegin(filt), cend(filt), cbegin(outs), begin(filt), [=](int elem1, int elem2) { return min(elem1, elem2); });
+	auto filt = path;
+	if (band->isNerveHeadRangeValid()) {
+		if (band->isNerveHeadDiscCupShaped()) {
+			filt = smoothOptimalPathWithMultiSize(WINDOW_SIZE2, DEGREE, WINDOW_SIZE2, DEGREE, false, 9);
+			// filt = CppUtil::SgFilter::smoothInts(filt, WINDOW_SIZE1, DEGREE);
+		}
+		else {
+			filt = smoothOptimalPathWithMultiSize(WINDOW_SIZE2, DEGREE, WINDOW_SIZE2, DEGREE, false, 1);
+			// filt = CppUtil::SgFilter::smoothInts(filt, WINDOW_SIZE1, DEGREE);
+		}
+	}
+	else {
+		filt = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE2, DEGREE);
+	}
+
+	transform(cbegin(filt), cend(filt), cbegin(opls), begin(filt), [=](int elem1, int elem2) { return max(elem1, elem2); });
+	transform(cbegin(filt), cend(filt), cbegin(brms), begin(filt), [=](int elem1, int elem2) { return min(elem1, elem2); });
 	transform(begin(filt), end(filt), begin(filt), [=](int elem) { return min(max(elem, 0), height - 1); });
 	this->sourceYs() = filt;
 	return true;

@@ -647,6 +647,9 @@ bool SegmProc::DiscSession::filterOpticDiscSet(void)
 			}
 		}
 	}
+	if (list.empty()) {
+		return false;
+	}
 
 	float rangeY = getOcularBsegm(0)->getPatternDescript().getScanRangeY();
 	int linePerMM = (int)ceil(size / rangeY);
