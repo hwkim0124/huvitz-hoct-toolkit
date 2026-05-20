@@ -209,6 +209,13 @@ bool SemtRetina::RetinaBandExtractor::detectInnerRetinaBoundary(void)
 		y_exts[x] = row_start;
 	}
 
+	for (int x = 0; x < x_beg; x++) {
+		y_exts[x] = min(y_locs[0], y_exts[x]);
+	}
+	for (int x = x_end + 1; x < width; x++) {
+		y_exts[x] = min(y_locs.back(), y_exts[x]);
+	}
+
 	const int INNER_MARGIN = crta->getUpwardOffsetToInnerBound();
 	for (int i = 0; i < static_cast<int>(y_locs.size()); ++i) {
 		y_locs[i] = std::max(0, y_locs[i] - INNER_MARGIN);
@@ -346,6 +353,13 @@ bool SemtRetina::RetinaBandExtractor::detectOuterRetinaBoundary(void)
 		}
 	}
 
+	for (int x = 0; x < x_beg; x++) {
+		y_exts[x] = max(y_exts[x], y_locs[0]);
+	}
+	for (int x = x_end + 1; x < width; x++) {
+		y_exts[x] = max(y_exts[x], y_locs.back());
+	}
+
 	const int OUTER_MARGIN = crta->getDownwardOffsetToOuterBound();
 	for (int i = 0; i < static_cast<int>(y_locs.size()); ++i) {
 		y_locs[i] = std::min(height - 1, y_locs[i] + OUTER_MARGIN);
@@ -456,7 +470,7 @@ bool SemtRetina::RetinaBandExtractor::detectOpticNerveHeadRegion(void)
 		}
 	}
 
-	if (dlen >= HEAD_WIDTH_MIN) {
+	if (dlen >= (HEAD_WIDTH_MIN/4)) { // dlen >= HEAD_WIDTH_MIN) {
 		auto xcen = (int)(xsum / wsum + 0.5f);
 		auto ycen = (int)(ysum / wsum + 0.5f);
 		auto disc_x1 = xcen;
@@ -484,8 +498,21 @@ bool SemtRetina::RetinaBandExtractor::detectOpticNerveHeadRegion(void)
 			}
 		}
 
+		if (disc_x1 < PERI_WIDTH_MIN) {
+			disc_x1 = 0;
+		}
+		if (disc_x2 >= (width - PERI_WIDTH_MIN)) {
+			disc_x2 = width - 1;
+		}
+
 		auto disc_w = disc_x2 - disc_x1 + 1;
-		if (disc_w >= HEAD_WIDTH_MIN) {
+		auto headMin = HEAD_WIDTH_MIN;
+
+		if (disc_x1 <= 0 || disc_x2 >= width - 1) {
+			headMin = (int)(HEAD_WIDTH_MIN * 0.5f);
+		}
+
+		if (disc_w >= headMin) {
 			auto rnfl_w = 0;
 			for (int x = disc_x1; x <= disc_x2; x++) {
 				auto y1 = inns[x];
@@ -510,12 +537,7 @@ bool SemtRetina::RetinaBandExtractor::detectOpticNerveHeadRegion(void)
 			else {
 				impl().isDiscCupShaped = true;
 			}
-			if (disc_x1 < PERI_WIDTH_MIN) {
-				disc_x1 = 0;
-			}
-			if (disc_x2 >= (width - PERI_WIDTH_MIN)) {
-				disc_x2 = width - 1;
-			}
+
 			setNerveHeadRangeX(disc_x1, disc_x2);
 			LogD() << "\t\tONH region detected, line index: " << resa->sampleIndex() << ", x1: " << disc_x1 << ", x2 : " << disc_x2 << ", width : " << disc_w << ", cup shaped : " << impl().isDiscCupShaped ;
 		}

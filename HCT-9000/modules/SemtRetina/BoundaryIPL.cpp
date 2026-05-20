@@ -268,8 +268,9 @@ bool SemtRetina::BoundaryIPL::smoothBoundaryIPL(void)
 	auto filt = path;
 	if (band->isNerveHeadRangeValid()) {
 		if (band->isNerveHeadDiscCupShaped()) {
-			filt = smoothOptimalPathWithMultiSize(WINDOW_SIZE2, DEGREE, WINDOW_SIZE2, DEGREE);
+			// filt = smoothOptimalPathWithMultiSize(WINDOW_SIZE2, DEGREE, WINDOW_SIZE2, DEGREE);
 			// path = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE1, DEGREE);
+			filt = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE2, DEGREE);
 		}
 		else {
 			// path = smoothOptimalPathWithMultiSize(WINDOW_SIZE1, DEGREE, WINDOW_SIZE2, DEGREE, true);
@@ -328,7 +329,7 @@ bool SemtRetina::BoundaryIPL::smoothRefinedIPL(void)
 		filt = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE2, DEGREE);
 	}
 
-	transform(cbegin(filt), cend(filt), cbegin(inns), begin(filt), [=](int elem1, int elem2) { return max(elem1, elem2); });
+	transform(cbegin(filt), cend(filt), cbegin(inns), begin(filt), [=](int elem1, int elem2) { return max(elem1, elem2+1); });
 	transform(cbegin(filt), cend(filt), cbegin(outs), begin(filt), [=](int elem1, int elem2) { return min(elem1, elem2); });
 	transform(begin(filt), end(filt), begin(filt), [=](int elem) { return min(max(elem, 0), height - 1); });
 	this->sourceYs() = filt;

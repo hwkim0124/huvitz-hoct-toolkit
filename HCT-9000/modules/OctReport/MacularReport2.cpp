@@ -210,6 +210,7 @@ void OctReport::MacularReport2::locateFoveaCenter(void)
 	return;
 }
 
+
 void OctReport::MacularReport2::determineFoveaCenterInMacularScan(float rangeX, float rangeY, int numLines, int numPoints, EyeSide side)
 {
 	const float HORZ_MARGIN_IN_MM = 1.8f;
@@ -244,12 +245,17 @@ void OctReport::MacularReport2::determineFoveaCenterInMacularScan(float rangeX, 
 			}
 		}
 
-		auto tmap = getThicknessMap(OcularLayerType::ILM, OcularLayerType::RPE);
-		auto timg = tmap->makeImage(numPoints, numPoints);
-		timg.applyGaussianBlur(1.0);
-		timg.resize(numPoints, numLines);
+		auto tmap_rpe = getThicknessMap(OcularLayerType::ILM, OcularLayerType::RPE);
+		auto tmap_ipl = getThicknessMap(OcularLayerType::ILM, OcularLayerType::IPL);
+		auto timg_rpe = tmap_rpe->makeImage(numPoints, numPoints);
+		auto timg_ipl = tmap_ipl->makeImage(numPoints, numPoints);
 
-		auto data = timg.copyDataInFloats();
+		timg_ipl.applyGaussianBlur(0.5);
+		timg_rpe.applyGaussianBlur(1.0);
+		timg_rpe.resize(numPoints, numLines);
+		timg_ipl.resize(numPoints, numLines);
+
+		auto data = timg_rpe.copyDataInFloats();
 		for (int i = line_sidx; i <= line_eidx; i++) {
 			for (int j = point_sidx; j <= point_eidx; j++) {
 				auto cent_thick = data[i * numPoints + j];
@@ -258,25 +264,30 @@ void OctReport::MacularReport2::determineFoveaCenterInMacularScan(float rangeX, 
 				auto ox1 = (int)(j - (OUTER_RING_RADIUS * pixs_per_x_mm));
 				auto ox2 = (int)(j + (OUTER_RING_RADIUS * pixs_per_x_mm));
 
-				auto tsum = 0.0f;
-				auto tcnt = 0;
-				// auto vect = std::vector<float>();
+				auto tsum_out = 0.0f;
+				auto tcnt_out = 0;
+				auto tsum_inn = 0.0f;
+				auto tcnt_inn = 0;
+
 				for (int y = oy1; y <= oy2; y++) {
 					for (int x = ox1; x <= ox2; x++) {
-						// vect.push_back(data[y * numPoints + x]);
 						auto dx = (x - j) / pixs_per_x_mm;
 						auto dy = (y - i) / pixs_per_y_mm;
 						auto dist = sqrtf(dx * dx + dy * dy);
 						if (dist >= INNER_RING_RADIUS && dist <= OUTER_RING_RADIUS) {
-							tsum += data[y * numPoints + x];
-							tcnt += 1;
+							tsum_out += data[y * numPoints + x];
+							tcnt_out += 1;
+						}
+						else if (dist < INNER_RING_RADIUS) {
+							tsum_inn += data[y * numPoints + x];
+							tcnt_inn += 1;
 						}
 					}
 				}
-				// sort(vect.begin(), vect.end());
-				// float outer_thick = vect[(int)(vect.size() * 0.9f)];
-				float outer_thick = tsum / tcnt;
-				auto diff_thick = outer_thick - cent_thick;
+
+				float outer_thick = tsum_out / tcnt_out;
+				float inner_thick = tsum_inn / tcnt_inn;
+				auto diff_thick = outer_thick - inner_thick;
 				auto rate_thick = (cent_thick / outer_thick);
 
 				if (diff_thick > max_diff) {
@@ -291,6 +302,8 @@ void OctReport::MacularReport2::determineFoveaCenterInMacularScan(float rangeX, 
 		if (max_yidx >= 0 && max_xidx >= 0) {
 			auto ox1 = (int)(max_xidx - (INNER_RING_RADIUS * pixs_per_x_mm));
 			auto ox2 = (int)(max_xidx + (INNER_RING_RADIUS * pixs_per_x_mm));
+			auto data = timg_ipl.copyDataInFloats();
+
 			for (int x = ox1; x <= ox2; x++) {
 				auto val = data[max_yidx * numPoints + x];
 				if (fov_cent > val) {
@@ -318,12 +331,17 @@ void OctReport::MacularReport2::determineFoveaCenterInMacularScan(float rangeX, 
 			}
 		}
 
-		auto tmap = getThicknessMap(OcularLayerType::ILM, OcularLayerType::RPE);
-		auto timg = tmap->makeImage(numPoints, numPoints);
-		timg.applyGaussianBlur(1.0);
-		timg.resize(numLines, numPoints);
+		auto tmap_rpe = getThicknessMap(OcularLayerType::ILM, OcularLayerType::RPE);
+		auto tmap_ipl = getThicknessMap(OcularLayerType::ILM, OcularLayerType::IPL);
+		auto timg_rpe = tmap_rpe->makeImage(numPoints, numPoints);
+		auto timg_ipl = tmap_rpe->makeImage(numPoints, numPoints);
 
-		auto data = timg.copyDataInFloats();
+		timg_ipl.applyGaussianBlur(0.5);
+		timg_rpe.applyGaussianBlur(1.0);
+		timg_rpe.resize(numLines, numPoints);
+		timg_ipl.resize(numLines, numPoints);
+
+		auto data = timg_rpe.copyDataInFloats();
 		for (int i = line_sidx; i <= line_eidx; i++) {
 			for (int j = point_sidx; j <= point_eidx; j++) {
 				auto cent_thick = data[j * numLines + i];
@@ -332,25 +350,30 @@ void OctReport::MacularReport2::determineFoveaCenterInMacularScan(float rangeX, 
 				auto ox1 = (int)(i - (OUTER_RING_RADIUS * pixs_per_x_mm));
 				auto ox2 = (int)(i + (OUTER_RING_RADIUS * pixs_per_x_mm));
 
-				auto tsum = 0.0f;
-				auto tcnt = 0;
-				// auto vect = std::vector<float>();
+				auto tsum_out = 0.0f;
+				auto tcnt_out = 0;
+				auto tsum_inn = 0.0f;
+				auto tcnt_inn = 0;
+
 				for (int y = oy1; y <= oy2; y++) {
 					for (int x = ox1; x <= ox2; x++) {
-						// vect.push_back(data[y * numPoints + x]);
 						auto dx = (x - i) / pixs_per_x_mm;
 						auto dy = (y - j) / pixs_per_y_mm;
 						auto dist = sqrtf(dx * dx + dy * dy);
 						if (dist >= INNER_RING_RADIUS && dist <= OUTER_RING_RADIUS) {
-							tsum += data[y * numLines + x];
-							tcnt += 1;
+							tsum_out += data[y * numLines + x];
+							tcnt_out += 1;
+						}
+						else if (dist < INNER_RING_RADIUS) {
+							tsum_inn += data[y * numLines + x];
+							tcnt_inn += 1;
 						}
 					}
 				}
-				// sort(vect.begin(), vect.end());
-				// float outer_thick = vect[(int)(vect.size() * 0.9f)];
-				float outer_thick = tsum / tcnt;
-				auto diff_thick = outer_thick - cent_thick;
+
+				float outer_thick = tsum_out / tcnt_out;
+				float inner_thick = tsum_inn / tcnt_inn;
+				auto diff_thick = outer_thick - inner_thick;
 				auto rate_thick = (cent_thick / outer_thick);
 
 				if (diff_thick > max_diff) {
@@ -365,6 +388,8 @@ void OctReport::MacularReport2::determineFoveaCenterInMacularScan(float rangeX, 
 		if (max_yidx >= 0 && max_xidx >= 0) {
 			auto oy1 = (int)(max_yidx - (INNER_RING_RADIUS * pixs_per_y_mm));
 			auto oy2 = (int)(max_yidx + (INNER_RING_RADIUS * pixs_per_y_mm));
+			auto data = timg_ipl.copyDataInFloats();
+
 			for (int y = oy1; y <= oy2; y++) {
 				auto val = data[y * numLines + max_xidx];
 				if (fov_cent > val) {
@@ -375,7 +400,7 @@ void OctReport::MacularReport2::determineFoveaCenterInMacularScan(float rangeX, 
 		}
 	}
 
-	if (max_rate > DIFF_RATIO_MIN && max_rate < DIFF_RATIO_MAX) {
+	if (max_yidx >= 0 && max_xidx >= 0) {
 		float xPosMM, yPosMM;
 		if (getDescript()->isHorizontal()) {
 			d_ptr->foveaCenterLine = max_yidx;

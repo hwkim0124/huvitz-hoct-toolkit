@@ -27,6 +27,7 @@ namespace SemtRetina
 
 	protected:
 		bool designPathConstraints(void);
+		bool designPathConstraintsToNerveHead(void);
 		bool prepareGradientMap(void);
 		bool preparePathCostMap(void);
 		bool smoothBoundaryNFL(void);

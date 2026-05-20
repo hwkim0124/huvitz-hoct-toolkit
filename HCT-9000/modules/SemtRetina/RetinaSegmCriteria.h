@@ -106,8 +106,8 @@ namespace SemtRetina
 		int getGradientKernelColsIOS(void) const;
 		int getPathCostRangeDeltaIOS(void) const;
 		int getPathDiscRangeDeltaIOS(void) const;
-		int getPathDiscUpperOffsetIOS(void) const;
-		int getPathDiscLowerSpaceIOS(void) const;
+		int getPathDiscUpperOffsetMinIOS(void) const;
+		int getPathDiscUpperOffsetMaxIOS(void) const;
 		int getPathTopOverOffsetIOS(void) const;
 		int getPathSmoothWindowIOS(void) const;
 		int getLayerUpperSpaceMaxIOS(void) const;
@@ -115,6 +115,7 @@ namespace SemtRetina
 		int getLayerDiscOffsetMinIOS(void) const;
 		int getLayerDiscOffsetMaxIOS(void) const;
 		int getLayerSmoothWindowIOS(bool local) const;
+		int getLayerDiscEdgeGapIOS(void) const;
 
 		int getGradientKernelRowsRPE(void) const;
 		int getGradientKernelColsRPE(void) const;
@@ -126,6 +127,7 @@ namespace SemtRetina
 		int getLayerLowerOffsetMaxRPE(void) const;
 		int getLayerRefiningRangeRPE(void) const;
 		int getLayerSmoothWindowRPE(bool local) const;
+		int getLayerDiscEdgeGapRPE(void) const;
 
 		int getGradientKernelRowsBRM(void) const;
 		int getGradientKernelColsBRM(void) const;
@@ -136,10 +138,12 @@ namespace SemtRetina
 		int getPathDiscUpperOffsetMaxBRM(void) const;
 		int getPathSmoothWindowBRM(void) const;
 		int getLayerLowerSpaceMaxBRM(void) const;
-		int getLayerRefiningRangeBRM(void) const;
+		int getLayerRefiningUpperSpaceBRM(void) const;
+		int getLayerRefiningLowerSpaceBRM(void) const;
 		int getLayerDiscUpperOffsetMinBRM(void) const;
 		int getLayerDiscUpperOffsetMaxBRM(void) const;
 		int getLayerSmoothWindowBRM(bool local) const;
+		int getLayerDiscEdgeGapBRM(void) const;
 
 	private:
 		struct RetinaSegmCriteriaImpl;

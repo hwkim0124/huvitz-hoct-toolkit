@@ -623,7 +623,7 @@ void CHctReportView::drawPatternReport(Gdiplus::Graphics & G)
 
 		LogD() << "Fovea center: " << centerX << ", " << centerY << ", thick.: " << centerT;
 
-		auto chart2 = report->makeETDRSChart(OcularLayerType::ILM, OcularLayerType::RPE, centerX, centerY);
+		auto chart2 = report->makeETDRSChart(OcularLayerType::ILM, OcularLayerType::RPE, 0.0f, 0.0f, centerX, centerY);
 
 		LogD() << "Center thick.: " << chart2.centerThickness();
 		LogD() << "Inner thick.: " << chart2.innerThickness(0) << "," << chart2.innerThickness(1) << "," << chart2.innerThickness(2) << "," << chart2.innerThickness(3);
@@ -632,7 +632,7 @@ void CHctReportView::drawPatternReport(Gdiplus::Graphics & G)
 		LogD() << "Superior thick.: " << chart2.superiorThickness();
 		LogD() << "Inferior thick.: " << chart2.inferiorThickness();
 
-		auto chart3 = report->makeGCCThicknessChart();
+		auto chart3 = report->makeGCCThicknessChart(OcularLayerType::ILM, OcularLayerType::IPL, 0.0f, 0.0f, centerX, centerY);
 		for (int i = 0; i < 6; i++) {
 			LogD() << "Sectors thick-" << i << ": " << chart3.sectionThickness(i);
 		}

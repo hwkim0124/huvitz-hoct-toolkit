@@ -104,12 +104,10 @@ bool SemtRetina::OpticDiscSegmenter::segment(bool angio)
 	if (!bios->detectBoundary()) {
 		return false;
 	}
-
 	auto* bbrm = boundaryBRM();
 	if (!bbrm->detectBoundary()) {
 		return false;
 	}
-
 	auto* brpe = boundaryRPE();
 	if (!brpe->detectBoundary()) {
 		return false;

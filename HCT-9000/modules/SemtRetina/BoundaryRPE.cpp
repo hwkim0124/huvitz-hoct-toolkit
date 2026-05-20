@@ -106,8 +106,8 @@ bool SemtRetina::BoundaryRPE::reconstructLayer(void)
 		auto y2 = brms[i];
 		auto size = y2 - y1;
 
-		auto offs1 = (int)(size * 0.40f);
-		auto offs2 = (int)(size * 0.90f);
+		auto offs1 = (int)(size * 0.60f);
+		auto offs2 = (int)(size * 1.0f);
 
 		if (size >= OFFSET_MAX) {
 			offs1 = OFFSET_MIN;
@@ -209,7 +209,7 @@ bool SemtRetina::BoundaryRPE::designPathConstraints(void)
 
 		// auto offs1 = (int)(size * 0.50f);
 		// auto offs2 = (int)(size * 0.95f);
-		auto offs1 = (int)(size * 0.40f);
+		auto offs1 = (int)(size * 0.60f);
 		auto offs2 = (int)(size * 1.0f);
 
 		if (size >= OFFSET_MAX) {
@@ -233,11 +233,22 @@ bool SemtRetina::BoundaryRPE::designPathConstraints(void)
 				auto y1 = ioss[x];
 				auto y2 = brms[x];
 				auto size = y2 - y1;
-				auto offs1 = (int)(size * 0.35f);
-				auto offs2 = (int)(size * 0.35f);
-				upps[x] = min(y1 + offs1, y2);
-				lows[x] = max(y2 - offs2, y1);
+				auto offs1 = (int)(size * 0.35f) + 1;
+				auto offs2 = (int)(size * 0.35f) + 1;
+				upps[x] = min(y1 + offs1, brms[x]);
+				lows[x] = max(y2 - offs2, upps[x]);
 				delt[x] = moves;
+			}
+		}
+		else {
+			for (int x = disc_x1; x <= disc_x2; ++x) {
+				auto y1 = ioss[x];
+				auto y2 = brms[x];
+				auto size = y2 - y1;
+				auto offs1 = (int)(size * 0.25f) + 1;
+				auto offs2 = (int)(size * 0.25f) + 1;
+				upps[x] = min(y1 + offs1, brms[x]);
+				lows[x] = max(y2 - offs2, upps[x]);
 			}
 		}
 		delt[disc_x1] *= 10;
@@ -367,11 +378,12 @@ bool SemtRetina::BoundaryRPE::smoothRefinedRPE(void)
 	const int WINDOW_SIZE1 = crta->getLayerSmoothWindowRPE(true);
 	const int WINDOW_SIZE2 = crta->getLayerSmoothWindowRPE(false);
 	const int DEGREE = 1;
+	const int DISC_GAP = crta->getLayerDiscEdgeGapRPE();
 
 	auto filt = path;
 	if (band->isNerveHeadRangeValid()) {
 		if (band->isNerveHeadDiscCupShaped()) {
-			filt = smoothOptimalPathWithMultiSize(WINDOW_SIZE2, DEGREE, WINDOW_SIZE2, DEGREE, false, 9);
+			filt = smoothOptimalPathWithMultiSize(WINDOW_SIZE2, DEGREE, WINDOW_SIZE2, DEGREE, false, DISC_GAP);
 			// path = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE1, DEGREE);
 		}
 		else {
@@ -383,7 +395,7 @@ bool SemtRetina::BoundaryRPE::smoothRefinedRPE(void)
 		filt = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE2, DEGREE);
 	}
 
-	transform(cbegin(filt), cend(filt), cbegin(ioss), begin(filt), [=](int elem1, int elem2) { return max(elem1, elem2); });
+	transform(cbegin(filt), cend(filt), cbegin(ioss), begin(filt), [=](int elem1, int elem2) { return max(elem1, elem2+1); });
 	transform(cbegin(filt), cend(filt), cbegin(brms), begin(filt), [=](int elem1, int elem2) { return min(elem1, elem2); });
 	transform(begin(filt), end(filt), begin(filt), [=](int elm) { return min(max(elm, 0), height - 1); });
 	this->sourceYs() = filt;
