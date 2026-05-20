@@ -70,7 +70,7 @@ namespace SemtRetina
 		int getLayerSmoothWindowILM(bool local) const;
 		int getPathSideMarginSlopeWidth(void) const;
 
-		int getlayerUpperSpaceMinILM(void) const;
+		int getLayerUpperSpaceMinILM(void) const;
 
 		int getPathCostRangeDeltaONL(void) const;
 		int getPathDiscRangeDeltaONL(void) const;

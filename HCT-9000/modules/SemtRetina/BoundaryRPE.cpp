@@ -76,29 +76,6 @@ bool SemtRetina::BoundaryRPE::reconstructLayer(void)
 	auto brms = bbrm->sourceYs();
 	auto rpes = sourceYs();
 
-	/*
-	const int OFFS_MIN = crta->getLayerLowerOffsetMinRPE();
-	const int OFFS_MAX = crta->getLayerLowerOffsetMaxRPE();
-
-	for (int i = 0; i < width; i++) {
-		auto dist = (brms[i] - ioss[i]) + 1;
-		auto offs = min((int)(dist * 0.5f), OFFS_MAX);
-		auto y1 = max(brms[i] - offs, ioss[i]);
-		auto y2 = max(brms[i] - OFFS_MIN, y1);
-		upps[i] = y1;
-		lows[i] = y2;
-	}
-	*/
-	/*
-	const int OFFSET = 1; // crta->getLayerRefiningRangeRPE();
-	for (int i = 0; i < width; i++) {
-		auto y1 = (int)(rpes[i] - OFFSET);
-		auto y2 = (int)(rpes[i] + OFFSET);
-		upps[i] = max(y1, ioss[i]);
-		lows[i] = min(y2, brms[i]);
-	}
-	*/
-
 	const int OFFSET_MAX = crta->getPathUpperOffsetMaxRPE();
 	const int OFFSET_MIN = crta->getPathUpperOffsetMinRPE();
 	for (int i = 0; i < width; i++) {
@@ -383,7 +360,7 @@ bool SemtRetina::BoundaryRPE::smoothRefinedRPE(void)
 	auto filt = path;
 	if (band->isNerveHeadRangeValid()) {
 		if (band->isNerveHeadDiscCupShaped()) {
-			filt = smoothOptimalPathWithMultiSize(WINDOW_SIZE2, DEGREE, WINDOW_SIZE2, DEGREE, false, DISC_GAP);
+			filt = smoothOptimalPathWithMultiSize(WINDOW_SIZE2, DEGREE, WINDOW_SIZE1, DEGREE, false, DISC_GAP);
 			// path = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE1, DEGREE);
 		}
 		else {

@@ -402,15 +402,15 @@ bool SemtRetina::BoundaryOPL::smoothRefinedOPL(void)
 	if (band->isNerveHeadRangeValid()) {
 		if (band->isNerveHeadDiscCupShaped()) {
 			// filt = smoothOptimalPathWithMultiSize(WINDOW_SIZE2, DEGREE, WINDOW_SIZE2, DEGREE, false, 3);
-			filt = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE2, DEGREE);
+			filt = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE1, DEGREE);
 		}
 		else {
 			// filt = smoothOptimalPathWithMultiSize(WINDOW_SIZE1, DEGREE, WINDOW_SIZE2, DEGREE, false, 1);
-			filt = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE2, DEGREE);
+			filt = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE1, DEGREE);
 		}
 	}
 	else {
-		filt = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE2, DEGREE);
+		filt = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE1, DEGREE);
 	}
 
 	transform(cbegin(filt), cend(filt), cbegin(nfls), begin(filt), [=](int elem1, int elem2) { return max(elem1, elem2+1); });

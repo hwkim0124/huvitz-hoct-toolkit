@@ -85,7 +85,7 @@ bool SemtRetina::BoundaryIOS::reconstructLayer(void)
 		delt[i] = 1;
 	}
 
-	const int OFFSET = 3; // crta->getLayerRefiningRangeIOS();
+	const int OFFSET = crta->getLayerRefiningRangeIOS();
 	for (int i = 0; i < width; i++) {
 		auto y1 = (int)(ioss[i] - OFFSET);
 		auto y2 = (int)(ioss[i] + OFFSET);
@@ -411,16 +411,16 @@ bool SemtRetina::BoundaryIOS::smoothRefinedIOS(void)
 	auto filt = path;
 	if (band->isNerveHeadRangeValid()) {
 		if (band->isNerveHeadDiscCupShaped()) {
-			filt = smoothOptimalPathWithMultiSize(WINDOW_SIZE2, DEGREE, WINDOW_SIZE2, DEGREE, false, DISC_GAP);
+			filt = smoothOptimalPathWithMultiSize(WINDOW_SIZE1, DEGREE, WINDOW_SIZE1, DEGREE, false, DISC_GAP);
 			// filt = CppUtil::SgFilter::smoothInts(filt, WINDOW_SIZE1, DEGREE);
 		}
 		else {
 			// filt = smoothOptimalPathWithMultiSize(WINDOW_SIZE2, DEGREE, WINDOW_SIZE2, DEGREE, false, 1);
-			filt = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE2, DEGREE);
+			filt = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE1, DEGREE);
 		}
 	}
 	else {
-		filt = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE2, DEGREE);
+		filt = CppUtil::SgFilter::smoothInts(path, WINDOW_SIZE1, DEGREE);
 	}
 
 	transform(cbegin(filt), cend(filt), cbegin(opls), begin(filt), [=](int elem1, int elem2) { return max(elem1, elem2+1); });

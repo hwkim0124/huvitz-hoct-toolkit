@@ -343,7 +343,7 @@ int SemtRetina::RetinaSegmCriteria::getLayerSmoothWindowILM(bool local) const
 	return size;
 }
 
-int SemtRetina::RetinaSegmCriteria::getlayerUpperSpaceMinILM(void) const
+int SemtRetina::RetinaSegmCriteria::getLayerUpperSpaceMinILM(void) const
 {
 	const int SIZE = 24;
 	int size = (int)(SIZE * imageScaleY() + 0.5f);
@@ -834,7 +834,7 @@ int SemtRetina::RetinaSegmCriteria::getLayerRefiningUpperSpaceBRM(void) const
 
 int SemtRetina::RetinaSegmCriteria::getLayerRefiningLowerSpaceBRM(void) const
 {
-	const int SIZE = 3;
+	const int SIZE = 5;
 	int size = (int)(SIZE * imageScaleY() + 0.5f);
 	return size;
 }

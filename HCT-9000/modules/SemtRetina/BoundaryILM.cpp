@@ -75,7 +75,7 @@ bool SemtRetina::BoundaryILM::reconstructLayer(void)
 	auto lows = std::vector<int>(width, 0);
 	auto delt = std::vector<int>(width, range);
 
-	const int UPPER_OFFS = crta->getlayerUpperSpaceMinILM();
+	const int UPPER_OFFS = crta->getLayerUpperSpaceMinILM();
 	for (int i = 0; i < width; i++) {
 		auto size = nfls[i] - ilms[i];
 		auto offs = (int)(size * 0.5f);

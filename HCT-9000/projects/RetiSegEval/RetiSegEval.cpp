@@ -13,10 +13,10 @@
 int main()
 {
 
-    CString dataPath = _T("D:/HOCT-Samples/in_house/260504_ia_fda_pretest/hoct_data/hoct_data_b");
-    CString macuPath = _T("D:/HOCT-Samples/in_house/260504_ia_fda_pretest/segm_eval/macu_proc_b");
-    CString discPath = _T("D:/HOCT-Samples/in_house/260504_ia_fda_pretest/segm_eval/disc_proc_b");
-    CString sectPath = _T("D:/HOCT-Samples/in_house/260504_ia_fda_pretest/segm_eval/sect_data_b");
+    CString dataPath = _T("D:/HOCT-Samples/in_house/260504_ia_fda_pretest/hoct_data2/hoct_data_b");
+    CString macuPath = _T("D:/HOCT-Samples/in_house/260504_ia_fda_pretest/segm_eval2/macu_proc_b");
+    CString discPath = _T("D:/HOCT-Samples/in_house/260504_ia_fda_pretest/segm_eval2/disc_proc_b");
+    CString sectPath = _T("D:/HOCT-Samples/in_house/260504_ia_fda_pretest/segm_eval2/sect_data_b");
 
     bool isSavingCSV = true;
     CStdioFile csvEtdrsFile;
@@ -31,17 +31,17 @@ int main()
 	CStdioFile csvRnflWideFile2;
 
     if (isSavingCSV) {
-		csvEtdrsFile.Open(sectPath + _T("\\etdrs_a.csv"), CFile::modeCreate | CFile::modeWrite | CFile::typeText);
-		csvGccFile.Open(sectPath + _T("\\gcc_a.csv"), CFile::modeCreate | CFile::modeWrite | CFile::typeText);
-		csvRnflFile.Open(sectPath + _T("\\rnfl_a.csv"), CFile::modeCreate | CFile::modeWrite | CFile::typeText);
-		csvRnflFile1.Open(sectPath + _T("\\rnfl_a_1.csv"), CFile::modeCreate | CFile::modeWrite | CFile::typeText);
-		csvRnflFile2.Open(sectPath + _T("\\rnfl_a_2.csv"), CFile::modeCreate | CFile::modeWrite | CFile::typeText);
+		csvEtdrsFile.Open(sectPath + _T("\\etdrs_b.csv"), CFile::modeCreate | CFile::modeWrite | CFile::typeText);
+		csvGccFile.Open(sectPath + _T("\\gcc_b.csv"), CFile::modeCreate | CFile::modeWrite | CFile::typeText);
+		csvRnflFile.Open(sectPath + _T("\\rnfl_b.csv"), CFile::modeCreate | CFile::modeWrite | CFile::typeText);
+		csvRnflFile1.Open(sectPath + _T("\\rnfl_b_1.csv"), CFile::modeCreate | CFile::modeWrite | CFile::typeText);
+		csvRnflFile2.Open(sectPath + _T("\\rnfl_b_2.csv"), CFile::modeCreate | CFile::modeWrite | CFile::typeText);
 
-        csvEtdrsWideFile.Open(sectPath + _T("\\etdrs_wide_a.csv"), CFile::modeCreate | CFile::modeWrite | CFile::typeText);
-        csvGccWideFile.Open(sectPath + _T("\\gcc_wide_a.csv"), CFile::modeCreate | CFile::modeWrite | CFile::typeText);
-        csvRnflWideFile.Open(sectPath + _T("\\rnfl_wide_a.csv"), CFile::modeCreate | CFile::modeWrite | CFile::typeText);
-		csvRnflWideFile1.Open(sectPath + _T("\\rnfl_wide_a_1.csv"), CFile::modeCreate | CFile::modeWrite | CFile::typeText);
-		csvRnflWideFile2.Open(sectPath + _T("\\rnfl_wide_a_2.csv"), CFile::modeCreate | CFile::modeWrite | CFile::typeText);
+        csvEtdrsWideFile.Open(sectPath + _T("\\etdrs_wide_b.csv"), CFile::modeCreate | CFile::modeWrite | CFile::typeText);
+        csvGccWideFile.Open(sectPath + _T("\\gcc_wide_b.csv"), CFile::modeCreate | CFile::modeWrite | CFile::typeText);
+        csvRnflWideFile.Open(sectPath + _T("\\rnfl_wide_b.csv"), CFile::modeCreate | CFile::modeWrite | CFile::typeText);
+		csvRnflWideFile1.Open(sectPath + _T("\\rnfl_wide_b_1.csv"), CFile::modeCreate | CFile::modeWrite | CFile::typeText);
+		csvRnflWideFile2.Open(sectPath + _T("\\rnfl_wide_b_2.csv"), CFile::modeCreate | CFile::modeWrite | CFile::typeText);
 
 		csvEtdrsFile.WriteString(_T("PID,EXAM,01_CEN,02_INN,03_INN,04_INN,05_INN,06_OUT,07_OUT,08_OUT,09_OUT\n"));
 		csvGccFile.WriteString(_T("PID,EXAM,G_SUP,G_S_N,G_N_I,G_INP,G_I_T,G_TEM\n"));
@@ -143,7 +143,6 @@ int main()
         }
 
         auto pdata = Analysis::getProtocolData(0);
-        /*
         for (int i = 0; i < pdata->countBscanData(); i++) {
             auto bscan = pdata->getBscanData(i);
             auto image = bscan->getBsegmSource();
@@ -214,7 +213,6 @@ int main()
             // Save the Gdiplus bitmap as a PNG file using the utility function in FileUtil
             FileUtil::SaveBitmapToPng(bdraw, outPath);
         }
-        */
 
         if (isMacular) {
             auto* report = OctSystem::Analysis::obtainMacularReport(0);
