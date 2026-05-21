@@ -416,9 +416,9 @@ bool OctAngio::AngioData::computeSequentialDisplacements(int lines, int repeats,
 		tasks[k].push_back(i);
 	}
 
-	trans_xlist = std::vector<float>(lines);
-	trans_ylist = std::vector<float>(lines);
-	ecc_list = std::vector<float>(lines);
+	trans_xlist = std::vector<float>(lines, 0.0f);
+	trans_ylist = std::vector<float>(lines, 0.0f);
+	ecc_list = std::vector<float>(lines, 0.0f);
 
 	std::vector<std::thread> workers;
 	for (unsigned int k = 0; k < n_workers; k++) {

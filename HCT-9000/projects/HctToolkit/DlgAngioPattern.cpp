@@ -1309,6 +1309,7 @@ void DlgAngioPattern::OnBnClickedButtonAngioReload()
 		AfxMessageBox(_T("Failed to prepare angio data!"));
 	}
 	else {
+		Angiography::useMotionCorrection(m_useMotionCorrect);
 		Angiography::generateMotionData();
 		AfxMessageBox(_T("Angio data prepared successfully!"));
 		updateScannerResult();

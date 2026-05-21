@@ -45,7 +45,7 @@ struct Angiography::AngiographyImpl
 	int currentIdx = 0;
 	vector<OctAngio::Angiogram2> angiogram = vector<OctAngio::Angiogram2>(8);
 
-	AngiographyImpl() : data(nullptr), useVasularLayers(false), useMotionCorrect(true), 
+	AngiographyImpl() : data(nullptr), useVasularLayers(false), useMotionCorrect(false), 
 						useBiasFieldCorrect(true), noiseReductionRate(0.25f) {
 
 	}
@@ -197,8 +197,10 @@ bool OctSystem::Angiography::prepareAngiogram(bool alignAxial, bool alignLateral
 
 bool OctSystem::Angiography::generateMotionData(void)
 {
-	if (!getAngiogram().estimateMotionVectors()) {
-		return false;
+	if (getImpl().useMotionCorrect) {
+		if (!getAngiogram().estimateMotionVectors()) {
+			return false;
+		}
 	}
 	return true;
 }

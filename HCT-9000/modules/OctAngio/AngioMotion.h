@@ -32,6 +32,7 @@ namespace OctAngio
 		int getMotionVersion(void) const;
 		void setMotionVersion(int version);	
 		bool isMotionShiftSupported(void) const;
+		bool isMotionShiftsAvailable(const AngioLayout& layout) const;
 
 		void setBscanTranslations(const std::vector<float>& transX, const std::vector<float>& transY, const std::vector<float>& eccs);
 		bool computeMotionShifts(const AngioLayout& layout, const std::vector<float>& angio);

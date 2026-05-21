@@ -736,15 +736,19 @@ bool OctAngio::Angiogram2::processProjectionImages2(void)
 			if (!blank) {
 				if (motion) {
 					auto& vessDiff = Decorr2().differProjectionMask();
-					Motion().computeMotionShifts(Layout(), vessDiff);
-					Motion().rotateVerticalScan(Layout(), false, vessDiff);
+					if (!Motion().isMotionShiftsAvailable(Layout())) {
+						Motion().computeMotionShifts(Layout(), vessDiff);
+					}
+					if (Motion().isMotionShiftsAvailable(Layout())) {
+						Motion().rotateVerticalScan(Layout(), false, vessDiff);
 
-					Motion().rotateVerticalScan(Layout(), true, dcs);
-					Motion().rotateVerticalScan(Layout(), true, dfs);
-					Motion().applyMotionCorrection(Layout(), dcs);
-					Motion().applyMotionCorrection(Layout(), dfs);
-					Motion().rotateVerticalScan(Layout(), false, dcs);
-					Motion().rotateVerticalScan(Layout(), false, dfs);
+						Motion().rotateVerticalScan(Layout(), true, dcs);
+						Motion().rotateVerticalScan(Layout(), true, dfs);
+						Motion().applyMotionCorrection(Layout(), dcs);
+						Motion().applyMotionCorrection(Layout(), dfs);
+						Motion().rotateVerticalScan(Layout(), false, dcs);
+						Motion().rotateVerticalScan(Layout(), false, dfs);
+					}
 				}
 				if (bias) {
 					Post().applyBiasFieldCorrection(Layout(), Decorr().differAngiogram(), isFoveaAvascularZone());

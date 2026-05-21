@@ -120,6 +120,15 @@ bool OctAngio::AngioMotion::isMotionShiftSupported(void) const
 	return version >= MOTION_CORRECTION_VERSION;
 }
 
+bool OctAngio::AngioMotion::isMotionShiftsAvailable(const AngioLayout& layout) const
+{
+	auto& shifts = getImpl().motionShifts;
+	if (!shifts.empty() && shifts.size() == layout.numberOfLines()) {
+		return true;
+	}
+	return false;
+}
+
 void OctAngio::AngioMotion::setBscanTranslations(const std::vector<float>& transX, const std::vector<float>& transY, const std::vector<float>& eccs)
 {
 	getImpl().bscanMotionTransX = transX;
@@ -134,7 +143,7 @@ bool OctAngio::AngioMotion::computeMotionShifts(const AngioLayout& layout, const
 	auto& ylist = getImpl().bscanMotionTransY;
 	auto& clist = getImpl().bscanMotionEccVal;
 
-	if (xlist.size() != ylist.size() || xlist.size() != clist.size() || xlist.size() != layout.getHeight()) {
+	if (xlist.size() != ylist.size() || xlist.size() != clist.size() || xlist.size() != layout.numberOfLines()) {
 		LogD() << "Motion translation vectors not matched!, size: " << xlist.size();
 		return false;
 	}
