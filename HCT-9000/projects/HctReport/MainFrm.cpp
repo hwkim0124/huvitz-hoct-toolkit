@@ -49,6 +49,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWnd)
 	ON_COMMAND(ID_MACULARWIDESCAN_512X128, &CMainFrame::OnMacularwidescan512x128)
 	ON_COMMAND(ID_DISCWIDESCAN_512X128, &CMainFrame::OnDiscwidescan512x128)
 	ON_COMMAND(ID_MACULARCUBESCAN_1024X128, &CMainFrame::OnMacularcubescan1024x128)
+	ON_COMMAND(ID_CORNEARADIALSCAN_1024X16, &CMainFrame::OnCornearadialscan1024x16)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -333,6 +334,15 @@ void CMainFrame::OnCornearadialscan1024x12()
 }
 
 
+
+void CMainFrame::OnCornearadialscan1024x16()
+{
+	// TODO: Add your command handler code here
+	openNewDocumentOfPattern(PatternName::AnteriorRadial, 1024, 16);
+}
+
+
+
 void CMainFrame::OnDiscradialscan512x12()
 {
 	// TODO: Add your command handler code here
@@ -428,5 +438,4 @@ void CMainFrame::OnBiometerLensthickness()
 	// TODO: Add your command handler code here
 	openNewDocumentOfLensThickness();
 }
-
 

@@ -47,16 +47,23 @@ void OctReport::CorneaReport2::clearContents(void)
 }
 
 
-SegmScan::CorneaThicknessMap * OctReport::CorneaReport2::getThicknessMap(OcularLayerType upper, OcularLayerType lower)
+SegmScan::CorneaThicknessMap * OctReport::CorneaReport2::getThicknessMap(OcularLayerType upper, OcularLayerType lower, bool tearSubtract)
 {
 	auto tmap = prepareEnfaceMap(upper, lower);
-	return static_cast<CorneaThicknessMap*>(tmap);
+	auto* cmap = static_cast<CorneaThicknessMap*>(tmap);
+
+	if (tearSubtract) {
+		if (upper == OcularLayerType::EPI && lower == OcularLayerType::BOW) {
+			cmap->applyTearFilmSubtraction();
+		}
+	}
+	return cmap;
 }
 
 
-SegmScan::CorneaEplot * OctReport::CorneaReport2::getCorneaEplot(OcularLayerType upper, OcularLayerType lower)
+SegmScan::CorneaEplot * OctReport::CorneaReport2::getCorneaEplot(OcularLayerType upper, OcularLayerType lower, bool tearSubtract)
 {
-	auto tmap = getThicknessMap(upper, lower);
+	auto tmap = getThicknessMap(upper, lower, tearSubtract);
 	return static_cast<CorneaEplot*>(tmap);
 }
 

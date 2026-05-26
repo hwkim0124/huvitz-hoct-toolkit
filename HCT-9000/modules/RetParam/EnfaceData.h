@@ -77,8 +77,9 @@ namespace RetParam
 		float getAverageOnCenter(float diam = 3.0f) const;
 		float getAverageOnCircle(float diam, int samples) const;
 				
-	protected:
 		CppUtil::CvImage* getDataImage(void) const;
+
+	protected:
 		bool buildDataImage(const std::vector<std::vector<std::uint8_t>>& lines, const std::vector<bool>& flags);
 		bool buildDataImage(const std::vector<std::vector<float>>& lines, const std::vector<bool>& flags);
 

@@ -178,6 +178,7 @@ BEGIN
         BEGIN
             MENUITEM "512 x 12",                    ID_CORNEARADIALSCAN_512X12
             MENUITEM "1024 x 12",                   ID_CORNEARADIALSCAN_1024X12
+            MENUITEM "1024 x 16",                   ID_CORNEARADIALSCAN_1024X16
         END
         POPUP "Disc Radial Scan"
         BEGIN

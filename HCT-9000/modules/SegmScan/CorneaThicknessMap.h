@@ -31,7 +31,7 @@ namespace SegmScan
 		CorneaThicknessMap& operator=(const CorneaThicknessMap& rhs);
 
 	public:
-
+		bool applyTearFilmSubtraction(void);
 
 	private:
 		struct CorneaThicknessMapImpl;

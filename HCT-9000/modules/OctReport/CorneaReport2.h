@@ -23,6 +23,10 @@ namespace SegmScan {
 	class CorneaETDRSChart;
 }
 
+namespace CppUtil {
+	class CvImage;
+}
+
 
 namespace OctReport
 {
@@ -41,7 +45,7 @@ namespace OctReport
 		bool updateContents(void) override;
 		void clearContents(void) override;
 
-		SegmScan::CorneaThicknessMap* getThicknessMap(OcularLayerType upper, OcularLayerType lower);
+		SegmScan::CorneaThicknessMap* getThicknessMap(OcularLayerType upper, OcularLayerType lower, bool tearSubtract);
 		SegmScan::CorneaRadiusMap* getCurvatureRadiusMap(void);
 
 		SegmScan::CorneaETDRSChart makeETDRSChart(OcularLayerType upper = OcularLayerType::EPI,
@@ -49,7 +53,7 @@ namespace OctReport
 													float centerX = 0.0f, float centerY = 0.0f);
 
 		// These interfaces had been deprecated. 
-		SegmScan::CorneaEplot* getCorneaEplot(OcularLayerType upper, OcularLayerType lower);
+		SegmScan::CorneaEplot* getCorneaEplot(OcularLayerType upper, OcularLayerType lower, bool tearSubtract = true);
 		SegmScan::CorneaEplot* getCurvatureRadiusPlot(void);
 		SegmScan::CorneaChart makeCorneaChart(OcularLayerType upper, OcularLayerType lower, float centerX = 0.0f, float centerY = 0.0f);
 

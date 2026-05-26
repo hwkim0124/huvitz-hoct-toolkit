@@ -91,6 +91,7 @@ public:
 	afx_msg void OnMacularwidescan512x128();
 	afx_msg void OnDiscwidescan512x128();
 	afx_msg void OnMacularcubescan1024x128();
+	afx_msg void OnCornearadialscan1024x16();
 };
 
 

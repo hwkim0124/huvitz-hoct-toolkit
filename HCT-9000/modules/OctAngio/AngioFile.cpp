@@ -321,7 +321,7 @@ std::vector<int> OctAngio::AngioFile::makeDecorrSizes(OctAngio::AngioLayout& lay
 
 std::vector<int> OctAngio::AngioFile::makeMotionShifts(OctAngio::AngioLayout& layout, OctAngio::AngioMotion& motion)
 {
-	int bodySize = layout.getHeight();
+	int bodySize = layout.numberOfLines();
 	auto shifts = motion.getMotionShifts();
 
 	LogD() << "Motion shifts size: " << shifts.size() << ", body size: " << bodySize;
