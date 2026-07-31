@@ -106,17 +106,20 @@ AngioDecorr & OctAngio::AngioDecorr::operator=(AngioDecorr && rhs) = default;
 auto OctAngio::AngioDecorr::estimateThreshold(const AngioLayout & layout, const AngioData & data, const AngioLayers & layers) -> bool
 {
 	auto lines = layout.numberOfLines();
+	getImpl().amplitMeans = vector<float>(lines, 0.0f);
+	getImpl().amplitStdevs = vector<float>(lines, 0.0f);
+	getImpl().amplitThresholds = vector<float>(lines, 0.0f);
+
+	/*
 	LayerArrays ilms = layers.getUpperLayers(OcularLayerType::ILM);
 	LayerArrays nfls = layers.getUpperLayers(OcularLayerType::NFL);
 	LayerArrays ioss = layers.getUpperLayers(OcularLayerType::IOS);
 	LayerArrays brms = layers.getLowerLayers(OcularLayerType::BRM);
 
-	getImpl().amplitMeans = vector<float>(lines, 0.0f);
-	getImpl().amplitStdevs = vector<float>(lines, 0.0f);
-	getImpl().amplitThresholds = vector<float>(lines, 0.0f);
 	getImpl().layerThreshold1 = vector<float>(lines, 0.0f);
 	getImpl().layerThreshold2 = vector<float>(lines, 0.0f);
 	getImpl().layerThreshold3 = vector<float>(lines, 0.0f);
+	*/
 
 	auto n_workers = std::thread::hardware_concurrency();
 	std::vector<std::vector<int>> tasks(n_workers);
@@ -129,7 +132,7 @@ auto OctAngio::AngioDecorr::estimateThreshold(const AngioLayout & layout, const 
 	std::vector<std::thread> workers;
 	for (unsigned int k = 0; k < n_workers; k++) {
 		if (tasks[k].size() > 0) {
-			workers.push_back(std::thread([tasks, k, &layout, &data, &ilms, &nfls, &ioss, &brms, this]()
+			workers.push_back(std::thread([tasks, k, &layout, &data, this]()
 			{
 				auto width = data.getAmplitudes()[0][0].getWidth();
 				auto height = data.getAmplitudes()[0][0].getHeight();
@@ -138,6 +141,7 @@ auto OctAngio::AngioDecorr::estimateThreshold(const AngioLayout & layout, const 
 					auto& amplit = data.getAmplitudes()[line_idx][0];
 					auto p_buff = (const float*)amplit.getBitsData();
 
+					/*
 					auto vec1 = vector<float>();
 					auto vec2 = vector<float>();
 					auto vec3 = vector<float>();
@@ -187,6 +191,7 @@ auto OctAngio::AngioDecorr::estimateThreshold(const AngioLayout & layout, const 
 					getImpl().layerThreshold1[line_idx] = thresh1;
 					getImpl().layerThreshold2[line_idx] = thresh2;
 					getImpl().layerThreshold3[line_idx] = thresh3;
+					*/
 
 					float mean, sdev, thresh;
 					amplit.getMeanStddev(&mean, &sdev);
@@ -270,13 +275,13 @@ auto OctAngio::AngioDecorr::calculateSignals(const AngioLayout& layout, const An
 						auto bg_mean = getImpl().amplitMeans[line_idx];
 						auto bg_stdv = getImpl().amplitStdevs[line_idx];
 						auto athresh = getImpl().amplitThresholds[line_idx];
-
+						LogD() << "Angio line: " << line_idx << ", mean: " << bg_mean << ", stdev: " << bg_stdv << ", thresh: " << athresh;
+						/*
 						const auto thresh1 = getImpl().layerThreshold1[line_idx];
 						const auto thresh2 = getImpl().layerThreshold2[line_idx];
 						const auto thresh3 = getImpl().layerThreshold3[line_idx];
-
-						// thresh1 = max(max(thresh1, (int)bg_mean), (int)bg_stdv);
 						LogD() << "Angio line: " << line_idx << ", mean: " << bg_mean << ", stdev: " << bg_stdv << ", thresh: " << athresh << ", regional : " << thresh1 << ", " << thresh2 << ", " << thresh3;
+						*/
 
 						vector<pair<int, int>> list;
 						for (auto t = 1; t < images.size(); t++) {
@@ -291,13 +296,6 @@ auto OctAngio::AngioDecorr::calculateSignals(const AngioLayout& layout, const An
 							auto img2 = pair.second;
 							auto p1 = (float*)images[img1].getBitsData();
 							auto p2 = (float*)images[img2].getBitsData();
-
-							if (img1 == 0 && img2 == 1) {
-								// LogD() << "Line index: " << line_idx << ", img1: " << img1 << ", img2: " << img2;
-							}
-							else {
-								// continue;
-							}
 
 							for (auto c = 0; c < width; c++) {
 								auto r1 = uppers[c];
@@ -341,14 +339,15 @@ auto OctAngio::AngioDecorr::calculateSignals(const AngioLayout& layout, const An
 										diff = fabs(a1 - a2);
 									}
 									
-									const auto AVASCULAR_HEIGHT = 7; 
-									if (r <= min(nfl + AVASCULAR_HEIGHT, opl)) {
-										auto dmax = (float)((nfl + AVASCULAR_HEIGHT) - ilm);
-										auto dist = (float)(r - ilm);
-										auto supp = (dmax > 0 ? (1.0f - (dist / dmax)) : 0.0f);
-										diff = deco * diff * supp;
+									if (layout.isMacularScan()) {
+										const auto AVASCULAR_HEIGHT = 7;
+										if (r <= min(nfl + AVASCULAR_HEIGHT, opl)) {
+											auto dmax = (float)((nfl + AVASCULAR_HEIGHT) - ilm);
+											auto dist = (float)(r - ilm);
+											auto supp = (dmax > 0 ? (1.0f - (dist / dmax)) : 0.0f);
+											diff = deco * diff * supp;
+										}
 									}
-									
 									differs[idx1] = max(differs[idx1], diff);
 									decorrs[idx1] = max(decorrs[idx1], deco);
 									intenss[idx1] = max(intenss[idx1], ints);
@@ -685,16 +684,6 @@ auto OctAngio::AngioDecorr::updateProjectionProfiles(const AngioLayout & layout,
 								dcval = dcsum / count;
 								dfval = dfsum / count;
 
-								auto opl = opls[line_idx][c];
-								auto nfl = nfls[line_idx][c];
-
-								/*
-								if (count != avgSize) {
-									dcval = 0.0f;
-									dfval = 0.0f;
-								}
-								*/
-
 								if (useTailMask) {
 									if (projMask && fromBase) {
 										auto nones_y1 = nones1[line_idx][c];
@@ -728,7 +717,10 @@ auto OctAngio::AngioDecorr::updateProjectionProfiles(const AngioLayout & layout,
 								}
 								*/
 								if (isFovea) {
+									auto opl = opls[line_idx][c];
+									auto nfl = nfls[line_idx][c];
 									const auto AVASCULAR_HEIGHT = 7;
+
 									if (r <= min(nfl + AVASCULAR_HEIGHT, opl)) {
 										auto pixelSizeX = layout.getPixelSizeX();
 										auto pixelSizeY = layout.getPixelSizeY();

@@ -1356,10 +1356,11 @@ void DlgAngioPattern::OnBnClickedButtonAngioRedraw()
 	Angiography::useMotionCorrection(m_useMotionCorrect);
 	Angiography::useBiasFieldCorrection(m_useBiasFieldCorrect);
 	Angiography::useVascularLayers(m_useVascularLayers);
+	bool isDiscAngio = m_patternName == PatternName::DiscAngio;
 
 	if (m_openAngioData2) {
 		if (!Angiography::updateAngiogram2(m_upperLayerType, m_lowerLayerType, m_angioLayerOffset1, m_angioLayerOffset2,
-			m_rangeX, m_rangeY, m_angioFoveaCx, m_angioFoveaCy)) {
+			m_rangeX, m_rangeY, m_angioFoveaCx, m_angioFoveaCy, isDiscAngio)) {
 			AfxMessageBox(_T("Angiogram update failed!"));
 		}
 		else {
@@ -1371,7 +1372,7 @@ void DlgAngioPattern::OnBnClickedButtonAngioRedraw()
 	}
 	else {
 		if (!Angiography::updateAngiogram(m_upperLayerType, m_lowerLayerType, m_angioLayerOffset1, m_angioLayerOffset2,
-			m_rangeX, m_rangeY, m_angioFoveaCx, m_angioFoveaCy)) {
+			m_rangeX, m_rangeY, m_angioFoveaCx, m_angioFoveaCy, isDiscAngio)) {
 			AfxMessageBox(_T("Angiogram update failed!"));
 		}
 		else {

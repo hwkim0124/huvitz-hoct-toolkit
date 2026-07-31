@@ -497,7 +497,10 @@ bool OctAngio::Angiogram2::buildProjectionMasks(void)
 	auto vascAvgOffs = avgOffsetVascularMask();
 
 	LogD() << "Building projection masks for vascular structure";
-		
+	
+	// Projection mask for vessel overlay.
+	// Vasculature layer : NFL ~ IPL + 15um. Projection mask size is 11. 
+	// Averaged decorrleation and differentials in layer. 
 	if (!Decorr().updateProjectionMask(Layout(), uppersV, lowersV, outerFlow, vascAvgOffs)) {
 		return false;
 	}
@@ -510,7 +513,8 @@ bool OctAngio::Angiogram2::buildProjectionMasks(void)
 	Post().createProjectionMask(Layout(), Decorr2().decorrAngiogram(), Decorr2().decorrProjectionMask(), false);
 	Post().createProjectionMask(Layout(), Decorr2().differAngiogram(), Decorr2().differProjectionMask(), false);
 
-	// Projection mask for artifact removal. (ILM~OPL)
+	// Projection mask for motion artifact removal. 
+	// Vasculature layer : NFL ~ OPL. Projection mask size is 11. 
 	auto uppersD = Layers().getUpperLayersOfVasculature2();
 	auto lowersD = Layers().getLowerLayersOfVasculature2();
 	outerFlow = false;
@@ -603,6 +607,7 @@ bool OctAngio::Angiogram2::buildProjectionMasks(void)
 		}
 		*/
 
+		// Enhance vessels in mask. 
 		Post().performVesselProcessing(w, h, vessDiff);
 		Post().performVesselProcessing(w, h, vessDeco);
 		Post().performVesselProcessing(w, h, maskDiff);
@@ -650,6 +655,7 @@ bool OctAngio::Angiogram2::processProjectionImages(void)
 	int angioWidth = Layout().getWidth();
 	int angioHeight = Layout().getHeight();
 	bool outerflows = Layers().isOuterRetinaFlows();
+	bool isDisc = Layout().isDiscScan();
 
 	float noiseRate = getImpl().noiseReductionRate;
 	Post().applyNoiseReduction(Layout(), Decorr().differAngiogram(), noiseRate);
@@ -688,12 +694,12 @@ bool OctAngio::Angiogram2::processProjectionImages(void)
 			if (postproc) {
 				std::vector<std::thread> workers;
 				for (int t = 0; t < 2; t++) {
-					workers.push_back(std::thread([t, angioWidth, angioHeight, &dcs, &dfs, outerflows, this]() {
+					workers.push_back(std::thread([t, angioWidth, angioHeight, &dcs, &dfs, outerflows, isDisc, this]() {
 						if (t == 0) {
-							Post().performPostProcessing(angioWidth, angioHeight, dcs);
+							Post().performPostProcessing(angioWidth, angioHeight, dcs, false, isDisc);
 						}
 						else {
-							Post().performPostProcessing(angioWidth, angioHeight, dfs, outerflows);
+							Post().performPostProcessing(angioWidth, angioHeight, dfs, outerflows, isDisc);
 						}
 					}));
 				}
@@ -716,6 +722,7 @@ bool OctAngio::Angiogram2::processProjectionImages2(void)
 	bool outerflows = Layers().isOuterRetinaFlows();
 	auto vertical = Layout().isVerticalScan();
 	bool modelEye = isModelEyeImage();
+	bool isDisc = Layout().isDiscScan();
 
 	if (usePostProcessing() || true) { 
 		auto& dcs = Decorr().decorrAngiogram();
@@ -751,18 +758,18 @@ bool OctAngio::Angiogram2::processProjectionImages2(void)
 					}
 				}
 				if (bias) {
-					Post().applyBiasFieldCorrection(Layout(), Decorr().differAngiogram(), isFoveaAvascularZone());
-					Post().applyBiasFieldCorrection(Layout(), Decorr().decorrAngiogram(), isFoveaAvascularZone());
+					Post().applyBiasFieldCorrection(Layout(), Decorr().differAngiogram());
+					Post().applyBiasFieldCorrection(Layout(), Decorr().decorrAngiogram());
 				}
 
 				std::vector<std::thread> workers;
 				for (int t = 0; t < 2; t++) {
-					workers.push_back(std::thread([t, angioWidth, angioHeight, &dcs, &dfs, outerflows, this]() {
+					workers.push_back(std::thread([t, angioWidth, angioHeight, &dcs, &dfs, outerflows, isDisc, this]() {
 						if (t == 0) {
-							Post().performPostProcessing(angioWidth, angioHeight, dcs, outerflows);
+							Post().performPostProcessing(angioWidth, angioHeight, dcs, outerflows, isDisc);
 						}
 						else {
-							Post().performPostProcessing(angioWidth, angioHeight, dfs, outerflows);
+							Post().performPostProcessing(angioWidth, angioHeight, dfs, outerflows, isDisc);
 						}
 						}));
 				}
@@ -815,11 +822,21 @@ bool OctAngio::Angiogram2::normalizeProjectionImages(void)
 
 	bool decorrout = useDecorrOutput();
 	if (GlobalSettings::isUserModeSettings()) {
-		if (Layers().isOuterRetinaFlows()) {
-			decorrout = true;
+		if (Layout().isDiscScan()) {
+			if (Layers().isOuterRetinaFlows()) {
+				decorrout = false;
+			}
+			else {
+				decorrout = true;
+			}
 		}
 		else {
-			decorrout = false;
+			if (Layers().isOuterRetinaFlows()) {
+				decorrout = true;
+			}
+			else {
+				decorrout = false;
+			}
 		}
 	}
 

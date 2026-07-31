@@ -126,16 +126,16 @@ bool OctAngio::AngioData::importAmplitudesFromImageFiles(int lines, int points, 
 	std::vector<std::thread> workers;
 	for (unsigned int k = 0; k < n_workers; k++) {
 		if (tasks[k].size() > 0) {
-			int dataSize = getImpl().dataSize;
-			workers.push_back(std::thread([tasks, k, dataSize, lines, repeats, dirPath, this]() {
-				auto rvect = vector<float>(dataSize);
-				auto ivect = vector<float>(dataSize);
+			int readSize = getImpl().imageSize;	// only the used rows [rowStart, rowEnd) are read
+			workers.push_back(std::thread([tasks, k, readSize, lines, repeats, dirPath, this]() {
+				auto rvect = vector<float>(readSize);
+				auto ivect = vector<float>(readSize);
 				auto rbuff = (char*)&rvect[0];
 				auto ibuff = (char*)&ivect[0];
 
 				for (int i : tasks[k]) {
 					for (int j = 0; j < repeats; j++) {
-						if (!readImageDataFile(i, j, rbuff, ibuff, dataSize, dirPath)) {
+						if (!readImageDataFile(i, j, rbuff, ibuff, readSize, dirPath)) {
 							// return false;
 						}
 						else {
@@ -555,11 +555,16 @@ bool OctAngio::AngioData::readImageDataFile(int lineIdx, int repeatIdx, char * r
 	path1 = (boost::format("%s//%03d_%02d_r.bin") % dirPath % major % minor).str();
 	path2 = (boost::format("%s//%03d_%02d_i.bin") % dirPath % major % minor).str();
 
+	// The on-disk files hold all dataHeight (1025) rows, but only [rowStart, rowEnd) are used
+	// to build the amplitude image. Skip the leading unused rows and read just dataSize floats.
+	std::streamoff skipBytes = (std::streamoff)getImpl().dataRowStart * getImpl().imageWidth * sizeof(float);
+
 	try {
 		std::ifstream file(path1, std::ios::in | std::ofstream::binary);
 		if (!file.good()) {
 			return false;
 		}
+		file.seekg(skipBytes, std::ios::beg);
 		file.read(rbuff, sizeof(float)*dataSize);
 		file.close();
 	}
@@ -573,6 +578,7 @@ bool OctAngio::AngioData::readImageDataFile(int lineIdx, int repeatIdx, char * r
 		if (!file2.good()) {
 			return false;
 		}
+		file2.seekg(skipBytes, std::ios::beg);
 		file2.read(ibuff, sizeof(float)*dataSize);
 		file2.close();
 	}
@@ -597,38 +603,39 @@ bool OctAngio::AngioData::makeAmplitudeFromImageData(int lineIdx, int repeatIdx,
 
 	bool isComplex = (getImpl().imags.size() == amplitudes.size() && getImpl().reals.size() == amplitudes.size());
 
-	int rowStart = getImpl().dataRowStart;
-	int rowEnd = getImpl().dataRowEnd;
-	int dsize = getImpl().dataSize;
-
 	int width = getImpl().imageWidth;
 	int height = getImpl().imageHeight;
 	auto isize = getImpl().imageSize;
 
-	vector<float> data = vector<float>(isize, 0.0f);
-	vector<float> imag = vector<float>(isize, 0.0f);
-	vector<float> real = vector<float>(isize, 0.0f);
+	const float* reals = rbuff;
+	const float* imags = ibuff;
 
-	auto reals = (float*)rbuff; 
-	auto imags = (float*)ibuff; 
-
-	int index, cnt = 0;
-	for (int r = rowStart; r < rowEnd; r++) {
-		for (int c = 0; c < width; c++) {
-			index = r * width + c;
-			if (isComplex) {
-				real[cnt] = reals[index]; // pow(reals[index], 2.0f);
-				imag[cnt] = imags[index]; // pow(imags[index], 2.0f);
-			}
-			data[cnt++] = sqrt(pow(reals[index], 2.0f) + pow(imags[index], 2.0f));
-		}
-	}
-
-	amplitudes[lineIdx][repeatIdx].fromFloat32((const unsigned char*)&data[0], width, height);
+	// Write the amplitude directly into the destination image buffer to avoid an intermediate
+	// vector plus the deep copy that fromFloat32() performs. The read buffers already start at
+	// rowStart and hold exactly imageSize (used rows) floats, so index linearly.
+	auto& amplitude = amplitudes[lineIdx][repeatIdx];
+	amplitude.getCvMat() = cv::Mat(height, width, CV_32FC1);
+	float* dst = (float*)amplitude.getBitsData();
 
 	if (isComplex) {
+		vector<float> real = vector<float>(isize, 0.0f);
+		vector<float> imag = vector<float>(isize, 0.0f);
+		for (int k = 0; k < isize; k++) {
+			const float re = reals[k];
+			const float im = imags[k];
+			real[k] = re;
+			imag[k] = im;
+			dst[k] = std::sqrt(re * re + im * im);
+		}
 		getImpl().reals[lineIdx][repeatIdx].fromFloat32((const unsigned char*)&real[0], width, height);
 		getImpl().imags[lineIdx][repeatIdx].fromFloat32((const unsigned char*)&imag[0], width, height);
+	}
+	else {
+		for (int k = 0; k < isize; k++) {
+			const float re = reals[k];
+			const float im = imags[k];
+			dst[k] = std::sqrt(re * re + im * im);
+		}
 	}
 	return true;
 }

@@ -76,12 +76,15 @@ bool OctAngio::AngioPost::createProjectionMask(const AngioLayout & layout, const
 }
 
 
-bool OctAngio::AngioPost::performPostProcessing(int width, int height, std::vector<float>& profile, bool outFlows)
+bool OctAngio::AngioPost::performPostProcessing(int width, int height, std::vector<float>& profile, bool outFlows, bool isDisc)
 {
 	if (profile.empty() || profile.size() != (width * height)) {
 		return false;
 	}
 	if (all_of(profile.begin(), profile.end(), [](float i) { return i <= 0; })) {
+		return true;
+	}
+	if (isDisc) {
 		return true;
 	}
 
@@ -693,7 +696,7 @@ bool OctAngio::AngioPost::removeFoveaRegionNoise(const AngioLayout & layout, con
 	return false;
 }
 
-bool OctAngio::AngioPost::applyBiasFieldCorrection(const AngioLayout& layout, std::vector<float>& profile, bool isFovea)
+bool OctAngio::AngioPost::applyBiasFieldCorrection(const AngioLayout& layout, std::vector<float>& profile)
 {
 	if (profile.empty() || profile.size() != layout.getSize()) {
 		return false;

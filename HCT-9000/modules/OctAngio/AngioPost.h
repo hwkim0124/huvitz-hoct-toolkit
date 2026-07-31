@@ -26,7 +26,7 @@ namespace OctAngio
 
 	public:
 		bool createProjectionMask(const AngioLayout& layout, const std::vector<float>& profile, std::vector<float>& mask, bool kernel=true);
-		bool performPostProcessing(int width, int height, std::vector<float>& profile, bool outFlows = false);
+		bool performPostProcessing(int width, int height, std::vector<float>& profile, bool outFlows = false, bool isDisc = false);
 		bool performVesselProcessing(int width, int height, std::vector<float>& profile);
 		bool performFilterProcessing(int width, int height, std::vector<float>& profile);
 
@@ -36,7 +36,7 @@ namespace OctAngio
 		bool applyNoiseReduction(const AngioLayout& layout, std::vector<float>& profile, float rate);
 		bool removeFoveaRegionNoise(const AngioLayout& layout, const AngioLayers& layers, std::vector<float>& profile);
 
-		bool applyBiasFieldCorrection(const AngioLayout& layout, std::vector<float>& profile, bool isFovea);
+		bool applyBiasFieldCorrection(const AngioLayout& layout, std::vector<float>& profile);
 
 		int& garborFilerOrients(void);
 		float& garborFilterSigma(void);

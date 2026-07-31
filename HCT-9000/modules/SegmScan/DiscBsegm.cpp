@@ -85,7 +85,7 @@ bool SegmScan::DiscBsegm::performAnalysis(bool meye)
 
 	bool useSemtVersion = false;
 	useSemtVersion = SemtRetina::RetinaSegmentModel::isInitialized();
-
+	// useSemtVersion = false;
 	if (useSemtVersion) {
 		auto d_ptr = source()->getBitsData();
 		auto src_w = source()->getWidth();

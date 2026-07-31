@@ -88,9 +88,10 @@ bool OctSystem::Angiography::initiateAngiogram(const OctScanPattern & desc, bool
 	int points = desc.getNumberOfScanPoints();
 	int repeats = desc.getScanOverlaps();
 	bool vertical = !desc.isHorizontal();
+	bool isDisc = desc.isDiscScan();
 
 	getAngiogram().resetLayout(lines, points, repeats, vertical);
-	getAngiogram().resetScanRange(desc.getScanRangeX(), desc.getScanRangeY());
+	getAngiogram().resetScanRange(desc.getScanRangeX(), desc.getScanRangeY(), isDisc);
 
 	if (!getAngiogram().loadDataBuffer()) {
 		return false;
@@ -127,10 +128,11 @@ bool OctSystem::Angiography::initiateAngiogramByDataFile(const OctScanPattern & 
 	int points = desc.getNumberOfScanPoints();
 	int repeats = desc.getScanOverlaps();
 	bool vertical = !desc.isHorizontal();
+	bool isDisc = desc.isDiscScan();
 
 	getAngiogram().setImportPath(dirPath);
 	getAngiogram().resetLayout(lines, points, repeats, vertical);
-	getAngiogram().resetScanRange(desc.getScanRangeX(), desc.getScanRangeY());
+	getAngiogram().resetScanRange(desc.getScanRangeX(), desc.getScanRangeY(), isDisc);
 
 	if (!getAngiogram().loadDataFiles(dirPath, fileName)) {
 		return false;
@@ -219,7 +221,7 @@ bool OctSystem::Angiography::updateAngiogram(OcularLayerType upper, OcularLayerT
 	getAngiogram().noiseReductionRate() = getImpl().noiseReductionRate;
 
 	getAngiogram().resetSlabRange(upper, lower, upperOffset, lowerOffset);
-	getAngiogram().resetScanRange(rangeX, rangeY, centerX, centerY);
+	getAngiogram().resetScanRange(rangeX, rangeY, centerX, centerY, isDisc);
 	getAngiogram().generateProjection(true);
 	return true;
 }
@@ -233,7 +235,7 @@ bool OctSystem::Angiography::updateAngiogram2(OcularLayerType upper, OcularLayer
 	getAngiogram().noiseReductionRate() = getImpl().noiseReductionRate;
 
 	getAngiogram().resetSlabRange(upper, lower, upperOffset, lowerOffset);
-	getAngiogram().resetScanRange(rangeX, rangeY, centerX, centerY);
+	getAngiogram().resetScanRange(rangeX, rangeY, centerX, centerY, isDisc);
 	getAngiogram().generateProjection(false);
 	return true;
 }

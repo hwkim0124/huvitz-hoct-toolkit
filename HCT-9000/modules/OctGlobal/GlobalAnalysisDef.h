@@ -67,12 +67,15 @@ namespace OctGlobal
 	constexpr float ONH_DISC_MASK_VALUE = -1.0f;
 	constexpr float ONH_CUP_MASK_VALUE = -2.0f;
 
-	constexpr float MACULAR_CENTER_CIRCLE_SIZE = (1.0f * 1.1f);
-	constexpr float MACULAR_INNER_CIRCLE_SIZE = (3.0f * 1.1f); // 2.0f;
-	constexpr float MACULAR_OUTER_CIRCLE_SIZE = (6.0f * 1.1f); // 3.0f;
+	constexpr float MACULAR_CENTER_CIRCLE_SIZE = (1.0f); //  * 1.1f);
+	constexpr float MACULAR_INNER_CIRCLE_SIZE = (3.0f); // *1.1f); // 2.0f;
+	constexpr float MACULAR_OUTER_CIRCLE_SIZE = (6.0f); // *1.1f); // 3.0f;
 	constexpr int RETINA_THICKNESS_CHART_SECTORS = 4;
 
-	constexpr float ONH_DISC_RNFL_CIRCLE_SIZE = (3.45f * 1.05f);
+	constexpr float GCC_INNER_CIRCLE_SIZE = 1.0f;
+	constexpr float GCC_OUTER_CIRCLE_SIZE = 6.0f;
+
+	constexpr float ONH_DISC_RNFL_CIRCLE_SIZE = (3.45f); // *1.05f);
 	constexpr float ONH_DISC_RNFL_345_SIZE = (3.45f * 1.1f);
 	constexpr float ONH_DISC_RNFL_345_SIZE2 = 3.45f;
 	constexpr int ONH_DISC_RNFL_CLOCKS = 12;
